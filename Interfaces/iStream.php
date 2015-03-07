@@ -1,9 +1,7 @@
 <?php
-namespace Poirot\Filesystem\Interfaces\Filesystem;
+namespace Poirot\Stream\Interfaces;
 
-use Poirot\Filesystem\Interfaces\Filesystem\Stream\iStreamMeta;
-
-interface iStream
+interface iStream 
 {
     /*++
     Stream File Open, Words Stand For:
@@ -18,70 +16,146 @@ interface iStream
 
     @see http://php.net/manual/en/function.fopen.php
     ++*/
-    const STREAM_RB    = 'r';
-    const STREAM_RWB   = 'r+';
-    const STREAM_WBCT  = 'W';
-    const STREAM_RWBCT = 'W+';
-    const STREAM_WAC   = 'a';
-    const STREAM_RWAC  = 'a+';
-    const STREAM_WBX   = 'X';
-    const STREAM_RWBX  = 'X+';
-    const STREAM_WBC   = 'C';
-    const STREAM_RWBC  = 'C+';
+    const MODE_RB    = 'r' ;
+    const MODE_RWB   = 'r+';
+    const MODE_WBCT  = 'W' ;
+    const MODE_RWBCT = 'W+';
+    const MODE_WAC   = 'a' ;
+    const MODE_RWAC  = 'a+';
+    const MODE_WBX   = 'X' ;
+    const MODE_RWBX  = 'X+';
+    const MODE_WBC   = 'C' ;
+    const MODE_RWBC  = 'C+';
 
     /**
-     * Set Resource Handler
+     * Construct
+     * 
+     * @param iStreamResource $handle
+     */
+    function __construct(iStreamResource $handle);
+
+    /**
+     * Set Stream Handler Resource
+     * 
+     * @param iStreamResource $handle
+     * 
+     * @return $this
+     */
+    function setResource(iStreamResource $handle);
+
+    /**
+     * Get Stream Handler Resource
+     * 
+     * @return iStreamResource
+     */
+    function getResource();
+
+    /**
+     * @link http://php.net/manual/en/function.stream-copy-to-stream.php
      *
-     * - Usually Handler injected from filesystem::stream()
+     * Copies Data From One Stream To Another
      *
-     * @param resource $resource Resource Handler
+     * @param iStream $destStream The destination stream
+     * @param null    $inByte     Maximum bytes to copy
+     * @param int     $offset     The offset where to start to copy data
      *
      * @return $this
      */
-    function setHandler($resource);
-
+    function pipeTo(iStream $destStream, $inByte = null, $offset = 0);
+    
     /**
-     * Meta Data About Handler
+     * @link http://php.net/manual/en/function.stream-get-contents.php
      *
-     * @return iStreamMeta
-     */
-    function meta();
-
-    /**
      * Read Data From Stream
      *
-     * @param int  $byte       Read Data in byte
-     * @param bool $binarySafe Binary Safe Data Read
+     * - if $inByte argument not set, read entire stream
+     *
+     * @param int  $inByte Read Data in byte
      *
      * @return string
      */
-    function read($byte = 0, $binarySafe = false);
+    function read($inByte = null);
+
+    /**
+     * @link http://php.net/manual/en/function.stream-get-line.php
+     *
+     * Reading ends when length bytes have been read,
+     * when the string specified by ending is found
+     * (which is not included in the return value),
+     * or on EOF (whichever comes first)
+     *
+     * ! does not return the ending delimiter itself
+     *
+     * @param int    $inByte
+     * @param string $ending
+     *
+     * @return string
+     */
+    function readLine($inByte = null, $ending = "\n");
 
     /**
      * Writes the contents of string to the file stream
      *
-     * @param string $content The string that is to be written
-     * @param int    $byte    writing will stop after length bytes
-     *                        have been written or the end of string
-     *                        is reached
+     * @param string $content   The string that is to be written
+     * @param int    $inByte    Writing will stop after length bytes
+     *                          have been written or the end of string
+     *                          is reached
+     * 
+     * @return $this
+     */
+    function write($content, $inByte = null);
+
+    /**
+     * Move the file pointer to a new position
+     *
+     * The new position, measured in bytes from the beginning of the file,
+     * is obtained by adding $offset to the position specified by $whence.
+     *
+     * @param int $offset
+     * @param int $whence Accepted values are:
+     *              - SEEK_SET - Set position equal to $offset bytes.
+     *              - SEEK_CUR - Set position to current location plus $offset.
+     *              - SEEK_END - Set position to end-of-file plus $offset.
+     */
+    function seek($offset, $whence = SEEK_SET);
+
+    /**
+     * Move the file pointer to the beginning of the stream
      *
      * @return $this
      */
-    function write($content, $byte = 0);
+    function rewind();
 
     /**
-     * Is At The End Of Stream?
+     * @see iSHMeta
      *
-     * !  If PHP is not properly recognizing the line endings
-     *    when reading files either on or created by a Macintosh computer,
-     *    enabling the auto_detect_line_endings run-time configuration
-     *    option may help resolve the problem
+     * Check Whether Stream Resource Is Readable?
      *
-     * @return bool
+     * @return boolean
      */
-    function isStreamEnd();
+    function isReadable();
 
     /**
+     * @see iSHMeta
+     *
+     * Check Whether Stream Resource Is Writable?
+     *
+     * @return boolean
+     */
+    function isWritable();
+
+    /**
+     * @see iSHMeta
+     *
+     * Check Whether Stream Resource Is Seekable?
+     *
+     * @return boolean
+     */
+    function isSeekable();
+
+    /**
+     * @link  http://php.net/manual/en/function.stream-socket-shutdown.php
+     *
      * Close Stream Resource
      *
      * @return null
