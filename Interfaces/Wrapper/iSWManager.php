@@ -1,19 +1,21 @@
 <?php
 namespace Poirot\Stream\Interfaces\Wrapper;
 
-interface iSWManager 
+use Poirot\Stream\Wrapper\AbstractWrapper;
+
+interface iSWManager
 {
     /**
      * Register Stream Wrapper
      *
      * - If Not Set Using iSWrapper
      *
-     * @param iSWrapper $wrapper
-     * @param null      $label   Wrapper Label
+     * @param AbstractWrapper $wrapper
+     * @param null            $label   Wrapper Label
      *
-     * @return
+     * @throw \Exception If Wrapper Registered Before
      */
-    static function register(iSWrapper $wrapper, $label = null);
+    static function register(AbstractWrapper $wrapper, $label = null);
 
     /**
      * @link http://php.net/manual/en/function.stream-wrapper-unregister.php
