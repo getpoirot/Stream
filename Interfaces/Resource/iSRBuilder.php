@@ -1,19 +1,19 @@
 <?php
-namespace Poirot\Stream\Interfaces\StreamResource;
+namespace Poirot\Stream\Interfaces\Resource;
 
 use Poirot\Core\Interfaces\iPoirotOptions;
-use Poirot\Stream\Interfaces\iStreamResource;
+use Poirot\Stream\Interfaces\iSResource;
 
 interface iSRBuilder extends iPoirotOptions
 {
     /**
      * Build Stream Resource Handle With Config Files
      *
-     * @param iStreamResource $handle
+     * @param iSResource $handle
      *
      * @return $handle
      */
-    function build(iStreamResource $handle);
+    function build(iSResource $handle);
 
     /**
      * @link http://php.net/manual/en/function.stream-set-blocking.php

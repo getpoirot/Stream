@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-interface iStream 
+interface iStreamable
 {
     /*++
     Stream File Open, Words Stand For:
@@ -28,25 +28,18 @@ interface iStream
     const MODE_RWBC  = 'C+';
 
     /**
-     * Construct
-     * 
-     * @param iStreamResource $handle
-     */
-    function __construct(iStreamResource $handle);
-
-    /**
      * Set Stream Handler Resource
      * 
-     * @param iStreamResource $handle
+     * @param iSResource $handle
      * 
      * @return $this
      */
-    function setResource(iStreamResource $handle);
+    function setResource(iSResource $handle);
 
     /**
      * Get Stream Handler Resource
      * 
-     * @return iStreamResource
+     * @return iSResource
      */
     function getResource();
 
@@ -55,13 +48,13 @@ interface iStream
      *
      * Copies Data From One Stream To Another
      *
-     * @param iStream $destStream The destination stream
+     * @param iStreamable $destStream The destination stream
      * @param null    $inByte     Maximum bytes to copy
      * @param int     $offset     The offset where to start to copy data
      *
      * @return $this
      */
-    function pipeTo(iStream $destStream, $inByte = null, $offset = 0);
+    function pipeTo(iStreamable $destStream, $inByte = null, $offset = 0);
     
     /**
      * @link http://php.net/manual/en/function.stream-get-contents.php
@@ -106,10 +99,19 @@ interface iStream
     function write($content, $inByte = null);
 
     /**
+     * @link http://php.net/manual/en/function.fseek.php
+     *
      * Move the file pointer to a new position
      *
-     * The new position, measured in bytes from the beginning of the file,
-     * is obtained by adding $offset to the position specified by $whence.
+     * - The new position, measured in bytes from the beginning of the file,
+     *   is obtained by adding $offset to the position specified by $whence.
+     *
+     * ! php doesn't support seek/rewind on non-local streams
+     *   we can using temp/cache piped stream.
+     *
+     * ! If you have opened the file in append ("a" or "a+") mode,
+     *   any data you write to the file will always be appended,
+     *   regardless of the file position.
      *
      * @param int $offset
      * @param int $whence Accepted values are:
@@ -120,38 +122,20 @@ interface iStream
     function seek($offset, $whence = SEEK_SET);
 
     /**
+     * @link http://php.net/manual/en/function.rewind.php
+     *
      * Move the file pointer to the beginning of the stream
+     *
+     * ! php doesn't support seek/rewind on non-local streams
+     *   we can using temp/cache piped stream.
+     *
+     * ! If you have opened the file in append ("a" or "a+") mode,
+     *   any data you write to the file will always be appended,
+     *   regardless of the file position.
      *
      * @return $this
      */
     function rewind();
-
-    /**
-     * @see iSHMeta
-     *
-     * Check Whether Stream Resource Is Readable?
-     *
-     * @return boolean
-     */
-    function isReadable();
-
-    /**
-     * @see iSHMeta
-     *
-     * Check Whether Stream Resource Is Writable?
-     *
-     * @return boolean
-     */
-    function isWritable();
-
-    /**
-     * @see iSHMeta
-     *
-     * Check Whether Stream Resource Is Seekable?
-     *
-     * @return boolean
-     */
-    function isSeekable();
 
     /**
      * @link  http://php.net/manual/en/function.stream-socket-shutdown.php

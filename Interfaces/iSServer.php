@@ -12,7 +12,7 @@ namespace Poirot\Stream\Interfaces;
  * @link http://php.net/manual/en/function.stream-socket-server.php#44501
  *
  */
-interface iStreamServer 
+interface iSServer
 {
     /**
      * The type of socket created is determined by the
@@ -64,7 +64,7 @@ interface iStreamServer
      * Listen On Port To Accept Data On That Port
      * From Client
      *
-     * @return iStreamResource
+     * @return iSResource
      */
     function listen();
 }

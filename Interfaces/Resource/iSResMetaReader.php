@@ -1,10 +1,10 @@
 <?php
-namespace Poirot\Stream\Interfaces\StreamResource;
+namespace Poirot\Stream\Interfaces\Resource;
 
 /**
  * @link http://php.net/manual/en/function.stream-get-meta-data.php
  */
-interface iSRMeta
+interface iSResMetaReader
 {
     /**
      * Construct

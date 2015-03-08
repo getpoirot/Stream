@@ -1,19 +1,10 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-use Poirot\Stream\Interfaces\StreamResource\iSRMeta;
+use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 
-interface iStreamResource
+interface iSResource
 {
-    /**
-     * Construct
-     *
-     * @param resource $stream
-     *
-     * @throws \InvalidArgumentException
-     */
-    function __construct($stream);
-
     /**
      * Get Resource Origin Handler
      *
@@ -42,13 +33,15 @@ interface iStreamResource
     /**
      * Meta Data About Handler
      *
-     * @return iSRMeta
+     * @return iSResMetaReader
      */
     function meta();
 
     // :
 
     /**
+     * @link http://php.net/manual/en/function.ftell.php
+     *
      * Get the position of the file pointer
      *
      * @return int
@@ -56,6 +49,8 @@ interface iStreamResource
     function getCurrOffset();
 
     /**
+     * @link http://php.net/manual/en/function.feof.php
+     *
      * Is Stream Positioned At The End?
      *
      * @return boolean
@@ -74,7 +69,36 @@ interface iStreamResource
     /**
      * Is Stream Alive?
      *
+     * - is_readable uri meta data?
+     *
      * @return boolean
      */
     function isAlive();
+
+    /**
+     * @see iSHMeta
+     *
+     * Check Whether Stream Resource Is Readable?
+     *
+     * @return boolean
+     */
+    function isReadable();
+
+    /**
+     * @see iSHMeta
+     *
+     * Check Whether Stream Resource Is Writable?
+     *
+     * @return boolean
+     */
+    function isWritable();
+
+    /**
+     * @see iSHMeta
+     *
+     * Check Whether Stream Resource Is Seekable?
+     *
+     * @return boolean
+     */
+    function isSeekable();
 }

@@ -2,10 +2,12 @@
 namespace Poirot\Stream\Interfaces;
 
 /**
- * @link http://php.net/manual/en/function.stream-socket-sendto.php
  * @link http://php.net/manual/en/function.stream-socket-client.php
+ * @link http://php.net/manual/en/function.stream-socket-sendto.php
+ * @link http://php.net/manual/en/function.fsockopen.php
+ * @link http://php.net/manual/en/function.pfsockopen.php
  */
-interface iStreamClient 
+interface iSClient
 {
     /**
      * The type of socket created is determined by the
@@ -44,7 +46,7 @@ interface iStreamClient
     /**
      * @link http://php.net/manual/en/function.stream-socket-client.php
      *
-     * @return iStreamResource
+     * @return iSResource
      */
     function getConnect();
 }
