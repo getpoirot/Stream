@@ -5,6 +5,50 @@ use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
 
 class SROpenMode implements iSRAccessMode
 {
+    /*++
+    Stream File Open, Words Stand For:
+
+    BASE:    R = Read                 | W = Write
+    -----------------------------------------------------------------------------
+    POINTER: A = Pointer at end       | B = Pointer at beginning
+    -----------------------------------------------------------------------------
+    CREATE : C = Create if not exists | X = Create file only if not exists, otherwise fail
+    -----------------------------------------------------------------------------
+    BIN:     T = Truncate file
+    -----------------------------------------------------------------------------
+
+    @see http://php.net/manual/en/function.fopen.php
+    ++*/
+
+    protected $mode_available = [
+        'RB'    => self::MODE_RB,
+        'RWB'   => self::MODE_RWB,
+        'WBCT'  => self::MODE_WBCT,
+        'RWBCT' => self::MODE_RWBCT,
+        'WAC'   => self::MODE_WAC,
+        'RWAC'  => self::MODE_RWAC,
+        'WBX'   => self::MODE_WBX,
+        'RWBX'  => self::MODE_RWBX,
+        'WBC'   => self::MODE_WBC,
+        'RWBC'  => self::MODE_RWBC,
+    ];
+
+    protected $mode_xxx = [
+        'read'    => null, # R | null
+        'write'   => null, # W | null
+
+        'pointer' => 'B', # A | B
+
+        'create'  => null, # C | X
+
+        'bin'     => null, # T | null
+    ];
+
+    /**
+     * @var boolean
+     */
+    protected $isBinary;
+
     /**
      * Construct
      *
@@ -14,7 +58,8 @@ class SROpenMode implements iSRAccessMode
      */
     function __construct($modeStr = null)
     {
-        // TODO: Implement __construct() method.
+        if ($modeStr !== null)
+            $this->fromString($modeStr);
     }
 
     /**
@@ -22,11 +67,59 @@ class SROpenMode implements iSRAccessMode
      *
      * @param string $modStr
      *
+     * @throws \InvalidArgumentException
      * @return $this
      */
     function fromString($modStr)
     {
-        // TODO: Implement fromString() method.
+        if (!is_string($modStr) || empty($modStr) || strlen($modStr) > 3)
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid Open Mode Format For "%s".',
+                $modStr
+            ));
+
+        if (strpos($modStr, 'b') !== false) {
+            $this->asBinary();
+            $modStr = str_replace('b', '', $modStr); // remove binary sign
+        }
+
+        $modXXX = array_search($modStr, $this->mode_available);
+        if ($modXXX === false)
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid Open Mode Format For "%s".',
+                $modStr
+            ));
+
+        for($i=0; $i < strlen($modXXX); $i++) {
+            $c = $modXXX[$i];
+            switch ($c) {
+                // BASE:
+                case 'R':
+                    $this->openForRead();
+                    break;
+                case 'W':
+                    $this->openForWrite();
+                    break;
+                // POINTER:
+                case 'A':
+                    $this->withPointerAtEnd();
+                    break;
+                case 'B':
+                    $this->withPointerAtBeginning();
+                    break;
+                // CREATE:
+                case 'C':
+                    $this->createFile();
+                    break;
+                case 'X':
+                    $this->createXFile();
+                    break;
+                // BIN:
+                case 'T':
+                    $this->doTruncate();
+                    break;
+            }
+        }
     }
 
     /**
@@ -36,7 +129,9 @@ class SROpenMode implements iSRAccessMode
      */
     function openForWrite()
     {
-        // TODO: Implement openForWrite() method.
+        $this->mode_xxx['write'] = 'W';
+
+        return $this;
     }
 
     /**
@@ -46,7 +141,9 @@ class SROpenMode implements iSRAccessMode
      */
     function openForRead()
     {
-        // TODO: Implement openForRead() method.
+        $this->mode_xxx['read'] = 'R';
+
+        return $this;
     }
 
     /**
@@ -56,7 +153,7 @@ class SROpenMode implements iSRAccessMode
      */
     function hasAllowRead()
     {
-        // TODO: Implement hasAllowRead() method.
+        return $this->mode_xxx['read'] == 'R';
     }
 
     /**
@@ -66,7 +163,7 @@ class SROpenMode implements iSRAccessMode
      */
     function hasAllowWrite()
     {
-        // TODO: Implement hasAllowWrite() method.
+        return $this->mode_xxx['write'] == 'W';
     }
 
     /**
@@ -76,20 +173,24 @@ class SROpenMode implements iSRAccessMode
      */
     function asBinary()
     {
-        // TODO: Implement asBinary() method.
+        $this->isBinary = true;
+
+        return $this;
     }
 
     /**
      * Open Stream as Plain Text
      *
      * @see http://php.net/manual/en/function.fopen.php
-     *      first note
+     *      look at first note
      *
      * @return $this
      */
     function asText()
     {
-        // TODO: Implement asText() method.
+        $this->isBinary = false;
+
+        return $this;
     }
 
     /**
@@ -99,7 +200,7 @@ class SROpenMode implements iSRAccessMode
      */
     function isBinary()
     {
-        // TODO: Implement isBinary() method.
+        return $this->isBinary;
     }
 
     /**
@@ -109,7 +210,7 @@ class SROpenMode implements iSRAccessMode
      */
     function isText()
     {
-        // TODO: Implement isText() method.
+        return !$this->isBinary();
     }
 
     /**
@@ -119,7 +220,9 @@ class SROpenMode implements iSRAccessMode
      */
     function withPointerAtEnd()
     {
-        // TODO: Implement withPointerAtEnd() method.
+        $this->mode_xxx['pointer'] = 'A';
+
+        return $this;
     }
 
     /**
@@ -129,7 +232,9 @@ class SROpenMode implements iSRAccessMode
      */
     function withPointerAtBeginning()
     {
-        // TODO: Implement withPointerAtBeginning() method.
+        $this->mode_xxx['pointer'] = 'B';
+
+        return $this;
     }
 
     /**
@@ -140,7 +245,7 @@ class SROpenMode implements iSRAccessMode
      */
     function isAtTop()
     {
-        // TODO: Implement isAtTop() method.
+        return $this->mode_xxx['pointer'] == 'B';
     }
 
     /**
@@ -151,7 +256,7 @@ class SROpenMode implements iSRAccessMode
      */
     function isAtEnd()
     {
-        // TODO: Implement isAtEnd() method.
+        return !$this->isAtTop();
     }
 
     /**
@@ -161,7 +266,9 @@ class SROpenMode implements iSRAccessMode
      */
     function createFile()
     {
-        // TODO: Implement createFile() method.
+        $this->mode_xxx['create'] = 'C';
+
+        return $this;
     }
 
     /**
@@ -175,7 +282,9 @@ class SROpenMode implements iSRAccessMode
      */
     function createXFile()
     {
-        // TODO: Implement createXFile() method.
+        $this->mode_xxx['create'] = 'X';
+
+        return $this;
     }
 
     /**
@@ -185,7 +294,7 @@ class SROpenMode implements iSRAccessMode
      */
     function hasCreate()
     {
-        // TODO: Implement hasCreate() method.
+        return $this->mode_xxx['create'] == 'C';
     }
 
     /**
@@ -195,7 +304,7 @@ class SROpenMode implements iSRAccessMode
      */
     function hasXCreate()
     {
-        // TODO: Implement hasXCreate() method.
+        return $this->mode_xxx['create'] == 'X';
     }
 
     /**
@@ -205,7 +314,9 @@ class SROpenMode implements iSRAccessMode
      */
     function doTruncate()
     {
-        // TODO: Implement doTruncate() method.
+        $this->mode_xxx['bin'] = 'T';
+
+        return $this;
     }
 
     /**
@@ -216,27 +327,33 @@ class SROpenMode implements iSRAccessMode
      */
     function hasTruncate()
     {
-        // TODO: Implement hasTruncate() method.
+        return $this->mode_xxx['bin'] == 'T';
     }
 
     /**
      * Get Access Mode As String
      *
+     * - usually in format of W, r+, rb+, ...
+     *
+     * @throws \Exception If not complete statement
      * @return string
      */
     function toString()
     {
-        // TODO: Implement toString() method.
-    }
+        $ModeXXX = implode('', $this->mode_xxx);
+        if (!array_key_exists($ModeXXX, $this->mode_available))
+            throw new \Exception(sprintf(
+                'Statement "%s" not completed.',
+                $ModeXXX
+            ));
 
-    /**
-     * Magical String Object
-     *
-     * @return string
-     */
-    function __toString()
-    {
-        // TODO: Implement __toString() method.
+        $mode = $this->mode_available[$ModeXXX];
+        if ($this->isBinary()) {
+            $base = substr($mode, 0, 1);
+            // r|b|+
+            $mode = $base.'b'.substr($mode, 1);
+        }
+
+        return $mode;
     }
 }
- 

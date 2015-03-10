@@ -16,16 +16,6 @@ interface iStreamable
 
     @see http://php.net/manual/en/function.fopen.php
     ++*/
-    const MODE_RB    = 'r' ;
-    const MODE_RWB   = 'r+';
-    const MODE_WBCT  = 'W' ;
-    const MODE_RWBCT = 'W+';
-    const MODE_WAC   = 'a' ;
-    const MODE_RWAC  = 'a+';
-    const MODE_WBX   = 'X' ;
-    const MODE_RWBX  = 'X+';
-    const MODE_WBC   = 'C' ;
-    const MODE_RWBC  = 'C+';
 
     /**
      * Set Stream Handler Resource

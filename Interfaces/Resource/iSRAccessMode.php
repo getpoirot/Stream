@@ -16,6 +16,16 @@ interface iSRAccessMode
 
     @see http://php.net/manual/en/function.fopen.php
     ++*/
+    const MODE_RB    = 'r' ;
+    const MODE_RWB   = 'r+';
+    const MODE_WBCT  = 'W' ;
+    const MODE_RWBCT = 'W+';
+    const MODE_WAC   = 'a' ;
+    const MODE_RWAC  = 'a+';
+    const MODE_WBX   = 'X' ;
+    const MODE_RWBX  = 'X+';
+    const MODE_WBC   = 'C' ;
+    const MODE_RWBC  = 'C+';
 
     /**
      * Construct
@@ -31,6 +41,7 @@ interface iSRAccessMode
      *
      * @param string $modStr
      *
+     * @throws \InvalidArgumentException
      * @return $this
      */
     function fromString($modStr);
@@ -82,7 +93,7 @@ interface iSRAccessMode
      * Open Stream as Plain Text
      *
      * @see http://php.net/manual/en/function.fopen.php
-     *      first note
+     *      look at first note
      *
      * @return $this
      */
@@ -200,14 +211,10 @@ interface iSRAccessMode
     /**
      * Get Access Mode As String
      *
+     * - usually in format of W, r+, rb+, ...
+     *
+     * @throws \Exception If not complete statement
      * @return string
      */
     function toString();
-
-    /**
-     * Magical String Object
-     *
-     * @return string
-     */
-    function __toString();
 }
