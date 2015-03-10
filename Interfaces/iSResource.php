@@ -9,13 +9,14 @@ interface iSResource
     /**
      * Get Resource Origin Handler
      *
+     * - check for resource to be available
+     *
+     * @throws \Exception On Closed/Not Available Resource
      * @return resource
      */
-    function getResource();
+    function getRHandler();
 
     /**
-     * @link http://php.net/manual/en/function.stream-socket-get-name.php
-     *
      * Retrieve the name of the local sockets
      *
      * @return string
@@ -23,9 +24,10 @@ interface iSResource
     function getLocalName();
 
     /**
-     * @link http://php.net/manual/en/function.stream-socket-get-name.php
-     *
      * Retrieve the name of the remote sockets
+     *
+     * ! in tcp connections it will return ip address of
+     *   remote server (64.233.185.106:80)
      *
      * @return string
      */
@@ -94,7 +96,7 @@ interface iSResource
     /**
      * Is Stream Alive?
      *
-     * - is_readable uri meta data?
+     * - resource availability
      *
      * @return boolean
      */

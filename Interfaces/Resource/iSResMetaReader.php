@@ -1,17 +1,17 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-/**
- * @link http://php.net/manual/en/function.stream-get-meta-data.php
- */
 interface iSResMetaReader
 {
     /**
-     * Construct
+     * Set Original Resource Handler
      *
-     * @param resource $stream
+     * @param resource $rHandler
+     *
+     * @throws \InvalidArgumentException
+     * @return $this
      */
-    function __construct($stream);
+    function setRHandler($rHandler);
 
     /**
      * The URI/filename Associated With This Stream
@@ -52,7 +52,7 @@ interface iSResMetaReader
     function getWrapperData();
 
     /**
-     * The Type Of Access Required For This Stream
+     * The Type Mode Of Access Required For This Stream
      *
      * @return string
      */

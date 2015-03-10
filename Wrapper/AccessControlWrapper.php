@@ -42,7 +42,7 @@ class AccessControlWrapper extends AbstractWrapper
      */
     function getLabel()
     {
-        return 'myAcc';
+        return 'iacc';
     }
 
     /**
