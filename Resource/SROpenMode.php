@@ -1,22 +1,10 @@
 <?php
-namespace Poirot\Stream\Interfaces\Resource;
+namespace Poirot\Stream\Resource;
 
-interface iSRAccessMode
+use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
+
+class SROpenMode implements iSRAccessMode
 {
-    /*++
-    Stream File Open, Words Stand For:
-
-    R = Read                 | W = Write
-    -----------------------------------------------------------------------------
-    A = Pointer at end       | B = Pointer at beginning
-    -----------------------------------------------------------------------------
-    C = Create if not exists | X = Create file only if not exists, otherwise fail
-    -----------------------------------------------------------------------------
-    T = Truncate file
-
-    @see http://php.net/manual/en/function.fopen.php
-    ++*/
-
     /**
      * Construct
      *
@@ -24,7 +12,10 @@ interface iSRAccessMode
      *
      * @param null|string $modeStr
      */
-    function __construct($modeStr = null);
+    function __construct($modeStr = null)
+    {
+        // TODO: Implement __construct() method.
+    }
 
     /**
      * Set From String
@@ -33,50 +24,60 @@ interface iSRAccessMode
      *
      * @return $this
      */
-    function fromString($modStr);
-
-    // Access Modes Implementations:
+    function fromString($modStr)
+    {
+        // TODO: Implement fromString() method.
+    }
 
     /**
      * Open File For Write
      *
      * @return $this
      */
-    function openForWrite();
-
-    //   +   //
+    function openForWrite()
+    {
+        // TODO: Implement openForWrite() method.
+    }
 
     /**
      * Open File For Read
      *
      * @return $this
      */
-    function openForRead();
-
-    //
+    function openForRead()
+    {
+        // TODO: Implement openForRead() method.
+    }
 
     /**
      * Indicates whether the mode allows to read
      *
      * @return boolean
      */
-    function hasAllowRead();
+    function hasAllowRead()
+    {
+        // TODO: Implement hasAllowRead() method.
+    }
 
     /**
      * Indicates whether the mode allows to write
      *
      * @return boolean
      */
-    function hasAllowWrite();
-
-    // _____
+    function hasAllowWrite()
+    {
+        // TODO: Implement hasAllowWrite() method.
+    }
 
     /**
      * Open Stream as Binary Mode
      *
      * @return $this
      */
-    function asBinary();
+    function asBinary()
+    {
+        // TODO: Implement asBinary() method.
+    }
 
     /**
      * Open Stream as Plain Text
@@ -86,43 +87,50 @@ interface iSRAccessMode
      *
      * @return $this
      */
-    function asText();
-
-    //
+    function asText()
+    {
+        // TODO: Implement asText() method.
+    }
 
     /**
      * Indicates whether the stream is in binary mode
      *
      * @return boolean
      */
-    function isBinary();
+    function isBinary()
+    {
+        // TODO: Implement isBinary() method.
+    }
 
     /**
      * Indicates whether the stream is in text mode
      *
      * @return boolean
      */
-    function isText();
-
-    // _____
+    function isText()
+    {
+        // TODO: Implement isText() method.
+    }
 
     /**
      * Place the file pointer at the end of the file
      *
      * @return $this
      */
-    function withPointerAtEnd();
-
-    //   or  //
+    function withPointerAtEnd()
+    {
+        // TODO: Implement withPointerAtEnd() method.
+    }
 
     /**
      * Place the file pointer at the beginning of the file
      *
      * @return $this
      */
-    function withPointerAtBeginning();
-
-    //
+    function withPointerAtBeginning()
+    {
+        // TODO: Implement withPointerAtBeginning() method.
+    }
 
     /**
      * Indicates whether the mode implies positioning the cursor at the
@@ -130,7 +138,10 @@ interface iSRAccessMode
      *
      * @return boolean
      */
-    function isAtTop();
+    function isAtTop()
+    {
+        // TODO: Implement isAtTop() method.
+    }
 
     /**
      * Indicates whether the mode implies positioning the cursor at the end of
@@ -138,16 +149,20 @@ interface iSRAccessMode
      *
      * @return boolean
      */
-    function isAtEnd();
-
-    // _____
+    function isAtEnd()
+    {
+        // TODO: Implement isAtEnd() method.
+    }
 
     /**
      * Create File If the file does not exist
      *
      * @return $this
      */
-    function createFile();
+    function createFile()
+    {
+        // TODO: Implement createFile() method.
+    }
 
     /**
      * Create file only if not exists
@@ -158,34 +173,40 @@ interface iSRAccessMode
      *
      * @return $this
      */
-    function createXFile();
-
-    //
+    function createXFile()
+    {
+        // TODO: Implement createXFile() method.
+    }
 
     /**
      * Indicates whether the mode allows to create a new file
      *
      * @return boolean
      */
-    function hasCreate();
+    function hasCreate()
+    {
+        // TODO: Implement hasCreate() method.
+    }
 
     /**
      * Indicates whether the mode allows to open an existing file
      *
      * @return boolean
      */
-    function hasXCreate();
-
-    // _____
+    function hasXCreate()
+    {
+        // TODO: Implement hasXCreate() method.
+    }
 
     /**
      * Truncate file after open
      *
      * @return $this
      */
-    function doTruncate();
-
-    //
+    function doTruncate()
+    {
+        // TODO: Implement doTruncate() method.
+    }
 
     /**
      * Indicates whether the mode implies to delete the
@@ -193,21 +214,29 @@ interface iSRAccessMode
      *
      * @return boolean
      */
-    function hasTruncate();
-
-    // :
+    function hasTruncate()
+    {
+        // TODO: Implement hasTruncate() method.
+    }
 
     /**
      * Get Access Mode As String
      *
      * @return string
      */
-    function toString();
+    function toString()
+    {
+        // TODO: Implement toString() method.
+    }
 
     /**
      * Magical String Object
      *
      * @return string
      */
-    function __toString();
+    function __toString()
+    {
+        // TODO: Implement __toString() method.
+    }
 }
+ 
