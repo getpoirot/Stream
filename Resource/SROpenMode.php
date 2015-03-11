@@ -65,6 +65,8 @@ class SROpenMode implements iSRAccessMode
     /**
      * Set From String
      *
+     * - reset object
+     *
      * @param string $modStr
      *
      * @throws \InvalidArgumentException
@@ -77,6 +79,8 @@ class SROpenMode implements iSRAccessMode
                 'Invalid Open Mode Format For "%s".',
                 $modStr
             ));
+
+        $this->__reset();
 
         if (strpos($modStr, 'b') !== false) {
             $this->asBinary();
@@ -120,6 +124,24 @@ class SROpenMode implements iSRAccessMode
                     break;
             }
         }
+
+        return $this;
+    }
+
+    protected function __reset()
+    {
+        $this->isBinary = null;
+
+        $this->mode_xxx = [
+            'read'    => null, # R | null
+            'write'   => null, # W | null
+
+            'pointer' => 'B', # A | B
+
+            'create'  => null, # C | X
+
+            'bin'     => null, # T | null
+        ];
     }
 
     /**
