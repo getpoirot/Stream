@@ -6,17 +6,16 @@ interface iSFManager
     /**
      * Register a user defined stream filter
      *
-     * @param iSFilter  $wrapper
+     * @param iSFilter  $filter
      * @param null      $label   Wrapper Label
      *                           - If Not Set Using iSFilter
      *
-     * @throw \Exception If Wrapper Registered Before
+     * @throws \Exception If Wrapper Registered Before
+     *                    Error on Registering Filter
      */
-    static function register(iSFilter $wrapper, $label = null);
+    static function register(iSFilter $filter, $label = null);
 
     /**
-     * @link http://php.net/manual/en/function.stream-filter-remove.php
-     *
      * Remove Filter
      *
      * @param string|iSFilter $filter
@@ -30,6 +29,7 @@ interface iSFManager
      *
      * @param string $filterName
      *
+     * @throws \Exception Filter Not Found
      * @return iSFilter
      */
     static function get($filterName);
@@ -44,11 +44,9 @@ interface iSFManager
     static function has($filterName);
 
     /**
-     * @link http://php.net/manual/en/function.stream-get-filters.php
-     *
      * Get List Of Registered Filters
      *
-     * @return [string]
+     * @return array [string]
      */
     static function listFilters();
 }

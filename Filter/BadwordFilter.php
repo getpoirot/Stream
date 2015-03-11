@@ -1,30 +1,10 @@
 <?php
-namespace Poirot\Stream\Interfaces\Filter;
+namespace Poirot\Stream\Filter;
 
 use Poirot\Stream\Interfaces\iSResource;
 
-/**
- * stream_filter_register() must be called first in order
- * to register the desired user filter to filtername.
- *
- * Using iSFManager To Register Filters
- */
-interface iSFilter
+class BadwordFilter extends AbstractFilter
 {
-    /*
-    php_user_filter prototype
-    */
-
-    # public $filtername;
-    # public $params;
-
-    /**
-     * Label Used To Register Our Filter
-     *
-     * @return string
-     */
-    function getLabel();
-
     /**
      * @link http://php.net/manual/en/function.stream-filter-append.php
      *
@@ -49,25 +29,27 @@ interface iSFilter
      *       to get both filter resources.
      *
      * @param iSResource $streamResource
-     * @param int        $rwFlag
+     * @param int $rwFlag
      *
      * @return $this
      */
-    function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL);
+    function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
+    {
+        // TODO: Implement appendTo() method.
+    }
 
     /**
      * Attach a filter to a stream
      *
      * @param iSResource $streamResource
-     * @param int        $rwFlag
+     * @param int $rwFlag
      *
      * @return $this
      */
-    function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL);
-
-    /*
-    php_user_filter prototype
-    */
+    function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
+    {
+        // TODO: Implement prependTo() method.
+    }
 
     /**
      * @param $in       pointer to a group of buckets objects containing the data to be filtered
@@ -75,15 +57,30 @@ interface iSFilter
      * @param $consumed counter passed by reference that must be incremented by the length of converted data
      * @param $closing  boolean flag that is set to TRUE if we are in the last cycle and the stream is about to close
      */
-    function filter ($in, $out, &$consumed, $closing);
+    function filter($in, $out, &$consumed, $closing)
+    {
+        $data = '';
 
-    /**
-     * called respectively when our class is created
-     */
-    function onCreate ();
+        while ($bucket = stream_bucket_make_writeable($in)) {
+            $data .= $bucket->data;
+            $consumed += $bucket->datalen;
+        }
 
-    /**
-     * called respectively when our class is destroyed
-     */
-    function onClose ();
+        $buck = stream_bucket_new($this->bufferHandle, '');
+
+        if (false === $buck)
+            // trigger filter error
+            return PSFS_ERR_FATAL;
+
+        #$parser = new MarkdownExtra;
+        #$html = $parser->transform($data);
+        $html  = $data;
+        $buck->data = $html;
+
+        stream_bucket_append($out, $buck);
+
+        // data was processed successfully
+        return PSFS_PASS_ON;
+    }
 }
+ 

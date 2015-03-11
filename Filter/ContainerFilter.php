@@ -1,29 +1,31 @@
 <?php
-namespace Poirot\Stream\Interfaces\Filter;
+namespace Poirot\Stream\Filter;
 
+use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
-/**
- * stream_filter_register() must be called first in order
- * to register the desired user filter to filtername.
- *
- * Using iSFManager To Register Filters
- */
-interface iSFilter
+class ContainerFilter implements iSFilter
 {
-    /*
-    php_user_filter prototype
-    */
-
-    # public $filtername;
-    # public $params;
+    /**
+     * filter name passed to class
+     *
+     * stream_filter_register('template.*', 'Address\To\ThisClass' ..
+     * file_put_contents('php://filter/write=template.some_name' ....
+     * now filtername is template.some_name
+     *
+     * @var string
+     */
+    public $filtername;
 
     /**
      * Label Used To Register Our Filter
      *
      * @return string
      */
-    function getLabel();
+    function getLabel()
+    {
+        // TODO: Implement getLabel() method.
+    }
 
     /**
      * @link http://php.net/manual/en/function.stream-filter-append.php
@@ -49,25 +51,27 @@ interface iSFilter
      *       to get both filter resources.
      *
      * @param iSResource $streamResource
-     * @param int        $rwFlag
+     * @param int $rwFlag
      *
      * @return $this
      */
-    function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL);
+    function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
+    {
+        // TODO: Implement appendTo() method.
+    }
 
     /**
      * Attach a filter to a stream
      *
      * @param iSResource $streamResource
-     * @param int        $rwFlag
+     * @param int $rwFlag
      *
      * @return $this
      */
-    function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL);
-
-    /*
-    php_user_filter prototype
-    */
+    function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
+    {
+        // TODO: Implement prependTo() method.
+    }
 
     /**
      * @param $in       pointer to a group of buckets objects containing the data to be filtered
@@ -75,15 +79,25 @@ interface iSFilter
      * @param $consumed counter passed by reference that must be incremented by the length of converted data
      * @param $closing  boolean flag that is set to TRUE if we are in the last cycle and the stream is about to close
      */
-    function filter ($in, $out, &$consumed, $closing);
+    function filter($in, $out, &$consumed, $closing)
+    {
+        // TODO: Implement filter() method.
+    }
 
     /**
      * called respectively when our class is created
      */
-    function onCreate ();
+    function onCreate()
+    {
+        // TODO: Implement onCreate() method.
+    }
 
     /**
      * called respectively when our class is destroyed
      */
-    function onClose ();
+    function onClose()
+    {
+        // TODO: Implement onClose() method.
+    }
 }
+ 
