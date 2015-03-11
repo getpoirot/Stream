@@ -54,7 +54,7 @@ interface iSResMetaReader
     /**
      * The Type Mode Of Access Required For This Stream
      *
-     * @return string
+     * @return iSRAccessMode
      */
     function getAccessType();
 

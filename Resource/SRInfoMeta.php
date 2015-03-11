@@ -1,6 +1,7 @@
 <?php
 namespace Poirot\Stream\Resource;
 
+use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 
 class SRInfoMeta implements iSResMetaReader
@@ -59,6 +60,12 @@ class SRInfoMeta implements iSResMetaReader
         $this->__metaData  = stream_get_meta_data($this->rHandler);
     }
 
+    protected function getMetaKey($key)
+    {
+        if (isset($this->__metaData[$key]))
+            return $this->__metaData[$key];
+    }
+
     /**
      * The URI/filename Associated With This Stream
      *
@@ -68,7 +75,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        // TODO: Implement getUri() method.
+        return $this->getMetaKey('uri');
     }
 
     /**
@@ -81,7 +88,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        return $this->__metaData['unread_bytes'];
+        return $this->getMetaKey('unread_bytes');
     }
 
     /**
@@ -94,7 +101,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        return $this->__metaData['stream_type'];
+        return $this->getMetaKey('stream_type');
     }
 
     /**
@@ -107,7 +114,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        // TODO: Implement getWrapperType() method.
+        return $this->getMetaKey('wrapper_type');
     }
 
     /**
@@ -119,19 +126,25 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        // TODO: Implement getWrapperData() method.
+        return $this->getMetaKey('wrapper_data');
     }
 
     /**
      * The Type Mode Of Access Required For This Stream
      *
-     * @return string
+     * @return iSRAccessMode
      */
     function getAccessType()
     {
+        static $modeObj;
+
+        if (!$modeObj instanceof SROpenMode)
+            $modeObj = new SROpenMode;
+
         $this->assertMetaData();
 
-        return $this->__metaData['mode'];
+        $mode = $this->getMetaKey('mode');
+        return $modeObj->fromString($mode);
     }
 
     /**
@@ -144,7 +157,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        return (bool) $this->__metaData['timed_out'];
+        return (bool) $this->getMetaKey('timed_out');
     }
 
     /**
@@ -156,7 +169,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        return (bool) $this->__metaData['seekable'];
+        return (bool) $this->getMetaKey('seekable');
     }
 
     /**
@@ -168,7 +181,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        return ! ( (bool) $this->__metaData['blocked'] );
+        return ! ( (bool) $this->getMetaKey('blocked') );
     }
 
     /**
@@ -182,7 +195,7 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        return (bool) $this->__metaData['eof'];
+        return (bool) $this->getMetaKey('eof');
     }
 }
  

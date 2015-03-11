@@ -1,11 +1,12 @@
 <?php
-namespace Poirot\Stream\Resource;
+namespace Poirot\Stream;
 
 use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
+use Poirot\Stream\Resource\SRInfoMeta;
 
-class SRInfo implements iSResource
+class SResource implements iSResource
 {
     /**
      * @var resource
@@ -171,31 +172,32 @@ class SRInfo implements iSResource
      */
     function isReadable()
     {
-        // TODO: Implement isReadable() method.
+        $allowRead = $this->meta()->getAccessType()
+            ->hasAllowRead();
+
+        return $allowRead;
     }
 
     /**
-     * @see iSHMeta
-     *
      * Check Whether Stream Resource Is Writable?
      *
      * @return boolean
      */
     function isWritable()
     {
-        // TODO: Implement isWritable() method.
+        $allowWrite = $this->meta()->getAccessType()
+            ->hasAllowWrite();
+
+        return $allowWrite;
     }
 
     /**
-     * @see iSHMeta
-     *
      * Check Whether Stream Resource Is Seekable?
      *
      * @return boolean
      */
     function isSeekable()
     {
-        // TODO: Implement isSeekable() method.
+        return $this->meta()->isSeekable();
     }
 }
- 

@@ -39,6 +39,8 @@ interface iSRAccessMode
     /**
      * Set From String
      *
+     * - reset object
+     *
      * @param string $modStr
      *
      * @throws \InvalidArgumentException
