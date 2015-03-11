@@ -19,6 +19,12 @@ class SResource implements iSResource
     protected $__rMetaInfo;
 
     /**
+     * resource of attached filters by stream_app/prepend_filter
+     * @var array[resource]
+     */
+    protected $attachedFilters = [];
+
+    /**
      * Construct
      *
      * @param resource $rHandler
@@ -103,7 +109,20 @@ class SResource implements iSResource
      */
     function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
-        // TODO: Implement appendFilter() method.
+        if (!SFilterManager::has($filter))
+            // register filter if not exists in registry
+            SFilterManager::register($filter);
+
+        $filterRes = stream_filter_append(
+            $this->getRHandler()
+            , $filter->getLabel()
+            , $rwFlag, $filter->options()->toArray()
+        );
+
+        // store attached filter resource, so we can remove it from stream handler later
+        $this->attachedFilters[$filter->getLabel()] = $filterRes;
+
+        return $this;
     }
 
     /**
@@ -116,7 +135,36 @@ class SResource implements iSResource
      */
     function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
-        // TODO: Implement prependFilter() method.
+        if (!SFilterManager::has($filter))
+            // register filter if not exists in registry
+            SFilterManager::register($filter);
+
+        $filterRes = stream_filter_prepend($this->getRHandler(), $filter->getLabel(), $rwFlag, $filter->params);
+
+        // store attached filter resource, so we can remove it from stream handler later
+        $this->attachedFilters[$filter->getLabel()] = $filterRes;
+
+        return $this;
+    }
+
+    /**
+     * Remove Given Filter From Resource
+     *
+     * @param iSFilter $filter
+     *
+     * @return $this
+     */
+    function removeFilter(iSFilter $filter)
+    {
+        $filterName = $filter->getLabel();
+        if (isset($this->attachedFilters[$filterName])) {
+            $filterRes = $this->attachedFilters[$filterName];
+
+            stream_filter_remove($filterRes);
+            unset($this->attachedFilters[$filterName]); // filter was removed
+        }
+
+        return $this;
     }
 
     /**

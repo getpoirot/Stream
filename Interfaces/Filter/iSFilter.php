@@ -1,6 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Filter;
 
+use Poirot\Core\Interfaces\OptionsProviderInterface;
 use Poirot\Stream\Interfaces\iSResource;
 
 /**
@@ -8,8 +9,12 @@ use Poirot\Stream\Interfaces\iSResource;
  * to register the desired user filter to filtername.
  *
  * Using iSFManager To Register Filters
+ *
+ * Filters Manipulate Every Chunk Of Data That Read/Write
+ * Separately on each action
+ *
  */
-interface iSFilter
+interface iSFilter extends OptionsProviderInterface
 {
     /*
     php_user_filter prototype
@@ -26,8 +31,6 @@ interface iSFilter
     function getLabel();
 
     /**
-     * @link http://php.net/manual/en/function.stream-filter-append.php
-     *
      * Append Filter To Resource Stream
      *
      * ! By default, stream_filter_append() will attach the filter
@@ -70,10 +73,17 @@ interface iSFilter
     */
 
     /**
-     * @param $in       pointer to a group of buckets objects containing the data to be filtered
-     * @param $out      pointer to another group of buckets for storing the converted data
-     * @param $consumed counter passed by reference that must be incremented by the length of converted data
-     * @param $closing  boolean flag that is set to TRUE if we are in the last cycle and the stream is about to close
+     * Filter Stream Through Buckets
+     *
+     * @param resource $in     userfilter.bucket brigade
+     *                         pointer to a group of buckets objects containing the data to be filtered
+     * @param resource $out    userfilter.bucket brigade
+     *                         pointer to another group of buckets for storing the converted data
+     * @param int $consumed    counter passed by reference that must be incremented by the length
+     *                         of converted data
+     * @param boolean $closing flag that is set to TRUE if we are in the last cycle and the stream is
+     *                           about to close
+     * @return int
      */
     function filter ($in, $out, &$consumed, $closing);
 

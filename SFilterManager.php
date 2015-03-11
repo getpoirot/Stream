@@ -11,6 +11,8 @@ class SFilterManager implements iSFManager
     /**
      * Register a user defined stream filter
      *
+     * - when the filter registered it can't be removed
+     *
      * @param iSFilter  $filter
      * @param null      $label   Wrapper Label
      *                           - If Not Set Using iSFilter
@@ -35,18 +37,6 @@ class SFilterManager implements iSFManager
             ));
 
         self::$filters[$name] = $filter;
-    }
-
-    /**
-     * Remove Filter
-     *
-     * @param string|iSFilter $filter
-     *
-     * @param $filter
-     */
-    static function unregister($filter)
-    {
-        // TODO: Implement unregister() method.
     }
 
     /**

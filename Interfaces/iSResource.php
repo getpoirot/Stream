@@ -64,11 +64,18 @@ interface iSResource
      */
     function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
 
+    /**
+     * Remove Given Filter From Resource
+     *
+     * @param iSFilter $filter
+     *
+     * @return $this
+     */
+    function removeFilter(iSFilter $filter);
+
     // :
 
     /**
-     * @link http://php.net/manual/en/function.ftell.php
-     *
      * Get the position of the file pointer
      *
      * @return int
@@ -76,8 +83,6 @@ interface iSResource
     function getCurrOffset();
 
     /**
-     * @link http://php.net/manual/en/function.feof.php
-     *
      * Is Stream Positioned At The End?
      *
      * @return boolean
@@ -85,8 +90,6 @@ interface iSResource
     function isEOF();
 
     /**
-     * @link http://php.net/manual/en/function.stream-is-local.php
-     *
      * Checks If Stream Is Local One Or Not?
      *
      * @return boolean
@@ -103,8 +106,6 @@ interface iSResource
     function isAlive();
 
     /**
-     * @see iSHMeta
-     *
      * Check Whether Stream Resource Is Readable?
      *
      * @return boolean
@@ -112,8 +113,6 @@ interface iSResource
     function isReadable();
 
     /**
-     * @see iSHMeta
-     *
      * Check Whether Stream Resource Is Writable?
      *
      * @return boolean
@@ -121,8 +120,6 @@ interface iSResource
     function isWritable();
 
     /**
-     * @see iSHMeta
-     *
      * Check Whether Stream Resource Is Seekable?
      *
      * @return boolean

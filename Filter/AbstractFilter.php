@@ -1,6 +1,9 @@
 <?php
 namespace Poirot\Stream\Filter;
 
+use Poirot\Core\AbstractOptions;
+use Poirot\Core\Interfaces\iPoirotOptions;
+use Poirot\Core\OpenOptions;
 use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
@@ -18,9 +21,33 @@ abstract class AbstractFilter implements iSFilter
     public $filtername;
 
     /**
+     * You can read passed options params
+     * injected with append/prepend from
+     * this value
+     *
+     * @var array
+     */
+    public $params;
+
+    // --------------------------------------------------------------
+
+    protected $options;
+
+    /**
      * @var resource Buffer
      */
     protected $bufferHandle;
+
+    /**
+     * Construct
+     *
+     * @param null|AbstractOptions $options
+     */
+    function __construct($options = null)
+    {
+        if ($options instanceof iPoirotOptions)
+            $this->options()->from($options);
+    }
 
     /**
      * Label Used To Register Our Filter
@@ -39,8 +66,36 @@ abstract class AbstractFilter implements iSFilter
     }
 
     /**
-     * @link http://php.net/manual/en/function.stream-filter-append.php
+     * @return AbstractOptions
+     */
+    function options()
+    {
+        if (!$this->options)
+            $this->options = self::optionsIns();
+
+        return $this->options;
+    }
+
+    /**
+     * Get An Bare Options Instance
      *
+     * ! it used on easy access to options instance
+     *   before constructing class
+     *   [php]
+     *      $opt = Filesystem::optionsIns();
+     *      $opt->setSomeOption('value');
+     *
+     *      $class = new Filesystem($opt);
+     *   [/php]
+     *
+     * @return AbstractOptions
+     */
+    static function optionsIns()
+    {
+        return new OpenOptions;
+    }
+
+    /**
      * Append Filter To Resource Stream
      *
      * ! By default, stream_filter_append() will attach the filter
@@ -68,7 +123,9 @@ abstract class AbstractFilter implements iSFilter
      */
     function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
-        // TODO: Implement appendTo() method.
+        $streamResource->appendFilter($this, $rwFlag);
+
+        return $this;
     }
 
     /**
@@ -81,17 +138,66 @@ abstract class AbstractFilter implements iSFilter
      */
     function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
-        // TODO: Implement prependTo() method.
+        $streamResource->prependFilter($this, $rwFlag);
+
+        return $this;
     }
 
     /**
-     * @param $in       pointer to a group of buckets objects containing the data to be filtered
-     * @param $out      pointer to another group of buckets for storing the converted data
-     * @param $consumed counter passed by reference that must be incremented by the length of converted data
-     * @param $closing  boolean flag that is set to TRUE if we are in the last cycle and the stream is about to close
+     * Filter Stream Through Buckets
+     *
+     * @param resource $in     userfilter.bucket brigade
+     *                         pointer to a group of buckets objects containing the data to be filtered
+     * @param resource $out    userfilter.bucket brigade
+     *                         pointer to another group of buckets for storing the converted data
+     * @param int $consumed    counter passed by reference that must be incremented by the length
+     *                         of converted data
+     * @param boolean $closing flag that is set to TRUE if we are in the last cycle and the stream is
+     *                           about to close
+     * @return int
      */
     abstract function filter($in, $out, &$consumed, $closing);
 
+
+    /**
+     * Read Data From Bucket
+     *
+     * @param resource $in       userfilter.bucket brigade
+     * @param int      $consumed
+     * @return string
+     */
+    protected function __getDataFromBucket($in, &$consumed)
+    {
+        $data = '';
+        while ($bucket = stream_bucket_make_writeable($in)) {
+            $data .= $bucket->data;
+            $consumed += $bucket->datalen;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Write Back Filtered Data On Out Bucket
+     *
+     * @param resource $out  userfilter.bucket brigade
+     * @param string   $data
+     *
+     * @return int PSFS_ERR_FATAL|PSFS_PASS_ON
+     */
+    protected function __writeBackDataOut($out, $data)
+    {
+        $buck = stream_bucket_new($this->bufferHandle, '');
+        if (false === $buck)
+            // trigger filter error
+            return PSFS_ERR_FATAL;
+
+        $buck->data = $data;
+        stream_bucket_append($out, $buck);
+
+        // data was processed successfully
+        return PSFS_PASS_ON;
+    }
 
     /**
      * called respectively when our class is created
