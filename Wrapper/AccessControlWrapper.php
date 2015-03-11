@@ -3,6 +3,7 @@ namespace Poirot\Stream\Wrapper;
 
 use Poirot\Core\AbstractOptions;
 use Poirot\Core\Interfaces\OptionsProviderInterface;
+use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
 use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
 
 /**
@@ -10,8 +11,9 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
  *       to implement wrapper features
  *
  */
-class AccessControlWrapper extends AbstractWrapper
+class AccessControlWrapper
     implements
+    iSWrapper,
     OptionsProviderInterface
 {
     /**

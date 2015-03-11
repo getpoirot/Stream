@@ -1,8 +1,16 @@
 <?php
 namespace Poirot\Stream\Interfaces\Wrapper;
 
+/**
+ * Just a Prototype Class to Describe Methods
+ */
 interface iSWrapper
 {
+    /**
+     * @var resource
+     */
+    #public $context;
+
     /**
      * Get Wrapper Protocol Label
      *
