@@ -13,9 +13,10 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
  */
 class AccessControlWrapper
     implements
-    iSWrapper,
-    OptionsProviderInterface
+    iSWrapper
 {
+    public $context;
+
     /**
      * @var ACWOptions
      */
@@ -66,6 +67,13 @@ class AccessControlWrapper
         if (!$this->options)
             $this->options = self::optionsIns();
 
+        if ($this->context) {
+            $contextOpt = stream_context_get_options($this->context);
+            $contextOpt = $contextOpt[$this->getLabel()];
+
+            $this->options->from($contextOpt);
+        }
+
         return $this->options;
     }
 
@@ -98,8 +106,6 @@ class AccessControlWrapper
 
     protected function assertWriteAccess()
     {
-        kd($this->context);
-
         if (!$this->options()->getPermissions()->hasWriteAccess())
             throw new \Exception('Access Was Denied On Writing.');
     }

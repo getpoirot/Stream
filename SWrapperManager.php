@@ -21,6 +21,15 @@ class SWrapperManager implements iSWManager
             $label = $wrapper->getLabel();
 
         stream_wrapper_register($label, get_class($wrapper));
+
+        // Set the default stream context which will be used whenever
+        // file operations (fopen(), file_get_contents(), etc...) are
+        // called without a context parameter.
+        $options = [
+            $label => $wrapper->options()->toArray()
+        ];
+
+        stream_context_set_default($options);
     }
 
     /**

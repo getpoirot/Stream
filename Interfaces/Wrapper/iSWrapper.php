@@ -1,12 +1,18 @@
 <?php
 namespace Poirot\Stream\Interfaces\Wrapper;
 
+use Poirot\Core\Interfaces\OptionsProviderInterface;
+
 /**
  * Just a Prototype Class to Describe Methods
  */
-interface iSWrapper
+interface iSWrapper extends OptionsProviderInterface
 {
     /**
+     * Context Wrapper Options
+     *
+     * - get socket context options with stream_context_get_options
+     *
      * @var resource
      */
     #public $context;
