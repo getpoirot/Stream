@@ -36,6 +36,17 @@ class AccessControlWrapper
     protected $dh;
 
     /**
+     * Construct
+     *
+     * @param ACWOptions|array $options
+     */
+    function __construct($options = null)
+    {
+       if ($options !== null)
+           $this->options()->from($options);
+    }
+
+    /**
      * Get Wrapper Protocol Label
      *
      * - used on register/unregister wrappers, ...
@@ -87,12 +98,30 @@ class AccessControlWrapper
 
     protected function assertWriteAccess()
     {
+        kd($this->context);
+
         if (!$this->options()->getPermissions()->hasWriteAccess())
             throw new \Exception('Access Was Denied On Writing.');
     }
 
     /**
-     * @param string       $path
+     * Remove Wrapper Scheme From Path
+     *
+     * ! remove iacc://path/to/ from begining path
+     *   to avoid recursive wrapper call and faild
+     *   on using filesystem functions
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function cleanUpPath($path)
+    {
+        return str_replace('iacc://', '', $path);
+    }
+
+    /**
+     * @param string       $path        Path passed containing wrapper, iacc://path/to/
      * @param string       $mode
      * @param int          $options
      * @param string       $opened_path
@@ -101,6 +130,8 @@ class AccessControlWrapper
      */
     function stream_open($path, $mode, $options, &$opened_path)
     {
+        $path = $this->cleanUpPath($path);
+
         $this->fp = fopen($path, $mode, $options);
 
         return $this->fp !== false;
@@ -218,6 +249,8 @@ class AccessControlWrapper
      */
     function url_stat($path, $flags)
     {
+        $path = $this->cleanUpPath($path);
+
         if (!file_exists($path))
             return false;
 
@@ -233,9 +266,11 @@ class AccessControlWrapper
      */
     function mkdir($path, $mode, $options)
     {
+        $path = $this->cleanUpPath($path);
+
         $this->assertWriteAccess();
 
-        return mkdir($path, 0775, $options & STREAM_MKDIR_RECURSIVE);
+        return mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
     }
 
     /**
@@ -246,6 +281,8 @@ class AccessControlWrapper
      */
     function rmdir($path, $options)
     {
+        $path = $this->cleanUpPath($path);
+
         $this->assertWriteAccess();
 
         return rmdir($path);
@@ -258,6 +295,8 @@ class AccessControlWrapper
      */
     function dir_opendir($path, $options)
     {
+        $path = $this->cleanUpPath($path);
+
         $this->dh = opendir($path);
 
         return $this->dh > 0;
