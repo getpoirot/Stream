@@ -11,7 +11,8 @@ interface iSWrapper extends OptionsProviderInterface
     /**
      * Context Wrapper Options
      *
-     * - get socket context options with stream_context_get_options
+     * The current context, or NULL if no context was passed to the caller function.
+     * Use the stream_context_get_options() to parse the context
      *
      * @var resource
      */
