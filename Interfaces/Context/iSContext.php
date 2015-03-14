@@ -17,21 +17,19 @@ interface iSContext extends iOptionImplement
      * get contexts options as associative array with
      * $arr['wrapper']['option'] = $value format
      *
-     * @param string $wrapper
-     *
-     * @return $this
+     * @return string
      */
-    function forWrapper($wrapper);
+    function getsWrapper();
 
     /**
-     * Set/Retrieves parameters
+     * Set/Retrieves specific socket options
      *
      * - data params used on $this::toContext
      *   to set params of context
      *
      * @return iPoirotOptions
      */
-    function params();
+    function options();
 
     /**
      * Set Options From Context Resource
