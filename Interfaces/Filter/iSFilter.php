@@ -16,6 +16,50 @@ use Poirot\Stream\Interfaces\iSResource;
  */
 interface iSFilter extends OptionsProviderInterface
 {
+    /**
+     * Filter processed successfully with data available in the out bucket
+     * brigade.
+     *
+     * @const int
+     */
+    const PASS_ON          = PSFS_PASS_ON;
+
+    /**
+     * Filter processed successfully, however no data was available to return.
+     * More data is required from the stream or prior filter.
+     *
+     * @const int
+     */
+    const FEED_ME          = PSFS_FEED_ME;
+
+    /**
+     * The filter experienced and unrecoverable error and cannot continue.
+     *
+     * @const int
+     */
+    const FATAL_ERROR      = PSFS_ERR_FATAL;
+
+    /**
+     * Regular read/write.
+     *
+     * @const int
+     */
+    const FLAG_NORMAL      = PSFS_FLAG_NORMAL;
+
+    /**
+     * An incremental flush.
+     *
+     * @const int
+     */
+    const FLAG_FLUSH_INC   = PSFS_FLAG_FLUSH_INC;
+
+    /**
+     * Final flush prior to closing.
+     *
+     * @const int
+     */
+    const FLAG_FLUSH_CLOSE = PSFS_FLAG_FLUSH_CLOSE;
+
     /*
     php_user_filter prototype
     */
@@ -96,12 +140,17 @@ interface iSFilter extends OptionsProviderInterface
     function filter ($in, $out, &$consumed, $closing);
 
     /**
-     * called respectively when our class is created
+     * Called respectively when our class is created
+     *
+     * @return  bool
      */
     function onCreate ();
 
     /**
-     * called respectively when our class is destroyed
+     * Called upon filter shutdown (typically, this is also during stream
+     * shutdown), and is executed after the flush method is called.
+     *
+     * @return  void
      */
     function onClose ();
 }
