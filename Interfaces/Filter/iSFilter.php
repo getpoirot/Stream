@@ -73,17 +73,25 @@ interface iSFilter extends OptionsProviderInterface
     */
 
     /**
-     * Filter Stream Through Buckets
+     * Filter data.
+     * This method is called whenever data is read from or written to the attach
+     * stream.
      *
-     * @param resource $in     userfilter.bucket brigade
-     *                         pointer to a group of buckets objects containing the data to be filtered
-     * @param resource $out    userfilter.bucket brigade
-     *                         pointer to another group of buckets for storing the converted data
-     * @param int $consumed    counter passed by reference that must be incremented by the length
-     *                         of converted data
-     * @param boolean $closing flag that is set to TRUE if we are in the last cycle and the stream is
-     *                           about to close
-     * @return int
+     * @param   resource  $in           A resource pointing to a bucket brigade
+     *                                  which contains one or more bucket
+     *                                  objects containing data to be filtered.
+     * @param   resource  $out          A resource pointing to a second bucket
+     *                                  brigade into which your modified buckets
+     *                                  should be replaced.
+     * @param   int       &$consumed    Which must always be declared by
+     *                                  reference, should be incremented by the
+     *                                  length of the data which your filter
+     *                                  reads in and alters.
+     * @param   bool      $closing      If the stream is in the process of
+     *                                  closing (and therefore this is the last
+     *                                  pass through the filterchain), the
+     *                                  closing parameter will be set to true.
+     * @return  int
      */
     function filter ($in, $out, &$consumed, $closing);
 
