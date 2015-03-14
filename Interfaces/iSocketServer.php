@@ -4,17 +4,12 @@ namespace Poirot\Stream\Interfaces;
 /**
  * Creates a stream or datagram socket on the specified
  * Local Socket
- *
- * related:
- * - Retrieve list of registered socket transports
- * @link http://php.net/manual/en/function.stream-get-transports.php
- *
- * @link http://php.net/manual/en/function.stream-socket-server.php#44501
- *
  */
-interface iSServer
+interface iSocketServer
 {
     /**
+     * Construct
+     *
      * The type of socket created is determined by the
      * transport specified using standard URL formatting:
      * transport://target
@@ -30,11 +25,30 @@ interface iSServer
      * List of Supported Socket Transports:
      * @link http://php.net/manual/en/transports.php
      *
-     * @param string $localSocket
+     * Note: For UDP sockets, you must use STREAM_SERVER_BIND as
+     *       the flags parameter.
      *
-     * @return $this
+     * Note: Most systems require root access to create a server
+     *       socket on a port below 1024.
+     *
+     * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
+     *       you must enclose the IP in square brackets for example,
+     *       tcp://[fe80::1]:80
+     *
+     * @param string $uriLocalSocket Uri To Local Socket
+     *
+     * @throws \Exception If Can't Connect To Server
      */
-    function setTransport($localSocket);
+    function __construct($uriLocalSocket);
+    /*
+     * resource stream_socket_server (
+     *  string $local_socket
+     *  [, int &$errno
+     *  [, string &$errstr
+     *  [, int $flags = STREAM_SERVER_BIND | STREAM_SERVER_LISTEN
+     *  [, resource $context ]]]]
+     * )
+     */
 
     /**
      * @link http://php.net/manual/en/function.stream-socket-server.php

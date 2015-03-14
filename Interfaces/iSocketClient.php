@@ -7,7 +7,7 @@ namespace Poirot\Stream\Interfaces;
  * @link http://php.net/manual/en/function.fsockopen.php
  * @link http://php.net/manual/en/function.pfsockopen.php
  */
-interface iSClient
+interface iSocketClient
 {
     /**
      * The type of socket created is determined by the
