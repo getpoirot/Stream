@@ -284,6 +284,12 @@ abstract class AbstractContext extends AbstractOptions
         while ($context = array_shift($bindContexts)) {
             $wrapper = $context->gotWrapper();
             $options['options'][$wrapper] = $context->options()->toArray();
+
+            $ops = &$options['options'][$wrapper];
+            foreach ($ops as $key => &$p)
+                // cleanup null values for context params
+                if ($p === null)
+                    unset($ops[$key]);
         }
 
         $params  = parent::toArray();
