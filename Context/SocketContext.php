@@ -38,7 +38,7 @@ class SocketContext extends AbstractContext
      *      $class = new Filesystem($opt);
      *   [/php]
      *
-     * @return AbstractOptions
+     * @return SCSocketOptions
      */
     static function optionsIns()
     {

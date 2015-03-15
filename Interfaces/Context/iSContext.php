@@ -17,9 +17,10 @@ interface iSContext extends iOptionImplement
      * get contexts options as associative array with
      * $arr['wrapper']['option'] = $value format
      *
+     * @throws \Exception Wrapper not defined
      * @return string
      */
-    function getsWrapper();
+    function gotWrapper();
 
     /**
      * Set/Retrieves specific socket options

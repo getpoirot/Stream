@@ -11,12 +11,21 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 
 !defined('POIROT_CORE_LOADED') and include_once 'Core.php';
 
-abstract class AbstractContext extends OpenOptions
+abstract class AbstractContext extends AbstractOptions
     implements
     iSContext,
     OptionsProviderInterface
 {
     protected $wrapper = null;
+
+    // params
+
+    /**
+     * @var callable
+     */
+    protected $notification;
+
+    // options
 
     /**
      * @var iOptionImplement
@@ -28,12 +37,45 @@ abstract class AbstractContext extends OpenOptions
      * get contexts options as associative array with
      * $arr['wrapper']['option'] = $value format
      *
+     * @throws \Exception
      * @return string
      */
-    function getsWrapper()
+    function gotWrapper()
     {
-        return $this->wrapper;
+        $wrapper = $this->wrapper;
+        if ($wrapper === null)
+            throw new \Exception('No Wrapper Defined Yet!!');
+
+        return $wrapper;
     }
+
+    // Params:
+
+    /**
+     * @return callable
+     */
+    public function getNotification()
+    {
+        return $this->notification;
+    }
+
+    /**
+     * Set callback function for the notification context parameter
+     * @link http://php.net/manual/en/function.stream-notification-callback.php
+     *
+     * @param callable $notification
+     *
+     * @return $this
+     */
+    public function setNotification($notification)
+    {
+        $this->notification = $notification;
+
+        return $this;
+    }
+
+
+    // Context:
 
     /**
      * Set/Retrieves specific options
@@ -43,7 +85,7 @@ abstract class AbstractContext extends OpenOptions
     function options()
     {
         if (!$this->options)
-            $this->options = self::optionsIns();
+            $this->options = static::optionsIns();
 
         return $this->options;
     }
@@ -70,6 +112,8 @@ abstract class AbstractContext extends OpenOptions
     /**
      * Set Options
      *
+     * ! called by __construct
+     *
      * @param array|iPoirotOptions|resource $options
      *
      * @return $this
@@ -89,23 +133,53 @@ abstract class AbstractContext extends OpenOptions
     /**
      * Set Options From Array
      *
-     * @param array $options Options Array
+     * $opts = array(
+     *    'notification' => 'dfsf',
+     *    'options' => [
+     *       'socket' => array(
+     *          'bindto'  => '192.168.0.100:0',
+     *        ),
+     *     ]
+     * );
+     *
+     * or
+     *
+     * $opts = array(
+     *   'notification' => 'dfsf',
+     *   'socket' => array(
+     *      'bindto'  => '192.168.0.100:0',
+     *   ),
+     * );
+     *
+     * @param array $params Options Array
      *
      * @throws \Exception
      * @return $this
      */
-    function fromArray(array $options)
+    function fromArray(array $params)
     {
-        if (array_values($options) == $options)
+        if (!empty($params) && array_values($params) === $params)
             throw new \InvalidArgumentException('Options Array must be associative array.');
 
-        $wrapper = $this->getsWrapper();
-        if (isset($options[$wrapper]))
-            $this->options()->fromArray($options[$wrapper]);
+        $opts = $params;
+        if (isset($params['options'])) {
+            // in case of context params, that include options key
+            // 'options => [
+            //    'socket' => array(
+            //       'bindto'  => '192.168.0.100:0',
+            //     ),
+            $opts = $params['options'];
+            unset($params['options']);
+        }
+
+        $wrapper = $this->gotWrapper();
+        if (isset($opts[$wrapper])) {
+            $this->options()->fromArray($opts[$wrapper]);
+            unset($params[$wrapper]);
+        }
 
         // set params:
-        unset($options[$wrapper]);
-        parent::fromArray($options);
+        parent::fromArray($params);
 
         return $this;
     }
@@ -118,6 +192,8 @@ abstract class AbstractContext extends OpenOptions
      * - rewrite wrapper with resource wrapper name
      *
      * @param resource $resource Context/Stream
+     *
+     * @throws \Exception
      * @return $this
      */
     function fromContext($resource)
@@ -129,13 +205,6 @@ abstract class AbstractContext extends OpenOptions
             ));
 
         $params = stream_context_get_params($resource);
-        if (isset($params['options'])) {
-            // set wrapper from resource
-            $wrapper = current(array_keys($params['options']));
-
-            $this->wrapper = $wrapper;
-        }
-
         $this->fromArray($params);
 
         return $this;
@@ -149,12 +218,14 @@ abstract class AbstractContext extends OpenOptions
      */
     function toArray()
     {
-        if (!$this->wrapper)
-            throw new \Exception('No Wrapper Defined Yet!!');
-
         $params  = parent::toArray();
+        foreach ($params as $key => $p)
+            // cleanup null values for context params
+            if ($p === null)
+                unset($params[$key]);
+
         $options = [
-            "{$this->getsWrapper()}" => $this->options()->toArray()
+            "{$this->gotWrapper()}" => $this->options()->toArray()
         ];
 
         return Core\array_merge($params, $options);
@@ -173,13 +244,16 @@ abstract class AbstractContext extends OpenOptions
      */
     function toContext()
     {
-        if (!$this->wrapper)
-            throw new \Exception('No Wrapper Defined Yet!!');
-
         $options = [
-            "{$this->getsWrapper()}" => $this->options()->toArray()
+            "{$this->gotWrapper()}" => $this->options()->toArray()
         ];
 
-        return stream_context_create($options, parent::toArray());
+        $params = parent::toArray();
+        foreach ($params as $key => $p)
+            // cleanup null values for context params
+            if ($p === null)
+                unset($params[$key]);
+
+        return stream_context_create($options, $params);
     }
 }
