@@ -33,6 +33,31 @@ abstract class AbstractContext extends AbstractOptions
     protected $options;
 
     /**
+     * @var array[AbstractContext]
+     */
+    protected $bindContexts = [];
+
+    /**
+     * Construct
+     *
+     * @param array|iPoirotOptions $options Options
+     */
+    function __construct($options = null)
+    {
+        $this->beforeConst();
+
+        parent::__construct($options);
+    }
+
+    /**
+     * Called by __construct
+     */
+    protected function beforeConst()
+    {
+
+    }
+
+    /**
      * Used To Create Context, as php on creating streams
      * get contexts options as associative array with
      * $arr['wrapper']['option'] = $value format
@@ -47,6 +72,20 @@ abstract class AbstractContext extends AbstractOptions
             throw new \Exception('No Wrapper Defined Yet!!');
 
         return $wrapper;
+    }
+
+    /**
+     * Bind Another Context With this
+     *
+     * @param AbstractContext $context
+     *
+     * @return $this
+     */
+    function bindContext(AbstractContext $context)
+    {
+        $this->bindContexts[] = $context;
+
+        return $this;
     }
 
     // Params:
@@ -107,6 +146,20 @@ abstract class AbstractContext extends AbstractOptions
     static function optionsIns()
     {
         return new OpenOptions;
+    }
+
+    function __call($method, $args)
+    {
+        $bindContexts = [$this];
+        $bindContexts = array_merge($bindContexts, $this->bindContexts);
+
+        while ($context = array_shift($bindContexts)) {
+            $wrapper = $context->gotWrapper();
+            if ($method === $wrapper)
+                return $context;
+        }
+
+        throw new \Exception('Method "'. $method. '" Is Unknown.');
     }
 
     /**
@@ -172,10 +225,15 @@ abstract class AbstractContext extends AbstractOptions
             unset($params['options']);
         }
 
-        $wrapper = $this->gotWrapper();
-        if (isset($opts[$wrapper])) {
-            $this->options()->fromArray($opts[$wrapper]);
-            unset($params[$wrapper]);
+        $bindContexts = [$this];
+        $bindContexts = array_merge($bindContexts, $this->bindContexts);
+
+        while ($context = array_shift($bindContexts)) {
+            $wrapper = $context->gotWrapper();
+            if (isset($opts[$wrapper])) {
+                $context->options()->fromArray($opts[$wrapper]);
+                unset($params[$wrapper]);
+            }
         }
 
         // set params:
@@ -218,15 +276,21 @@ abstract class AbstractContext extends AbstractOptions
      */
     function toArray()
     {
+        $bindContexts = [$this];
+        $bindContexts = array_merge($bindContexts, $this->bindContexts);
+
+        $options = [];
+        /** @var AbstractContext $context */
+        while ($context = array_shift($bindContexts)) {
+            $wrapper = $context->gotWrapper();
+            $options['options'][$wrapper] = $context->options()->toArray();
+        }
+
         $params  = parent::toArray();
         foreach ($params as $key => $p)
             // cleanup null values for context params
             if ($p === null)
                 unset($params[$key]);
-
-        $options = [
-            "{$this->gotWrapper()}" => $this->options()->toArray()
-        ];
 
         return Core\array_merge($params, $options);
     }
@@ -244,15 +308,10 @@ abstract class AbstractContext extends AbstractOptions
      */
     function toContext()
     {
-        $options = [
-            "{$this->gotWrapper()}" => $this->options()->toArray()
-        ];
+        $params  = $this->toArray();
 
-        $params = parent::toArray();
-        foreach ($params as $key => $p)
-            // cleanup null values for context params
-            if ($p === null)
-                unset($params[$key]);
+        $options = $params['options'];
+        unset($params['options']);
 
         return stream_context_create($options, $params);
     }

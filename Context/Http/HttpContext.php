@@ -1,18 +1,36 @@
 <?php
-namespace Poirot\Stream\Context;
+namespace Poirot\Stream\Context\Http;
 
 use Poirot\Core\AbstractOptions;
-use Poirot\Stream\Context\Http\SCHttpOptions;
+use Poirot\Stream\Context\AbstractContext;
 use Poirot\Stream\Context\Socket\SCSocketOptions;
+use Poirot\Stream\Context\Socket\SocketContext;
 
+/**
+ * @method SocketContext socket()
+ */
 class HttpContext extends AbstractContext
 {
     protected $wrapper = 'http';
 
+    protected function beforeConst()
+    {
+        // Bind Socket Context
+        $this->bindContext(new SocketContext);
+    }
+
     /**
-     * @var SCSocketOptions
+     * Set/Retrieves specific options
+     *
+     * ! Implement Just for ide auto complete
+     *   on @!return object
+     *
+     * @return SCHttpOptions
      */
-    protected $socket;
+    function options()
+    {
+        return parent::options();
+    }
 
     /**
      * Get An Bare Options Instance
@@ -26,24 +44,10 @@ class HttpContext extends AbstractContext
      *      $class = new Filesystem($opt);
      *   [/php]
      *
-     * @return AbstractOptions
+     * @return SCHttpOptions
      */
     static function optionsIns()
     {
         return new SCHttpOptions;
     }
-
-    /**
-     * Socket Options
-     *
-     * @return SCSocketOptions
-     */
-    function socket()
-    {
-        if (!$this->socket)
-            $this->socket = new SCSocketOptions;
-
-        return $this->socket;
-    }
 }
- 

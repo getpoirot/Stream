@@ -8,337 +8,319 @@ class SCHttpOptions extends AbstractOptions
     /**
      * @var string
      */
-    protected $peerName;
+    protected $method = 'GET';
+
+    /**
+     * @var string
+     */
+    protected $header;
+
+    /**
+     * @var string By default the user_agent php.ini setting is used
+     */
+    protected $userAgent;
+
+    /**
+     * @var string
+     */
+    protected $content;
+
+    /**
+     * @var string
+     */
+    protected $proxy;
 
     /**
      * @var boolean
      */
-    protected $verifyPeer;
+    protected $requestFulluri = false;
+
+    /**
+     * @var int
+     */
+    protected $followLocation = 1;
+
+    /**
+     * @var int
+     */
+    protected $maxRedirects = 20;
+
+    /**
+     * @var float
+     */
+    protected $protocolVersion = 1.0;
+
+    /**
+     * @var float By default the default_socket_timeout php.ini setting is used
+     */
+    protected $timeout;
 
     /**
      * @var boolean
      */
-    protected $verifyPeerName;
+    protected $ignoreErrors = false;
 
     /**
-     * @var boolean
+     * GET, POST, or any other HTTP method supported by the remote server
+     *
+     * @param string $method
+     *
+     * @return $this
      */
-    protected $allowSelfSigned;
-
-    /**
-     * @var string
-     */
-    protected $cafile;
-
-    /**
-     * @var string
-     */
-    protected $capath;
-
-    /**
-     * @var string
-     */
-    protected $localCert;
-
-    /**
-     * @var string
-     */
-    protected $passphrase;
-
-    /**
-     * @var integer
-     */
-    protected $verifyDepth;
-
-    /**
-     * @var string
-     */
-    protected $ciphers;
-
-    /**
-     * @var boolean
-     */
-    protected $capturePeerCert;
-
-    /**
-     * @var boolean
-     */
-    protected $capturePeerCertChain;
-
-    /**
-     * @var string
-     */
-    protected $SniEnable;
-
-    /**
-     * @var string
-     */
-    protected $sniServerName;
-
-    /**
-     * @var boolean
-     */
-    protected $disableCompression;
-
-    /**
-     * @var string|array
-     */
-    protected $peerFingerprint;
-
-    /**
-     * @return array|string
-     */
-    public function getPeerFingerprint()
+    public function setMethod($method)
     {
-        return $this->peerFingerprint;
-    }
+        $this->method = $method;
 
-    /**
-     * @param array|string $peerFingerprint
-     */
-    public function setPeerFingerprint($peerFingerprint)
-    {
-        $this->peerFingerprint = $peerFingerprint;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDisableCompression()
-    {
-        return $this->disableCompression;
-    }
-
-    /**
-     * @param mixed $disableCompression
-     */
-    public function setDisableCompression($disableCompression)
-    {
-        $this->disableCompression = $disableCompression;
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getSniServerName()
+    public function getMethod()
     {
-        return $this->sniServerName;
+        return $this->method;
     }
 
     /**
-     * @param string $sniServerName
+     * Additional headers to be sent during request.
+     * Values in this option will override other values
+     * (such as User-agent:, Host:, and Authentication:)
+     *
+     * @param string $header
+     *
+     * @return $this
      */
-    public function setSniServerName($sniServerName)
+    public function setHeader($header)
     {
-        $this->sniServerName = $sniServerName;
-    }
+        $this->header = $header;
 
-    /**
-     * @return string
-     */
-    public function getSniEnable()
-    {
-        return $this->SniEnable;
-    }
-
-    /**
-     * @param string $SniEnable
-     */
-    public function setSniEnable($SniEnable)
-    {
-        $this->SniEnable = $SniEnable;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCapturePeerCertChain()
-    {
-        return $this->capturePeerCertChain;
-    }
-
-    /**
-     * @param mixed $capturePeerCertChain
-     */
-    public function setCapturePeerCertChain($capturePeerCertChain)
-    {
-        $this->capturePeerCertChain = $capturePeerCertChain;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCapturePeerCert()
-    {
-        return $this->capturePeerCert;
-    }
-
-    /**
-     * @param mixed $capturePeerCert
-     */
-    public function setCapturePeerCert($capturePeerCert)
-    {
-        $this->capturePeerCert = $capturePeerCert;
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getCiphers()
+    public function getHeader()
     {
-        return $this->ciphers;
+        return $this->header;
     }
 
     /**
-     * @param string $ciphers
+     * Value to send with User-Agent: header.
+     * This value will only be used if user-agent
+     * is not specified in the header context option above
+     *
+     * @param string $userAgent
+     *
+     * @return $this
      */
-    public function setCiphers($ciphers)
+    public function setUserAgent($userAgent)
     {
-        $this->ciphers = $ciphers;
+        $this->userAgent = $userAgent;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserAgent()
+    {
+        if (!$this->userAgent)
+            $this->setUserAgent(ini_get('user_agent'));
+
+        return $this->userAgent;
+    }
+
+    /**
+     * Additional data to be sent after the headers.
+     * Typically used with POST or PUT requests
+     *
+     * @param string $content
+     *
+     * @return $this
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * URI specifying address of proxy server.
+     * (e.g. tcp://proxy.example.com:5100)
+     *
+     * @param string $proxy
+     *
+     * @return $this
+     */
+    public function setProxy($proxy)
+    {
+        $this->proxy = $proxy;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProxy()
+    {
+        return $this->proxy;
+    }
+
+    /**
+     * When set to TRUE, the entire URI will be used when
+     * constructing the request.
+     * (i.e. GET http://www.example.com/path/to/file.html HTTP/1.0).
+     * While this is a non-standard request format, some proxy
+     * servers require it
+     *
+     * @param boolean $requestFulluri
+     *
+     * @return $this
+     */
+    public function setRequestFulluri($requestFulluri)
+    {
+        $this->requestFulluri = $requestFulluri;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getRequestFulluri()
+    {
+        return $this->requestFulluri;
+    }
+
+    /**
+     * Follow Location header redirects. Set to 0 to disable
+     *
+     * @param int $followLocation
+     *
+     * @return $this
+     */
+    public function setFollowLocation($followLocation)
+    {
+        $this->followLocation = $followLocation;
+
+        return $this;
     }
 
     /**
      * @return int
      */
-    public function getVerifyDepth()
+    public function getFollowLocation()
     {
-        return $this->verifyDepth;
+        return $this->followLocation;
     }
 
     /**
-     * @param int $verifyDepth
+     * The max number of redirects to follow.
+     * Value 1 or less means that no redirects are followed
+     *
+     * @param int $maxRedirects
+     *
+     * @return $this
      */
-    public function setVerifyDepth($verifyDepth)
+    public function setMaxRedirects($maxRedirects)
     {
-        $this->verifyDepth = $verifyDepth;
+        $this->maxRedirects = $maxRedirects;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getPassphrase()
+    public function getMaxRedirects()
     {
-        return $this->passphrase;
+        return $this->maxRedirects;
     }
 
     /**
-     * @param string $passphrase
+     * HTTP protocol version
+     *
+     * Note: PHP prior to 5.3.0 does not implement chunked
+     *       transfer decoding. If this value is set to 1.1 it
+     *       is your responsibility to be 1.1 compliant
+     *
+     * @param float $protocolVersion
+     *
+     * @return $this
      */
-    public function setPassphrase($passphrase)
+    public function setProtocolVersion($protocolVersion)
     {
-        $this->passphrase = $passphrase;
+        $this->protocolVersion = $protocolVersion;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getLocalCert()
+    public function getProtocolVersion()
     {
-        return $this->localCert;
+        return $this->protocolVersion;
     }
 
     /**
-     * @param string $localCert
+     * Read timeout in seconds, specified by a float (e.g. 10.5)
+     *
+     * @param float $timeout
+     *
+     * @return $this
      */
-    public function setLocalCert($localCert)
+    public function setTimeout($timeout)
     {
-        $this->localCert = $localCert;
+        $this->timeout = $timeout;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getCapath()
+    public function getTimeout()
     {
-        return $this->capath;
+        if ($this->timeout == null)
+            $this->setTimeout(ini_get('default_socket_timeout'));
+
+        return $this->timeout;
     }
 
     /**
-     * @param string $capath
+     * Fetch the content even on failure status codes
+     *
+     * @param boolean $ignoreErrors
+     *
+     * @return $this
      */
-    public function setCapath($capath)
+    public function setIgnoreErrors($ignoreErrors)
     {
-        $this->capath = $capath;
+        $this->ignoreErrors = $ignoreErrors;
+
+        return $this;
     }
 
     /**
-     * @return string
+     * @return boolean
      */
-    public function getCafile()
+    public function getIgnoreErrors()
     {
-        return $this->cafile;
-    }
-
-    /**
-     * @param string $cafile
-     */
-    public function setCafile($cafile)
-    {
-        $this->cafile = $cafile;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAllowSelfSigned()
-    {
-        return $this->allowSelfSigned;
-    }
-
-    /**
-     * @param mixed $allowSelfSigned
-     */
-    public function setAllowSelfSigned($allowSelfSigned)
-    {
-        $this->allowSelfSigned = $allowSelfSigned;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVerifyPeerName()
-    {
-        return $this->verifyPeerName;
-    }
-
-    /**
-     * @param mixed $verifyPeerName
-     */
-    public function setVerifyPeerName($verifyPeerName)
-    {
-        $this->verifyPeerName = $verifyPeerName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVerifyPeer()
-    {
-        return $this->verifyPeer;
-    }
-
-    /**
-     * @param mixed $verifyPeer
-     */
-    public function setVerifyPeer($verifyPeer)
-    {
-        $this->verifyPeer = $verifyPeer;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPeerName()
-    {
-        return $this->peerName;
-    }
-
-    /**
-     * @param string $peerName
-     */
-    public function setPeerName($peerName)
-    {
-        $this->peerName = $peerName;
+        return $this->ignoreErrors;
     }
 }
  

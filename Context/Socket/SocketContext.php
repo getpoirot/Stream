@@ -1,7 +1,9 @@
 <?php
-namespace Poirot\Stream\Context;
+namespace Poirot\Stream\Context\Socket;
+
 use Poirot\Core\AbstractOptions;
-use Poirot\Stream\Context\Socket\SCSocketOptions;
+use Poirot\Stream\Context\AbstractContext;
+use Poirot\Stream\Context\Http\SCHttpOptions;
 
 /**
  * Socket context options are available for all wrappers
@@ -25,6 +27,19 @@ use Poirot\Stream\Context\Socket\SCSocketOptions;
 class SocketContext extends AbstractContext
 {
     protected $wrapper = 'socket';
+
+    /**
+     * Set/Retrieves specific options
+     *
+     * ! Implement Just for ide auto complete
+     *   on @!return object
+     *
+     * @return SCSocketOptions
+     */
+    function options()
+    {
+        return parent::options();
+    }
 
     /**
      * Get An Bare Options Instance
