@@ -41,34 +41,6 @@ interface iSResource
     function meta();
 
     /**
-     * @link http://php.net/manual/en/function.stream-set-timeout.php
-     *
-     * Set timeout period on a stream
-     *
-     * ! When the stream times out,
-     *   the 'timed_out' key of the array returned
-     *   by stream_get_meta_data() is set to TRUE,
-     *   although no error/warning is generated.
-     *
-     * Note: This parameter only applies when not making asynchronous
-     *       connection attempts
-     *
-     * Note: To set a timeout for reading/writing data over the socket,
-     *       use the stream_set_timeout(), as the timeout only applies
-     *       while making connecting the socket
-     *
-     * Note: This function doesn't work with advanced operations like
-     *       stream_socket_recvfrom(), use stream_select() with timeout
-     *       parameter instead
-     *
-     * @param int $seconds      The seconds part of the timeout to be set
-     * @param int $microseconds The microseconds part of the timeout to be set
-     *
-     * @return $this
-     */
-    function setTimeout($seconds, $microseconds);
-
-    /**
      * Append Filter
      *
      * [code]

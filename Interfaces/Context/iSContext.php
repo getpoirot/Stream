@@ -42,7 +42,7 @@ interface iSContext extends iOptionImplement
      * @param resource $resource Context/Stream
      * @return $this
      */
-    function fromContext($resource);
+    function fromResource($resource);
 
     /**
      * Creates and returns a stream context with any

@@ -1,13 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-/**
- * @link http://php.net/manual/en/function.stream-socket-client.php
- * @link http://php.net/manual/en/function.fsockopen.php
- * @link http://php.net/manual/en/function.pfsockopen.php
- * @link http://php.net/manual/en/function.fopen.php
- */
-interface iStreamClient extends iStream
+interface iStreamClient extends iStreamCommon
 {
     /**
      * Open Socket Connection To Socket Uri
@@ -44,12 +38,11 @@ interface iStreamClient extends iStream
      *
      * @see iSResource::setTimeout
      *
-     * @param int $seconds      The seconds part of the timeout to be set
-     * @param int $microseconds The microseconds part of the timeout to be set
+     * @param float $seconds In Form Of 5.3
      *
      * @return $this
      */
-    function withTimeout($seconds, $microseconds);
+    function withTimeout($seconds);
 
     /**
      * Set To Persistent Internet or Unix Domain Socket
@@ -71,7 +64,7 @@ interface iStreamClient extends iStream
     /**
      * Get Timeout
      *
-     * @return array['second' => int, 'microsecond' => int]
+     * @return array[$second, $microsecond]
      */
     function getTimeout();
 }

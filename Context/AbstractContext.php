@@ -176,9 +176,9 @@ abstract class AbstractContext extends AbstractOptions
         if (is_array($options))
             $this->fromArray($options);
         elseif (is_resource($options))
-            $this->fromContext($options);
+            $this->fromResource($options);
         elseif ($options instanceof iPoirotOptions)
-            $this->fromOption($options);
+            $this->fromSimilar($options);
 
         return $this;
     }
@@ -243,6 +243,35 @@ abstract class AbstractContext extends AbstractOptions
     }
 
     /**
+     * Set Options From Same Option Object
+     *
+     * note: it will take an option object instance of $this
+     *       OpenOptions only take OpenOptions as argument
+     *
+     * - also you can check for private and write_only
+     *   methods inside Options Object to get fully coincident copy
+     *   of Options Class Object
+     *
+     * @param iSContext $options Options Object
+     *
+     * @throws \Exception
+     * @return $this
+     */
+    function fromSimilar(/*iSContext*/ $options)
+    {
+        $return = parent::fromSimilar($options);
+
+        // assimilate options
+        $this->options()->fromSimilar($options->options());
+
+        // bind contexts
+        foreach($options->bindContexts as $context)
+        $this->bindContext($context);
+
+        return $return;
+    }
+
+    /**
      * Set Options From Context Resource
      *
      * - get parameters from context and store on object
@@ -254,7 +283,7 @@ abstract class AbstractContext extends AbstractOptions
      * @throws \Exception
      * @return $this
      */
-    function fromContext($resource)
+    function fromResource($resource)
     {
         if (!is_resource($resource))
             throw new \InvalidArgumentException(sprintf(

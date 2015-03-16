@@ -7,7 +7,7 @@ namespace Poirot\Stream\Interfaces;
  *
  * @link http://php.net/manual/en/function.stream-socket-server.php
  */
-interface iStreamServer extends iStream
+interface iStreamServer extends iStreamCommon
 {
     /**
      * Open Socket Connection To Socket Uri and Bind Server
