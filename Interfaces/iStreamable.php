@@ -3,20 +3,6 @@ namespace Poirot\Stream\Interfaces;
 
 interface iStreamable
 {
-    /*++
-    Stream File Open, Words Stand For:
-
-    R = Read                 | W = Write
-    -----------------------------------------------------------------------------
-    A = Pointer at end       | B = Pointer at beginning
-    -----------------------------------------------------------------------------
-    C = Create if not exists | X = Create file only if not exists, otherwise fail
-    -----------------------------------------------------------------------------
-    T = Truncate file
-
-    @see http://php.net/manual/en/function.fopen.php
-    ++*/
-
     /**
      * Set Stream Handler Resource
      * 
@@ -87,6 +73,20 @@ interface iStreamable
      * @return $this
      */
     function write($content, $inByte = null);
+
+    /**
+     * @link http://php.net/manual/en/function.stream-socket-sendto.php
+     *
+     * Sends the specified data through the socket,
+     * whether it is connected or not
+     *
+     * @param string $data  The data to be sent
+     * @param int    $flags The value of flags can be any combination of the following:
+     *                      STREAM_OOB	Process OOB (out-of-band) data.
+     *
+     * @return $this
+     */
+    function sendData($data, $flags = 0);
 
     /**
      * @link http://php.net/manual/en/function.fseek.php
