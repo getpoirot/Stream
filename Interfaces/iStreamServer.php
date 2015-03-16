@@ -10,33 +10,14 @@ namespace Poirot\Stream\Interfaces;
 interface iStreamServer extends iStream
 {
     /**
-     * Construct
+     * Open Socket Connection To Socket Uri and Bind Server
+     * Socket To Specific Port
      *
-     * Note: For UDP sockets, you must use STREAM_SERVER_BIND as
-     *       the flags parameter.
-     *
-     * Note: Most systems require root access to create a server
-     *       socket on a port below 1024.
-     *
-     * @param string $uriLocalSocket Uri To Local Socket
-     *
-     * @throws \Exception If Can't Connect To Server
-     */
-    function __construct($uriLocalSocket);
-    /*
-     * resource stream_socket_server (
-     *  string $local_socket
-     *  [, int &$errno
-     *  [, string &$errstr
-     *  [, int $flags = STREAM_SERVER_BIND | STREAM_SERVER_LISTEN
-     *  [, resource $context ]]]]
-     * )
-     */
-
-    /**
-     * @link http://php.net/manual/en/function.stream-socket-server.php
-     *
-     * Bind Server Socket To Specific Port
+     * - Initiates a stream or datagram connection to the
+     *   destination specified by socketUri.
+     *   The type of socket created is determined by the
+     *   transport specified using standard URL formatting:
+     *   transport://target
      *
      * - store socket server resource inside class
      * - each time bind was calling the resource
@@ -46,9 +27,32 @@ interface iStreamServer extends iStream
      * ! Most systems require root access to create
      *   a server socket on a port below 1024
      *
-     * @param int $port
+     *   ! For Internet Domain sockets (AF_INET) such as
+     *     TCP and UDP, the target portion of the socketUri
+     *     parameter should consist of a hostname or IP address
+     *     followed by a colon and a port number.
+     *     For Unix domain sockets, the target portion should
+     *     point to the socket file on the filesystem
      *
-     * @throw \Exception
+     * Note: The stream will by default be opened in blocking mode.
+     *
+     * Note: For UDP sockets, you must use STREAM_SERVER_BIND as
+     *       the flags parameter.
+     *
+     * Note: Most systems require root access to create a server
+     *       socket on a port below 1024.
+     *
+     * Warning UDP sockets will sometimes appear to have opened without
+     * an error, even if the remote host is unreachable. The error will
+     * only become apparent when you read or write data to/from the socket.
+     * The reason for this is because UDP is a "connectionless" protocol,
+     * which means that the operating system does not try to establish a
+     * link for the socket until it actually needs to send or receive data
+     *
+     * @param int $port -1 mean port from socket uri,
+     *                   0 mean let system to find match
+     *
+     * @throws \Exception On Connection Failed
      * @return $this
      */
     function bind($port = -1);
@@ -61,7 +65,7 @@ interface iStreamServer extends iStream
      * Listen On Port To Accept Data On That Port
      * From Client
      *
-     * @return iSResource
+     * @return iStreamable
      */
     function listen();
 }
