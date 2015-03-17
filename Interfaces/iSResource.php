@@ -125,4 +125,11 @@ interface iSResource
      * @return boolean
      */
     function isSeekable();
+
+    /**
+     * Close Stream Resource
+     *
+     * @return null
+     */
+    function close();
 }

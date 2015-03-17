@@ -248,4 +248,25 @@ class SResource implements iSResource
     {
         return $this->meta()->isSeekable();
     }
+
+    /**
+     * Close Stream Resource
+     *
+     * @return null
+     */
+    function close()
+    {
+        if ($this->isAlive())
+            fclose($this->getRHandler());
+    }
+
+    /**
+     * destruct,
+     * close connection
+     *
+     */
+    function __destruct()
+    {
+        $this->close();
+    }
 }
