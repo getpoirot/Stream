@@ -6,7 +6,7 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 interface iStreamCommon
 {
     /**
-     * Construct
+     * Set Socket Uri
      *
      * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
      *       you must enclose the IP in square brackets—for example,
@@ -14,17 +14,36 @@ interface iStreamCommon
      *
      * TODO: socketUri Can converted to an pathUri Object
      *
-     * @param string                         $socketUri Socket Uri
-     * @param iSContext|array|resource| null $context   Context Options
+     * @param string $socketUri
+     *
+     * @return $this
      */
-    function __construct($socketUri, $context = null);
+    function setSocketUri($socketUri);
+
+    /**
+     * Get Current Socket Uri That Stream Built With
+     *
+     * TODO: Socket Uri Can converted to an pathUri Object
+     *
+     * @return string
+     */
+    function getSocketUri();
 
     /**
      * Context Options
      *
+     * @param iSContext $context
+     *
+     * @return $this
+     */
+    function setContext(iSContext $context);
+
+    /**
+     * Get Context Options
+     *
      * @return iSContext
      */
-    function context();
+    function getContext();
 
     /**
      * Set blocking/non-blocking mode on a stream
@@ -36,7 +55,7 @@ interface iStreamCommon
      *
      * @return $this
      */
-    function withNoneBlocking($flag = true);
+    function setNoneBlocking($flag = true);
 
     /**
      * Indicate Where Stream Is Built With None-Blocking Mode?
@@ -46,11 +65,20 @@ interface iStreamCommon
     function isNoneBlocking();
 
     /**
-     * Get Current Socket Uri That Stream Built With
+     * Set timeout period on a stream
      *
-     * TODO: Socket Uri Can converted to an pathUri Object
+     * @see iSResource::setTimeout
      *
-     * @return string
+     * @param float $seconds In Form Of 5.3
+     *
+     * @return $this
      */
-    function getSocketUri();
+    function setTimeout($seconds);
+
+    /**
+     * Get Timeout
+     *
+     * @return array[$second, $microsecond]
+     */
+    function getTimeout();
 }

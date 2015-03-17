@@ -5,7 +5,6 @@ use Poirot\Stream\Context\Socket\SocketContext;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamClient;
-use Poirot\Stream\Resource\SROpenMode;
 
 class StreamClient implements iStreamClient
 {
@@ -48,21 +47,71 @@ class StreamClient implements iStreamClient
      */
     function __construct($socketUri, $context = null)
     {
+        $this->setSocketUri($socketUri);
+
+        if ($context !== null) {
+            if ($context instanceof iSContext)
+                $this->setContext($context);
+            else
+                $this->getContext()->from($context);
+        }
+    }
+
+    /**
+     * Set Socket Uri
+     *
+     * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
+     *       you must enclose the IP in square brackets—for example,
+     *       tcp://[fe80::1]:80
+     *
+     * TODO: socketUri Can converted to an pathUri Object
+     *
+     * @param string $socketUri
+     *
+     * @return $this
+     */
+    function setSocketUri($socketUri)
+    {
         $this->socketUri = $socketUri;
 
-        if ($context !== null)
-            $this->context()->from($context);
+        return $this;
+    }
+
+    /**
+     * Get Current Socket Uri That Stream Built With
+     *
+     * TODO: Socket Uri Can converted to an pathUri Object
+     *
+     * @return string
+     */
+    function getSocketUri()
+    {
+        return $this->socketUri;
     }
 
     /**
      * Context Options
      *
+     * @param iSContext $context
+     *
+     * @return $this
+     */
+    function setContext(iSContext $context)
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    /**
+     * Get Context Options
+     *
      * @return iSContext
      */
-    function context()
+    function getContext()
     {
         if (!$this->context)
-            $this->context = new SocketContext;
+            $this->setContext(new SocketContext);
 
         return $this->context;
     }
@@ -101,39 +150,15 @@ class StreamClient implements iStreamClient
 
         // knowing transport/wrapper:
         $scheme  = parse_url($sockUri, PHP_URL_SCHEME);
-        if (SWrapperManager::isRegistered($scheme))
-            $resource = $this->__connect_wrapper($sockUri);
-        else
-            $resource = $this->__connect_transport($sockUri);
+        if (!in_array($scheme, stream_get_transports()))
+            throw new \Exception(sprintf(
+                'Transport "%s" not supported.'
+                , $scheme
+            ));
+
+        $resource = $this->__connect_transport($sockUri);
 
         return new SResource($resource);
-    }
-
-    /**
-     * @link http://php.net/manual/en/function.fopen.php
-     */
-    protected function __connect_wrapper($sockUri)
-    {
-        $openMode = new SROpenMode(SROpenMode::MODE_RB);
-        $resource = fopen(
-            $sockUri
-            , $openMode->toString()
-            , null
-            , $this->context()->toContext()
-        );
-        if (!$resource)
-            throw new \Exception('Error Connecting to '.$sockUri);
-
-        // set timeout:
-        @list($sec, $microsec) = explode('.', $this->getTimeout());
-        stream_set_timeout($resource, $sec, $microsec);
-
-        // none blocking mode:
-        if ($this->isNoneBlocking())
-            // it will work after connection has made on resource
-            stream_set_blocking($resource, 0); // 0 for none-blocking
-
-        return $resource;
     }
 
     /**
@@ -144,7 +169,7 @@ class StreamClient implements iStreamClient
     protected function __connect_transport($sockUri)
     {
         // timeout:
-        $this->getTimeout();
+        $timeout = $this->getTimeout();
 
         // persistence
         $flags = ($this->isPersistent())
@@ -153,13 +178,13 @@ class StreamClient implements iStreamClient
 
         // get connect to resource:
         $errstr = $errno = null;
-        $resource = stream_socket_client(
+        $resource = @stream_socket_client(
             $sockUri
             , $errno
             , $errstr
             , $timeout
             , $flags
-            , $this->context()->toContext()
+            , $this->getContext()->toContext()
         );
         if (!$resource)
             throw new \Exception($errstr, $errno);
@@ -181,7 +206,7 @@ class StreamClient implements iStreamClient
      *
      * @return $this
      */
-    function withTimeout($seconds)
+    function setTimeout($seconds)
     {
         $this->timeout = $seconds;
 
@@ -209,7 +234,7 @@ class StreamClient implements iStreamClient
      *
      * @return $this
      */
-    function withPersistent($flag = true)
+    function setPersistent($flag = true)
     {
         $this->persistent = (boolean) $flag;
 
@@ -236,7 +261,7 @@ class StreamClient implements iStreamClient
      *
      * @return $this
      */
-    function withNoneBlocking($flag = true)
+    function setNoneBlocking($flag = true)
     {
         $this->noneBlocking = (boolean) $flag;
 
@@ -252,17 +277,4 @@ class StreamClient implements iStreamClient
     {
         return $this->noneBlocking;
     }
-
-    /**
-     * Get Current Socket Uri That Stream Built With
-     *
-     * TODO: Socket Uri Can converted to an pathUri Object
-     *
-     * @return string
-     */
-    function getSocketUri()
-    {
-        return $this->socketUri;
-    }
 }
- 

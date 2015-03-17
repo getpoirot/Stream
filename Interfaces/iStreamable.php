@@ -20,33 +20,35 @@ interface iStreamable
     function getResource();
 
     /**
-     * @link http://php.net/manual/en/function.stream-copy-to-stream.php
-     *
      * Copies Data From One Stream To Another
      *
+     * - If maxlength is not specified,
+     *   all remaining content in source will be copied
+     *
+     * - reset and count into transCount
+     *
      * @param iStreamable $destStream The destination stream
-     * @param null    $inByte     Maximum bytes to copy
-     * @param int     $offset     The offset where to start to copy data
+     * @param null        $maxByte    Maximum bytes to copy
+     * @param int         $offset     The offset where to start to copy data
      *
      * @return $this
      */
-    function pipeTo(iStreamable $destStream, $inByte = null, $offset = 0);
+    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0);
     
     /**
-     * @link http://php.net/manual/en/function.stream-get-contents.php
-     *
      * Read Data From Stream
      *
      * - if $inByte argument not set, read entire stream
      *
      * @param int  $inByte Read Data in byte
      *
+     * @throws \Exception Error On Read Data
      * @return string
      */
     function read($inByte = null);
 
     /**
-     * @link http://php.net/manual/en/function.stream-get-line.php
+     * Gets line from stream resource up to a given delimiter
      *
      * Reading ends when length bytes have been read,
      * when the string specified by ending is found
@@ -55,12 +57,12 @@ interface iStreamable
      *
      * ! does not return the ending delimiter itself
      *
-     * @param int    $inByte
      * @param string $ending
+     * @param int    $inByte
      *
      * @return string
      */
-    function readLine($inByte = null, $ending = "\n");
+    function readLine($ending = "\n", $inByte = null);
 
     /**
      * Writes the contents of string to the file stream
@@ -75,8 +77,6 @@ interface iStreamable
     function write($content, $inByte = null);
 
     /**
-     * @link http://php.net/manual/en/function.stream-socket-sendto.php
-     *
      * Sends the specified data through the socket,
      * whether it is connected or not
      *
@@ -87,6 +87,13 @@ interface iStreamable
      * @return $this
      */
     function sendData($data, $flags = 0);
+
+    /**
+     * Get Total Count Of Bytes After Each Read/Write
+     *
+     * @return int
+     */
+    function getTransCount();
 
     /**
      * @link http://php.net/manual/en/function.fseek.php
@@ -108,12 +115,12 @@ interface iStreamable
      *              - SEEK_SET - Set position equal to $offset bytes.
      *              - SEEK_CUR - Set position to current location plus $offset.
      *              - SEEK_END - Set position to end-of-file plus $offset.
+     *
+     * @return $this
      */
     function seek($offset, $whence = SEEK_SET);
 
     /**
-     * @link http://php.net/manual/en/function.rewind.php
-     *
      * Move the file pointer to the beginning of the stream
      *
      * ! php doesn't support seek/rewind on non-local streams
@@ -126,13 +133,4 @@ interface iStreamable
      * @return $this
      */
     function rewind();
-
-    /**
-     * @link  http://php.net/manual/en/function.stream-socket-shutdown.php
-     *
-     * Close Stream Resource
-     *
-     * @return null
-     */
-    function close();
 }

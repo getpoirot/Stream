@@ -34,17 +34,6 @@ interface iStreamClient extends iStreamCommon
     function getConnect();
 
     /**
-     * Set timeout period on a stream
-     *
-     * @see iSResource::setTimeout
-     *
-     * @param float $seconds In Form Of 5.3
-     *
-     * @return $this
-     */
-    function withTimeout($seconds);
-
-    /**
      * Set To Persistent Internet or Unix Domain Socket
      * Connection Built
      *
@@ -52,7 +41,7 @@ interface iStreamClient extends iStreamCommon
      *
      * @return $this
      */
-    function withPersistent($flag = true);
+    function setPersistent($flag = true);
 
     /**
      * Indicate Is Connection Have To Built On Persistent Mode
@@ -60,11 +49,4 @@ interface iStreamClient extends iStreamCommon
      * @return boolean
      */
     function isPersistent();
-
-    /**
-     * Get Timeout
-     *
-     * @return array[$second, $microsecond]
-     */
-    function getTimeout();
 }
