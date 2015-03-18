@@ -6,24 +6,13 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 interface iStreamCommon
 {
     /**
-     * Set Socket Uri
+     * Get Current Socket Uri That Stream Built With
      *
      * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
      * TODO: socketUri Can converted to an pathUri Object
-     *
-     * @param string $socketUri
-     *
-     * @return $this
-     */
-    function setSocketUri($socketUri);
-
-    /**
-     * Get Current Socket Uri That Stream Built With
-     *
-     * TODO: Socket Uri Can converted to an pathUri Object
      *
      * @return string
      */

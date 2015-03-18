@@ -179,7 +179,7 @@ class Streamable implements iStreamable
      *
      * @return $this
      */
-    function sendData($data, $flags = 0)
+    function sendData($data, $flags = STREAM_OOB)
     {
         $stream = $this->getResource()->getRHandler();
 
@@ -191,13 +191,26 @@ class Streamable implements iStreamable
          *
          * @link http://php.net/manual/en/stream.constants.php
          */
-        $ret = stream_socket_sendto($stream, "Out of Band data.", STREAM_OOB);
+        $ret = stream_socket_sendto($stream, $data, $flags);
         if ($ret == -1)
-            throw new \RuntimeException('Cannot send on stream.');
+            throw new \RuntimeException('Cannot send data on stream.');
 
         $this->__resetTransCount($ret);
 
         return $this;
+    }
+
+    /**
+     * Receives data from a socket, connected or not
+     *
+     * @param int $maxByte
+     * @param int $flags
+     *
+     * @return string
+     */
+    function receiveFrom($maxByte, $flags = STREAM_OOB)
+    {
+        stream_socket_recvfrom($clientStream->getResource()->getRHandler(), 1024);
     }
 
     /**

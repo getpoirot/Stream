@@ -5,7 +5,6 @@ namespace Poirot\Stream\Interfaces;
  * Creates a stream or datagram socket on the specified
  * Local Socket
  *
- * @link http://php.net/manual/en/function.stream-socket-server.php
  */
 interface iStreamServer extends iStreamCommon
 {
@@ -49,22 +48,26 @@ interface iStreamServer extends iStreamCommon
      * which means that the operating system does not try to establish a
      * link for the socket until it actually needs to send or receive data
      *
-     * @param int $port -1 mean port from socket uri,
-     *                   0 mean let system to find match
-     *
      * @throws \Exception On Connection Failed
      * @return $this
      */
-    function bind($port = -1);
+    function bind();
 
     /**
-     * @link http://php.net/manual/en/function.stream-socket-accept.php
-     * @link http://php.net/manual/en/function.stream-socket-accept.php#47088
-     * @link http://php.net/manual/en/function.stream-socket-recvfrom.php
+     * Is Server Binding On Socket?
      *
+     * @return boolean
+     */
+    function isBinding();
+
+    /**
      * Listen On Port To Accept Data On That Port
      * From Client
      *
+     * Warning with UDP server sockets. use stream_socket_recvfrom()
+     * and stream_socket_sendto().
+     *
+     * @throws \Exception
      * @return iStreamable
      */
     function listen();

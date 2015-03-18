@@ -86,7 +86,17 @@ interface iStreamable
      *
      * @return $this
      */
-    function sendData($data, $flags = 0);
+    function sendData($data, $flags = STREAM_OOB);
+
+    /**
+     * Receives data from a socket, connected or not
+     *
+     * @param int $maxByte
+     * @param int $flags
+     *
+     * @return string
+     */
+    function receiveFrom($maxByte, $flags = STREAM_OOB);
 
     /**
      * Get Total Count Of Bytes After Each Read/Write

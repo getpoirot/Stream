@@ -14,7 +14,7 @@ class StreamClient implements iStreamClient
     protected $socketUri;
 
     /**
-     * @var array
+     * @var float
      */
     protected $timeout;
 
