@@ -2,9 +2,11 @@
 namespace Poirot\Stream;
 
 use Poirot\Stream\Context\Socket\SocketContext;
+use Poirot\Stream\Exception\TimeoutException;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Interfaces\iStreamServer;
+use Poirot\Stream\Resource\SRInfoMeta;
 
 class StreamServer implements iStreamServer
 {
@@ -31,7 +33,7 @@ class StreamServer implements iStreamServer
     /**
      * @var resource
      */
-    protected $__socket_connected;
+    public  $__socket_connected;
 
     /**
      * Construct
@@ -118,7 +120,11 @@ class StreamServer implements iStreamServer
             $socket = @stream_socket_server($sockUri, $errno, $errstr);
 
         if (!$socket)
-            throw new \Exception($errstr, $errno);
+            throw new \Exception(sprintf(
+                'Server %s, %s.'
+                ,$this->getSocketUri()
+                ,$errstr
+            ), $errno);
 
         $this->__socket_connected = $socket;
 
@@ -142,29 +148,63 @@ class StreamServer implements iStreamServer
      * Warning with UDP server sockets. use stream_socket_recvfrom()
      * and stream_socket_sendto().
      *
-     * @throws \Exception
+     * @throws \Exception Not Bind Or Error Receive Data
      * @return iStreamable
      */
     function listen()
     {
         $sockUri = $this->getSocketUri();
+        if (!$this->isBinding())
+            throw new \Exception('Server not bind as local server.');
 
         // knowing transport/wrapper:
         $scheme  = parse_url($sockUri, PHP_URL_SCHEME);
         if ($scheme == 'udp')
-            #                                                            null | STREAM_PEEK
-            $resource = $this->__socket_connected;
+            $resource = $this->__listen_to_connectLessTransport();
         else
-            $resource = @stream_socket_accept($this->__socket_connected, $this->getTimeout());
+            $resource = $this->__listen_to_connectionOrientatedTransports();
 
-        if ($resource == false)
+        if ($resource === false)
             throw new \Exception(sprintf(
                 'Failed To Accept Connection, %s.'
                 , error_get_last()['message']
             ));
 
-        return new Streamable(new SResource($resource));
+        return new Streamable($resource);
     }
+
+        /**
+         * such as udp
+         */
+        function __listen_to_connectLessTransport()
+        {
+            stream_socket_recvfrom($this->__socket_connected, 1, 0, $remotePeer);
+
+            $sockUri = $this->getSocketUri();
+            $scheme  = parse_url($sockUri, PHP_URL_SCHEME);
+
+            $client   = new StreamClient($scheme.'://'.$remotePeer);
+            $resource = $client->getConnect();
+
+            return $resource;
+        }
+
+        /**
+         * such as tcp
+         */
+        function __listen_to_connectionOrientatedTransports()
+        {
+            $resource = false;
+            while ($conn = stream_socket_accept($this->__socket_connected, $this->getTimeout())) {
+                $resource = new SResource($conn);
+                break;
+            }
+
+            if ($resource === false)
+                throw new TimeoutException('Connection Timeout.');
+
+            return $resource;
+        }
 
     /**
      * Set Socket Uri
