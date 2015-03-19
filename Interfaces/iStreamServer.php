@@ -67,8 +67,17 @@ interface iStreamServer extends iStreamCommon
      * Warning with UDP server sockets. use stream_socket_recvfrom()
      * and stream_socket_sendto().
      *
-     * @throws \Exception
+     * @throws \Exception         Not Bind Or Error Receive Data
+     *         \TimeoutException  Listen Connection Timeout
+     *
      * @return iStreamable
      */
     function listen();
+
+    /**
+     * Shutdown Server And Close Connections
+     *
+     * @return void
+     */
+    function shutdown();
 }

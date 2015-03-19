@@ -6,7 +6,6 @@ use Poirot\Stream\Exception\TimeoutException;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Interfaces\iStreamServer;
-use Poirot\Stream\Resource\SRInfoMeta;
 
 class StreamServer implements iStreamServer
 {
@@ -148,7 +147,9 @@ class StreamServer implements iStreamServer
      * Warning with UDP server sockets. use stream_socket_recvfrom()
      * and stream_socket_sendto().
      *
-     * @throws \Exception Not Bind Or Error Receive Data
+     * @throws \Exception         Not Bind Or Error Receive Data
+     *         \TimeoutException  Listen Connection Timeout
+     *
      * @return iStreamable
      */
     function listen()
@@ -195,7 +196,7 @@ class StreamServer implements iStreamServer
         function __listen_to_connectionOrientatedTransports()
         {
             $resource = false;
-            while ($conn = stream_socket_accept($this->__socket_connected, $this->getTimeout())) {
+            while ($conn = @stream_socket_accept($this->__socket_connected, $this->getTimeout())) {
                 $resource = new SResource($conn);
                 break;
             }
@@ -319,6 +320,18 @@ class StreamServer implements iStreamServer
             $this->timeout = ini_get('default_socket_timeout');
 
         return $this->timeout;
+    }
+
+    /**
+     * Shutdown Server And Close Connections
+     *
+     * @return void
+     */
+    function shutdown()
+    {
+        fclose($this->__socket_connected);
+
+        #stream_socket_shutdown($this->__socket_connected, STREAM_SHUT_WR);
     }
 }
  

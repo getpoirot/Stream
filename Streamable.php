@@ -169,6 +169,21 @@ class Streamable implements iStreamable
         return $ret;
     }
 
+        /**
+         * Note: Writing to a network stream may end before the whole string
+         *       is written. Return value of fwrite() may be checked.
+         */
+        protected function __write_stream($rHandler, $content)
+        {
+            for ($written = 0; $written < strlen($content); $written += $fwrite) {
+                $fwrite = fwrite($rHandler, substr($content, $written));
+                if ($fwrite === false)
+                    return $written;
+            }
+
+            return $written;
+        }
+
     /**
      * Sends the specified data through the socket,
      * whether it is connected or not
