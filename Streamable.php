@@ -173,27 +173,35 @@ class Streamable implements iStreamable
      * Sends the specified data through the socket,
      * whether it is connected or not
      *
-     * @param string $data The data to be sent
-     * @param int $flags The value of flags can be any combination of the following:
-     *                      STREAM_OOB    Process OOB (out-of-band) data.
+     * @param string   $data  The data to be sent
+     * @param int|null $flags Provides a RDM (Reliably-delivered messages) socket
+     *                        The value of flags can be any combination of the following:
+     *                        - STREAM_SOCK_RDM
+     *                        - STREAM_PEEK
+     *                        - STREAM_OOB       process OOB (out-of-band) data
+     *                        - null             auto choose the value
      *
      * @return $this
      */
-    function sendData($data, $flags = STREAM_OOB)
+    function sendData($data, $flags = null)
     {
-        $stream = $this->getResource()->getRHandler();
+        $rHandler = $this->getResource()->getRHandler();
 
-        /**
-         * Provides a RDM (Reliably-delivered messages) socket.
-         * STREAM_SOCK_RDM
-         * STREAM_PEEK
-         * STREAM_OOB
-         *
-         * @link http://php.net/manual/en/stream.constants.php
-         */
-        $ret = stream_socket_sendto($stream, $data, $flags);
+        if ($flags === null) {
+            if ($this->getResource()->meta()->getStreamType() == 'udp_socket')
+                // STREAM_OOB data not provided on udp sockets
+                $flags = STREAM_PEEK;
+            else
+                $flags = STREAM_SOCK_RDM;
+        }
+
+        $ret = @stream_socket_sendto($rHandler, $data, $flags);
+
         if ($ret == -1)
-            throw new \RuntimeException('Cannot send data on stream.');
+            throw new \RuntimeException(sprintf(
+                'Cannot send data on stream, %s.',
+                error_get_last()['message']
+            ));
 
         $this->__resetTransCount($ret);
 

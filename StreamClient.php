@@ -176,6 +176,9 @@ class StreamClient implements iStreamClient
             ? STREAM_CLIENT_PERSISTENT
             : STREAM_CLIENT_CONNECT;
 
+        // asynchronous
+        STREAM_CLIENT_ASYNC_CONNECT;
+
         // get connect to resource:
         $errstr = $errno = null;
         $resource = @stream_socket_client(
@@ -187,7 +190,11 @@ class StreamClient implements iStreamClient
             , $this->getContext()->toContext()
         );
         if (!$resource)
-            throw new \Exception($errstr, $errno);
+            throw new \Exception(sprintf(
+                'Cannot Connect To Server "%s", %s.'
+                , $this->getSocketUri()
+                , $errstr
+            ), $errno);
 
         // none blocking mode:
         if ($this->isNoneBlocking())
