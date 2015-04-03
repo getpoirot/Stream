@@ -195,14 +195,11 @@ class StreamServer implements iStreamServer
          */
         function __listen_to_connectionOrientatedTransports()
         {
-            $resource = false;
-            while ($conn = @stream_socket_accept($this->__socket_connected, $this->getTimeout())) {
-                $resource = new SResource($conn);
-                break;
-            }
-
-            if ($resource === false)
+            $conn = @stream_socket_accept($this->__socket_connected, $this->getTimeout());
+            if ($conn === false)
                 throw new TimeoutException('Connection Timeout.');
+
+            $resource = new SResource($conn);
 
             return $resource;
         }

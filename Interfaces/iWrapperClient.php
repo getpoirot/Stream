@@ -7,6 +7,21 @@ use Poirot\Stream\Resource\SROpenMode;
 interface iWrapperClient extends iStreamCommon
 {
     /**
+     * Set Socket Uri
+     *
+     * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
+     *       you must enclose the IP in square brackets—for example,
+     *       tcp://[fe80::1]:80
+     *
+     * TODO: socketUri Can converted to an pathUri Object
+     *
+     * @param string $socketUri
+     *
+     * @return $this
+     */
+    function setSocketUri($socketUri);
+
+    /**
      * Open Socket Connection To Socket Uri
      *
      * - Initiates a stream or datagram connection to the

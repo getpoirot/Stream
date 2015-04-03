@@ -233,7 +233,7 @@ class Streamable implements iStreamable
      */
     function receiveFrom($maxByte, $flags = STREAM_OOB)
     {
-        stream_socket_recvfrom($clientStream->getResource()->getRHandler(), 1024);
+        stream_socket_recvfrom($this->getResource()->getRHandler(), 1024);
     }
 
     /**

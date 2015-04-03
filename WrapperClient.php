@@ -148,7 +148,7 @@ class WrapperClient implements iWrapperClient
      */
     protected function __connect_wrapper($sockUri)
     {
-        $resource = @fopen(
+        $resource = fopen(
             $sockUri
             , $this->getOpenmode()->toString()
             , null
