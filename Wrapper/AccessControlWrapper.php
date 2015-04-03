@@ -11,12 +11,8 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
  *       to implement wrapper features
  *
  */
-class AccessControlWrapper
-    implements
-    iSWrapper
+class AccessControlWrapper extends AbstractWrapper
 {
-    public $context;
-
     /**
      * @var ACWOptions
      */
@@ -64,17 +60,7 @@ class AccessControlWrapper
      */
     function options()
     {
-        if (!$this->options)
-            $this->options = self::optionsIns();
-
-        if ($this->context) {
-            $contextOpt = stream_context_get_options($this->context);
-            $contextOpt = $contextOpt[$this->getLabel()];
-
-            $this->options->from($contextOpt);
-        }
-
-        return $this->options;
+        return parent::options();
     }
 
     /**
