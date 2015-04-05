@@ -10,6 +10,8 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
  * Note: This is simple class just demonstrate how
  *       to implement wrapper features
  *
+ * (!) The Registered Wrappers Constructed On Each fopen
+ *     With Contexts
  */
 class AccessControlWrapper extends AbstractWrapper
 {

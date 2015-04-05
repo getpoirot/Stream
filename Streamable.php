@@ -166,7 +166,7 @@ class Streamable implements iStreamable
         $transCount = ($inByte !== null) ? $inByte : mb_strlen($content, '8bit');
         $this->__resetTransCount($transCount);
 
-        return $ret;
+        return $this;
     }
 
         /**
