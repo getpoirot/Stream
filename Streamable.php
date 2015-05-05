@@ -101,7 +101,12 @@ class Streamable implements iStreamable
         if (false === $data)
             throw new \RuntimeException('Cannot read stream.');
 
-        $transCount = mb_strlen($data, '8bit');
+        if (function_exists('mb_strlen'))
+            $transCount = mb_strlen($data, '8bit');
+        else
+            // TODO implement data length without mb_strlen
+            $transCount = 10;
+
         $this->__resetTransCount($transCount);
 
         return $data;
