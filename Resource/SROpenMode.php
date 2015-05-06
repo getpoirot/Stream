@@ -87,12 +87,19 @@ class SROpenMode implements iSRAccessMode
             $modStr = str_replace('b', '', $modStr); // remove binary sign
         }
 
-        $modXXX = array_search($modStr, $this->mode_available);
+        // Check for validate open mode:
+        $upModes = $this->mode_available;
+        array_walk($upModes, function(&$v, $k){
+            $v = strtoupper($v);
+        });
+        $modXXX = array_search(strtoupper($modStr), $upModes);
         if ($modXXX === false)
             throw new \InvalidArgumentException(sprintf(
                 'Invalid Open Mode Format For "%s".',
                 $modStr
             ));
+
+        // Setup Object:
 
         for($i=0; $i < strlen($modXXX); $i++) {
             $c = $modXXX[$i];
