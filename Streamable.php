@@ -43,7 +43,7 @@ class Streamable implements iStreamable
     /**
      * Get Stream Handler Resource
      *
-     * @return iSResource
+     * @return SResource|iSResource
      */
     function getResource()
     {

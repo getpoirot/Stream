@@ -85,7 +85,7 @@ class SResource implements iSResource
     /**
      * Meta Data About Handler
      *
-     * @return iSResMetaReader
+     * @return SRInfoMeta|iSResMetaReader
      */
     function meta()
     {
