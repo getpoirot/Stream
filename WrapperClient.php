@@ -48,7 +48,7 @@ class WrapperClient implements iWrapperClient
      * @param iSRAccessMode|string          $openMode  iSRAccessMode::MODE_*
      * @param iSContext|array|resource|null $context   Context Options
      */
-    function __construct($socketUri, $openMode, $context = null)
+    function __construct($socketUri, $openMode = iSRAccessMode::MODE_RB, $context = null)
     {
         $this->setSocketUri($socketUri);
 
