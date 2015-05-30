@@ -52,6 +52,9 @@ class WrapperClient implements iWrapperClient
     {
         $this->setSocketUri($socketUri);
 
+        if ($openMode === null)
+            $openMode = iSRAccessMode::MODE_RB;
+
         if ($openMode instanceof iSRAccessMode)
             $openMode = $openMode->toString();
 

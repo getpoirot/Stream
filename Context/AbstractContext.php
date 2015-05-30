@@ -44,7 +44,7 @@ abstract class AbstractContext extends AbstractOptions
      */
     function __construct($options = null)
     {
-        $this->beforeConst();
+        $this->__before_construct();
 
         parent::__construct($options);
     }
@@ -52,20 +52,20 @@ abstract class AbstractContext extends AbstractOptions
     /**
      * Called by __construct
      */
-    protected function beforeConst()
+    protected function __before_construct()
     {
 
     }
 
     /**
      * Used To Create Context, as php on creating streams
-     * get contexts options as associative array with
+     * contexts get options as associative array with
      * $arr['wrapper']['option'] = $value format
      *
      * @throws \Exception
      * @return string
      */
-    function gotWrapper()
+    function _getWrapper()
     {
         $wrapper = $this->wrapper;
         if ($wrapper === null)
@@ -76,6 +76,15 @@ abstract class AbstractContext extends AbstractOptions
 
     /**
      * Bind Another Context With this
+     *
+     * [
+     * * 'socket' => [
+            'bindto' => '192.168.0.100:7000',
+        ],
+     * * 'http' => [
+     *      ...
+     *  ]
+     * ]
      *
      * @param AbstractContext $context
      *
@@ -91,14 +100,6 @@ abstract class AbstractContext extends AbstractOptions
     // Params:
 
     /**
-     * @return callable
-     */
-    public function getNotification()
-    {
-        return $this->notification;
-    }
-
-    /**
      * Set callback function for the notification context parameter
      * @link http://php.net/manual/en/function.stream-notification-callback.php
      *
@@ -108,11 +109,21 @@ abstract class AbstractContext extends AbstractOptions
      */
     public function setNotification($notification)
     {
+        if (!is_callable($notification))
+            throw new \InvalidArgumentException('Notification handler must be a callable.');
+
         $this->notification = $notification;
 
         return $this;
     }
 
+    /**
+     * @return callable
+     */
+    public function getNotification()
+    {
+        return $this->notification;
+    }
 
     // Context:
 
@@ -148,13 +159,20 @@ abstract class AbstractContext extends AbstractOptions
         return new OpenOptions;
     }
 
+    /**
+     * access context options bind to this context
+     *
+     * $cntx->socket->setBindTo(..)
+     * $cntx->http->setConnection(...)
+     *
+     */
     function __call($method, $args)
     {
         $bindContexts = [$this];
         $bindContexts = array_merge($bindContexts, $this->bindContexts);
 
         while ($context = array_shift($bindContexts)) {
-            $wrapper = $context->gotWrapper();
+            $wrapper = $context->_getWrapper();
             if ($method === $wrapper)
                 return $context;
         }
@@ -229,7 +247,7 @@ abstract class AbstractContext extends AbstractOptions
         $bindContexts = array_merge($bindContexts, $this->bindContexts);
 
         while ($context = array_shift($bindContexts)) {
-            $wrapper = $context->gotWrapper();
+            $wrapper = $context->_getWrapper();
             if (isset($opts[$wrapper])) {
                 $context->options()->fromArray($opts[$wrapper]);
                 unset($params[$wrapper]);
@@ -311,7 +329,7 @@ abstract class AbstractContext extends AbstractOptions
         $options = [];
         /** @var AbstractContext $context */
         while ($context = array_shift($bindContexts)) {
-            $wrapper = $context->gotWrapper();
+            $wrapper = $context->_getWrapper();
             $options['options'][$wrapper] = $context->options()->toArray();
 
             $ops = &$options['options'][$wrapper];
