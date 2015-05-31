@@ -16,6 +16,8 @@ class Streamable implements iStreamable
      */
     protected $__transCount;
 
+    protected $_buffer;
+
     /**
      * Construct
      *
@@ -51,6 +53,34 @@ class Streamable implements iStreamable
     }
 
     /**
+     * Set R/W Buffer Size
+     *
+     * @param int|null $buffer
+     *
+     * @return $this
+     */
+    function setBuffer($buffer)
+    {
+        $this->_buffer = $buffer;
+
+        return $this;
+    }
+
+    /**
+     * Get Current R/W Buffer Size
+     *
+     * - usually null mean all stream content
+     * - used as default $inByte argument value on
+     *   read/write methods
+     *
+     * @return int|null
+     */
+    function getBuffer()
+    {
+        return $this->_buffer;
+    }
+
+    /**
      * Copies Data From One Stream To Another
      *
      * - If maxlength is not specified,
@@ -66,7 +96,12 @@ class Streamable implements iStreamable
     {
         $this->__assertStreamAlive();
 
-        $maxByte = ($maxByte == null) ? -1 : $maxByte;
+        $maxByte = ($maxByte === null)
+            ?
+            (
+                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+            )
+            : $maxByte;
 
         $count = stream_copy_to_stream(
             $this->getResource()->getRHandler()
@@ -94,7 +129,12 @@ class Streamable implements iStreamable
     {
         $this->__assertReadable();
 
-        $inByte = ($inByte == null) ? -1 : $inByte;
+        $inByte = ($inByte == null)
+            ?
+            (
+                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+            )
+            : $inByte;
 
         $stream = $this->getResource()->getRHandler();
         $data   = stream_get_contents($stream, $inByte);
@@ -131,7 +171,12 @@ class Streamable implements iStreamable
     {
         $this->__assertReadable();
 
-        $inByte = ($inByte == null) ? 1024 : $inByte;
+        $inByte = ($inByte == null)
+            ?
+            (
+                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+            )
+            : $inByte;
 
         $stream = $this->getResource()->getRHandler();
         $data   = stream_get_line($stream, $inByte, $ending);
@@ -159,6 +204,13 @@ class Streamable implements iStreamable
         $this->__assertWritable();
 
         $stream = $this->getResource()->getRHandler();
+
+        $inByte = ($inByte == null)
+            ?
+            (
+                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+            )
+            : $inByte;
 
         if (null === $inByte)
             $ret = fwrite($stream, $content);

@@ -20,6 +20,26 @@ interface iStreamable
     function getResource();
 
     /**
+     * Set R/W Buffer Size
+     *
+     * @param int|null $buffer
+     *
+     * @return $this
+     */
+    function setBuffer($buffer);
+
+    /**
+     * Get Current R/W Buffer Size
+     *
+     * - usually null mean all stream content
+     * - used as default $inByte argument value on
+     *   read/write methods
+     *
+     * @return int|null
+     */
+    function getBuffer();
+
+    /**
      * Copies Data From One Stream To Another
      *
      * - If maxlength is not specified,
