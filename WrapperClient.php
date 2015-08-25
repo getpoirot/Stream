@@ -161,8 +161,9 @@ class WrapperClient implements iWrapperClient
             throw new \Exception('Error Connecting to '.$sockUri);
 
         // set timeout:
-        @list($sec, $microsec) = explode('.', $this->getTimeout());
-        stream_set_timeout($resource, $sec, $microsec);
+        $timeOut = explode('.', $this->getTimeout());
+        (isset($timeOut[1])) ?: $timeOut[1] = null;
+        stream_set_timeout($resource, $timeOut[0], $timeOut[1]);
 
         // none blocking mode:
         if ($this->isNoneBlocking())
