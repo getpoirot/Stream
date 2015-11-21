@@ -60,10 +60,32 @@ class SRInfoMeta implements iSResMetaReader
         $this->__metaData  = stream_get_meta_data($this->rHandler);
     }
 
-    protected function getMetaKey($key)
+    /**
+     * Get Meta Key Value
+     *
+     * @param string $key
+     * @param null   $default
+     *
+     * @return null|mixed
+     */
+    function getMetaKey($key, $default = null)
     {
         if (isset($this->__metaData[$key]))
             return $this->__metaData[$key];
+
+        return $default;
+    }
+
+    /**
+     * Get Whole Data as Array
+     *
+     * @return array
+     */
+    function toArray()
+    {
+        $this->assertMetaData();
+
+        return $this->__metaData;
     }
 
     /**

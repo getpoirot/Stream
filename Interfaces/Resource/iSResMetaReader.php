@@ -13,6 +13,27 @@ interface iSResMetaReader
      */
     function setRHandler($rHandler);
 
+
+    /**
+     * Get Meta Key Value
+     *
+     * @param string $key
+     * @param null   $default
+     *
+     * @return null|mixed
+     */
+    function getMetaKey($key, $default = null);
+
+    /**
+     * Get Whole Data as Array
+     *
+     * @return array
+     */
+    function toArray();
+
+
+    // ..
+
     /**
      * The URI/filename Associated With This Stream
      *
