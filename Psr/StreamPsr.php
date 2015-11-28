@@ -7,7 +7,7 @@ use Poirot\Stream\SResource;
 use Poirot\Stream\Streamable;
 use Poirot\Stream\WrapperClient;
 
-class PsrStream implements StreamInterface
+class StreamPsr implements StreamInterface
 {
     /** @var Streamable */
     protected $stream;
