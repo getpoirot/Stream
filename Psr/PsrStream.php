@@ -293,9 +293,13 @@ class PsrStream implements StreamInterface
             return ($key === null) ? [] : null;
 
         $meta = $this->stream->getResource()->meta();
-        if ($key === null)
-            return $meta->toArray();
+        $meta = $meta->toArray();
 
-        return $meta->getMetaKey($key);
+        ## ! compatible for Poirot Messages access to body stream
+        $meta['resource'] = $this->stream->getResource()->getRHandler();
+        if ($key === null)
+            return $meta;
+
+        return (array_key_exists($key, $meta)) ? $meta[$key] : null;
     }
 }
