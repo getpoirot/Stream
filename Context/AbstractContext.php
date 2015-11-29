@@ -152,7 +152,7 @@ abstract class AbstractContext extends AbstractOptions
      *      $class = new Filesystem($opt);
      *   [/php]
      *
-     * @return AbstractOptions
+     * @return OpenOptions
      */
     static function optionsIns()
     {
@@ -333,19 +333,22 @@ abstract class AbstractContext extends AbstractOptions
             $options['options'][$wrapper] = $context->options()->toArray();
 
             $ops = &$options['options'][$wrapper];
-            foreach ($ops as $key => &$p)
+            foreach ($ops as $key => &$p) {
                 // cleanup null values for context params
                 if ($p === null)
                     unset($ops[$key]);
+            }
         }
 
         $params  = parent::toArray();
-        foreach ($params as $key => $p)
+        foreach ($params as $key => $v) {
             // cleanup null values for context params
-            if ($p === null)
+            if ($v === null)
                 unset($params[$key]);
+        }
 
-        return Core\array_merge($params, $options);
+        $result = Core\array_merge($params, $options);
+        return $result;
     }
 
     /**
