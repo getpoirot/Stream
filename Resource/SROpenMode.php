@@ -160,6 +160,10 @@ class SROpenMode implements iSRAccessMode
     {
         $this->mode_xxx['write'] = 'W';
 
+        if (!$this->hasCreate() && !$this->hasXCreate())
+            ## write to file must has create or xcreate by default
+            $this->createFile();
+
         return $this;
     }
 
@@ -372,8 +376,9 @@ class SROpenMode implements iSRAccessMode
         $ModeXXX = implode('', $this->mode_xxx);
         if (!array_key_exists($ModeXXX, $this->mode_available))
             throw new \Exception(sprintf(
-                'Statement "%s" not completed.',
-                $ModeXXX
+                'Invalid Open Mode Statement (%s). it`s must readable/writable or both with optional flags.'
+                .' like: r+, W, rb+, ...'
+                , $ModeXXX
             ));
 
         $mode = $this->mode_available[$ModeXXX];
@@ -384,5 +389,10 @@ class SROpenMode implements iSRAccessMode
         }
 
         return $mode;
+    }
+
+    function __toString()
+    {
+        return $this->toString();
     }
 }
