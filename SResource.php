@@ -30,6 +30,9 @@ class SResource implements iSResource
     /**
      * Construct
      *
+     * ! the StreamInterface as argument can be used
+     *   it will converted into resource by psr wrapper
+     *
      * @param resource|StreamInterface $rHandler
      */
     function __construct($rHandler)

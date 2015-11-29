@@ -4,6 +4,15 @@ namespace Poirot\Stream;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamable;
 
+/*
+// Covert Psr StreamInterface into Streamable:
+// ++
+$psr    = new StreamPsr('http://google.com/');
+$stream = new Streamable(new SResource($psr));
+echo $stream->read();
+
+*/
+
 class Streamable implements iStreamable
 {
     /**
