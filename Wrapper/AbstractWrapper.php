@@ -5,6 +5,18 @@ use Poirot\Core\AbstractOptions;
 use Poirot\Core\OpenOptions;
 use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
 
+/*
+// How to inject options into wrapper as default context:
+// ++
+fopen('label://stream', 'r', null
+    ## set options to wrapper
+    , stream_context_create([
+        ## ------- this is options [->getStream()]
+        'label' => ['stream' => $stream]
+    ])
+);
+*/
+
 abstract class AbstractWrapper
     implements
     iSWrapper
@@ -45,6 +57,7 @@ abstract class AbstractWrapper
             $this->options = self::optionsIns();
 
         if ($this->context) {
+            ## set options from injected context
             $contextOpt = stream_context_get_options($this->context);
             $contextOpt = $contextOpt[$this->getLabel()];
 
