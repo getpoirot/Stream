@@ -4,7 +4,9 @@ namespace Poirot\Stream;
 use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
+use Poirot\Stream\Psr\StreamInterface;
 use Poirot\Stream\Resource\SRInfoMeta;
+use Poirot\Stream\Wrapper\SPsrWrapper;
 
 class SResource implements iSResource
 {
@@ -24,13 +26,17 @@ class SResource implements iSResource
      */
     protected $attachedFilters = [];
 
+
     /**
      * Construct
      *
-     * @param resource $rHandler
+     * @param resource|StreamInterface $rHandler
      */
     function __construct($rHandler)
     {
+        if ($rHandler instanceof StreamInterface)
+            $rHandler = SPsrWrapper::convertToResource($rHandler);
+
         if (!is_resource($rHandler))
             throw new \InvalidArgumentException(sprintf(
                 '"%s" given instead of stream resource.',
@@ -39,7 +45,6 @@ class SResource implements iSResource
 
         $this->rHandler = $rHandler;
     }
-
 
     /**
      * Get Resource Origin Handler

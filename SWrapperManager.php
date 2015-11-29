@@ -13,12 +13,19 @@ class SWrapperManager implements iSWManager
      * @param null      $label   Wrapper Label
      *        - If Not Set Using iSWrapper
      *
-     * @throw \Exception If Wrapper Registered Before
+     * @throws \Exception If Wrapper Registered Before
      */
     static function register(iSWrapper $wrapper, $label = null)
     {
         if ($label == null)
             $label = $wrapper->getLabel();
+
+        if ($pos = strpos($label, ':') !== false)
+            throw new \Exception(sprintf(
+                '(%s) Is Invalid Label Provided For Stream Wrapper.'
+                . ' It must include just a name like "http".'
+                , $label
+            ));
 
         stream_wrapper_register($label, get_class($wrapper));
 
