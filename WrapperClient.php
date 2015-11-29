@@ -56,7 +56,7 @@ class WrapperClient implements iWrapperClient
             $openMode = iSRAccessMode::MODE_RB;
 
         if ($openMode instanceof iSRAccessMode)
-            $openMode = $openMode->toString();
+            $this->setOpenmode($openMode);
 
         if (is_string($openMode))
             $this->getOpenmode()->fromString($openMode);
@@ -142,7 +142,6 @@ class WrapperClient implements iWrapperClient
             ));
 
         $resource = $this->__connect_wrapper($sockUri);
-
         return new SResource($resource);
     }
 
@@ -151,24 +150,24 @@ class WrapperClient implements iWrapperClient
      */
     protected function __connect_wrapper($sockUri)
     {
-        $resource = @fopen(
-            $sockUri
+        $resource = fopen($sockUri
             , $this->getOpenmode()->toString()
             , null
             , $this->getContext()->toContext()
         );
+
         if (!$resource)
             throw new \Exception('Error Connecting to '.$sockUri);
 
         // set timeout:
         $timeOut = explode('.', $this->getTimeout());
         (isset($timeOut[1])) ?: $timeOut[1] = null;
-        stream_set_timeout($resource, $timeOut[0], $timeOut[1]);
+        @stream_set_timeout($resource, $timeOut[0], $timeOut[1]);
 
         // none blocking mode:
         if ($this->isNoneBlocking())
             // it will work after connection has made on resource
-            stream_set_blocking($resource, 0); // 0 for none-blocking
+            @stream_set_blocking($resource, 0); // 0 for none-blocking
 
         return $resource;
     }

@@ -42,8 +42,8 @@ class SResource implements iSResource
 
         if (!is_resource($rHandler))
             throw new \InvalidArgumentException(sprintf(
-                '"%s" given instead of stream resource.',
-                is_object($rHandler) ? get_class($rHandler) : gettype($rHandler)
+                '(%s) given instead of stream resource.',
+                \Poirot\Core\flatten($rHandler)
             ));
 
         $this->rHandler = $rHandler;
