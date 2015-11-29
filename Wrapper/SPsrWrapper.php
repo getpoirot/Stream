@@ -1,6 +1,7 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
+use Poirot\Stream\Context\BaseContext;
 use Poirot\Stream\Psr\StreamInterface;
 use Poirot\Stream\Resource\SROpenMode;
 use Poirot\Stream\SWrapperManager;
@@ -55,13 +56,12 @@ class SPsrWrapper extends AbstractWrapper
         (!$stream->isWritable()) ?: $mode->openForWrite();
         (!$stream->isReadable()) ?: $mode->openForRead();
 
-        return fopen($self->getLabel().'://stream'
+        $label = $self->getLabel();
+        return fopen($label.'://stream'
             , (string) $mode
             , null
             ## set options to wrapper
-            , stream_context_create([
-            $self->getLabel() => ['stream' => $stream]
-            ])
+            , (new BaseContext($label, ['stream' => $stream]))->toContext()
         );
     }
 
