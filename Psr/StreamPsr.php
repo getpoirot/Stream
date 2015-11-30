@@ -32,7 +32,7 @@ class StreamPsr implements StreamInterface
 
         // ...
 
-        $resource = null;
+        $resource = $stream;
         if (is_resource($stream)) {
             $resource = new SResource($stream);
         } elseif (is_string($stream))
@@ -49,9 +49,11 @@ class StreamPsr implements StreamInterface
         }
 
         if (!$resource instanceof iSResource)
-            throw new \InvalidArgumentException(
-                'Invalid stream provided; must be a string stream identifier or resource'
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid stream provided; must be a string stream identifier or resource.'
+                . ' given: "%s"'
+                , \Poirot\Core\flatten($resource)
+            ));
 
         $this->stream = new Streamable($resource);
     }
