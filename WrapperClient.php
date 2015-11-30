@@ -135,6 +135,12 @@ class WrapperClient implements iWrapperClient
 
         // knowing transport/wrapper:
         $scheme  = parse_url($sockUri, PHP_URL_SCHEME);
+        if (!$scheme)
+            ## /path/to/file.ext
+            return $this->setSocketUri("file://{$sockUri}")
+                ->getConnect();
+
+
         if (!SWrapperManager::isRegistered($scheme))
             throw new \Exception(sprintf(
                 'Wrapper "%s" not supported.'
