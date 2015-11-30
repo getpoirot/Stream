@@ -15,13 +15,22 @@ class StreamPsr implements StreamInterface
     /**
      * Construct
      *
-     * @param string|resource|iSResource $stream
-     * @param string                     $mode Mode with which to open stream
+     * ! it can be used as decorator for Poirot Stream Into Psr
+     *
+     * @param string|resource|iSResource|Streamable $stream
+     * @param string                                $mode Mode with which to open stream
      *
      * @throws \InvalidArgumentException
      */
     function __construct($stream, $mode = 'r')
     {
+        if ($stream instanceof Streamable) {
+            $this->stream = $stream;
+            return;
+        }
+
+        // ...
+
         $resource = null;
         if (is_resource($stream)) {
             $resource = new SResource($stream);
