@@ -32,9 +32,10 @@ class Streamable implements iStreamable
      *
      * @param iSResource $resource
      */
-    function __construct(iSResource $resource)
+    function __construct(iSResource $resource = null)
     {
-       $this->setResource($resource);
+        if ($resource !== null)
+            $this->setResource($resource);
     }
 
     /**

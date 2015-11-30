@@ -3,6 +3,7 @@ namespace Poirot\Stream\Psr;
 
 use Poirot\Core\ErrorStack;
 use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\SResource;
 use Poirot\Stream\Streamable;
 use Poirot\Stream\WrapperClient;
@@ -24,7 +25,7 @@ class StreamPsr implements StreamInterface
      */
     function __construct($stream, $mode = 'r')
     {
-        if ($stream instanceof Streamable) {
+        if ($stream instanceof iStreamable) {
             $this->stream = $stream;
             return;
         }
