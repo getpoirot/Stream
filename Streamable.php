@@ -139,7 +139,7 @@ class Streamable implements iStreamable
     {
         $this->__assertReadable();
 
-        $inByte = ($inByte == null)
+        $inByte = ($inByte === null)
             ?
             (
                 ($this->getBuffer() === null) ? -1 : $this->getBuffer()
@@ -181,7 +181,7 @@ class Streamable implements iStreamable
     {
         $this->__assertReadable();
 
-        $inByte = ($inByte == null)
+        $inByte = ($inByte === null)
             ?
             (
                 ($this->getBuffer() === null) ? -1 : $this->getBuffer()
@@ -215,11 +215,8 @@ class Streamable implements iStreamable
 
         $stream = $this->getResource()->getRHandler();
 
-        $inByte = ($inByte == null)
-            ?
-            (
-                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
-            )
+        $inByte = ($inByte === null)
+            ? $this->getBuffer()
             : $inByte;
 
         if (null === $inByte)
