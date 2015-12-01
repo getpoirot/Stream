@@ -281,8 +281,14 @@ class StreamPsr implements StreamInterface
             return '';
 
         $content = '';
-        while ($r = $this->stream->read())
-            $content .= $r;
+        while (!$this->eof()) {
+            $buf = $this->read(1048576);
+            // Using a loose equality here to match on '' and false.
+            if ($buf == null)
+                break;
+
+            $content .= $buf;
+        }
 
         return $content;
     }

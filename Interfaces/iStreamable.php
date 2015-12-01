@@ -123,6 +123,13 @@ interface iStreamable
     function receiveFrom($maxByte, $flags = STREAM_OOB);
 
     /**
+     * Get the size of the stream if known.
+     *
+     * @return int|null Returns the size in bytes if known, or null if unknown.
+     */
+    function getSize();
+
+    /**
      * Get Total Count Of Bytes After Each Read/Write
      *
      * @return int

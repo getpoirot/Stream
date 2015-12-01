@@ -155,7 +155,7 @@ class Streamable implements iStreamable
             $transCount = mb_strlen($data, '8bit');
         else
             // TODO implement data length without mb_strlen
-            $transCount = 10;
+            $transCount = strlen($data);
 
         $this->__resetTransCount($transCount);
 
@@ -304,6 +304,20 @@ class Streamable implements iStreamable
     }
 
     /**
+     * Get the size of the stream if known.
+     *
+     * @return int|null Returns the size in bytes if known, or null if unknown.
+     */
+    function getSize()
+    {
+        $size = fstat(
+            $this->getResource()->getRHandler()
+        )['size'];
+
+        return $size;
+    }
+
+    /**
      * Get Total Count Of Bytes After Each Read/Write
      *
      * @return int
@@ -374,6 +388,9 @@ class Streamable implements iStreamable
 
         return $this;
     }
+
+
+    // ...
 
     protected function __assertStreamAlive()
     {
