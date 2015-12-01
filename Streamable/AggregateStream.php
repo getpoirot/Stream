@@ -93,7 +93,27 @@ class AggregateStream extends Streamable
      */
     function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0)
     {
-        // TODO: Implement pipeTo() method.
+        $this->__assertStreamAlive();
+
+        $maxByte = ($maxByte === null)
+            ?
+            (
+                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+            )
+            : $maxByte;
+
+        ## get current offset
+        $currOffset = $this->getResource()->getCurrOffset();
+        $this->seek($offset);
+
+        ## copy data
+        $data  = $this->read($maxByte);
+        $destStream->write($data);
+        $this->__resetTransCount($destStream->getTransCount());
+
+        ## get back to current offset
+        $this->seek($currOffset);
+        return $this;
     }
 
     /**
@@ -168,7 +188,16 @@ class AggregateStream extends Streamable
      */
     function readLine($ending = "\n", $inByte = null)
     {
-        // TODO: Implement readLine() method.
+        $currOffset = $this->getResource()->getCurrOffset();
+
+        $rData = $this->read($inByte);
+        if (($i = strpos($rData, $ending)) !== false) {
+            ## found ending in string
+            $rData = substr($rData, 0, $i);
+            $this->seek($currOffset+$i/*length of data*/+strlen($ending)/* skip ending */);
+        }
+
+        return $rData;
     }
 
     /**
@@ -183,7 +212,7 @@ class AggregateStream extends Streamable
      */
     function write($content, $inByte = null)
     {
-        throw new \RuntimeException('AggregateStream is not writable.');
+        throw new \RuntimeException(__FUNCTION__. ' is not implemented in AggregateStream.');
     }
 
     /**
@@ -202,7 +231,7 @@ class AggregateStream extends Streamable
      */
     function sendData($data, $flags = null)
     {
-        // TODO: Implement sendData() method.
+        throw new \RuntimeException(__FUNCTION__. ' is not implemented in AggregateStream.');
     }
 
     /**
@@ -215,7 +244,7 @@ class AggregateStream extends Streamable
      */
     function receiveFrom($maxByte, $flags = STREAM_OOB)
     {
-        // TODO: Implement receiveFrom() method.
+        throw new \RuntimeException(__FUNCTION__. ' is not implemented in AggregateStream.');
     }
 
     /**
