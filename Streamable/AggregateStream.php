@@ -128,25 +128,26 @@ class AggregateStream extends Streamable
      */
     function read($inByte = null)
     {
-        $inByte = ($inByte == null)
+        $inByte = ($inByte === null)
             ?
             (
-            ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
             )
             : $inByte;
 
 
         $rData = '';
 
-        $remaining = true; $total = count($this->streams); $transCount = 0;
-        while ($remaining = (($inByte == -1 || $inByte > 0) && $remaining))
+        $total = count($this->streams); $transCount = 0;
+        while ($inByte == -1 || $inByte > 0)
         {
-            if ($this->_curr_stream__index +1 >= $total)
+            if ($this->_curr_stream__index +1 > $total)
+                ## no more stream to read
                 break;
 
             $currStream = $this->streams[$this->_curr_stream__index];
-            $result = $currStream->read($inByte);
-            if ($result == null || $currStream->getResource()->isEOF()) {
+            $result     = $currStream->read($inByte);
+            if ($result == null && $currStream->getResource()->isEOF()) {
                 ## loose comparison to match on '', false, and null
                 $this->_curr_stream__index++; ## next stream
                 continue;
