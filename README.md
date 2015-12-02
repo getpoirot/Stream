@@ -1,5 +1,7 @@
 # Poirot\Stream
 
+# [Documentation is out dated for now]
+
 ## Connection Oriented Transports (such as TCP)
 
 __Server__
