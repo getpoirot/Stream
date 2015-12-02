@@ -347,7 +347,7 @@ class AggregateStream extends Streamable
      */
     public function getIterator()
     {
-        return $this->streams;
+        return new \ArrayObject($this->streams);
     }
 }
  
