@@ -6,6 +6,14 @@ use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Streamable;
 use Traversable;
 
+/*
+$aggrStream = new AggregateStream([
+    new TemporaryStream('Hello ...'),
+    new TemporaryStream(' Stream Worlds')
+]);
+echo $aggrStream->read(); // Hello ... Stream Worlds
+*/
+
 class AggregateStream extends Streamable
     implements iStreamable
     , \IteratorAggregate
