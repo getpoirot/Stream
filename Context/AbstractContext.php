@@ -65,7 +65,7 @@ abstract class AbstractContext extends AbstractOptions
      * @throws \Exception
      * @return string
      */
-    function _getWrapper()
+    function wrapperName()
     {
         $wrapper = $this->wrapper;
         if ($wrapper === null)
@@ -75,7 +75,7 @@ abstract class AbstractContext extends AbstractOptions
     }
 
     /**
-     * Bind Another Context With this
+     * Bind Another Context Along this
      *
      * [
      * * 'socket' => [
@@ -86,14 +86,25 @@ abstract class AbstractContext extends AbstractOptions
      *  ]
      * ]
      *
-     * @param AbstractContext $context
+     * @param iSContext|array|resource $context
      *
      * @return $this
      */
-    function bindContext(AbstractContext $context)
+    function bindWith($context)
     {
-        $this->bindContexts[] = $context;
+        if (is_array($context))
+            $context = stream_context_create($context);
+        elseif (is_resource($context) && get_resource_type($context) == 'stream-context')
+            $context = new BaseContext($context);
 
+        if (!$context instanceof iSContext)
+            // Invalid parameter
+            throw new \InvalidArgumentException(
+                "Expecting either a stream context resource or array, got " . gettype($context)
+            );
+
+
+        $this->bindContexts[] = $context;
         return $this;
     }
 
@@ -243,11 +254,26 @@ abstract class AbstractContext extends AbstractOptions
             unset($params['options']);
         }
 
+        /**
+         * [
+         *    'bind_with' =>
+         *       [
+         *           'ssl' => $context
+         *           @see AbstractContext::bindWith
+         *       ]
+         * ]
+         */
+        if (isset($opts['bind_with']))
+            foreach($opts['bind_with'] as $wrapper => $context)
+                $this->bindWith([$wrapper => $context]);
+
+
         $bindContexts = [$this];
         $bindContexts = array_merge($bindContexts, $this->bindContexts);
 
         while ($context = array_shift($bindContexts)) {
-            $wrapper = $context->_getWrapper();
+            /** @var iSContext $context */
+            $wrapper = $context->wrapperName();
             if (isset($opts[$wrapper])) {
                 $context->options()->fromArray($opts[$wrapper]);
                 unset($params[$wrapper]);
@@ -270,21 +296,21 @@ abstract class AbstractContext extends AbstractOptions
      *   methods inside Options Object to get fully coincident copy
      *   of Options Class Object
      *
-     * @param iSContext $options Options Object
+     * @param iSContext $context Options Object
      *
      * @throws \Exception
      * @return $this
      */
-    function fromSimilar(/*iSContext*/ $options)
+    function fromSimilar(/*iSContext*/ $context)
     {
-        $return = parent::fromSimilar($options);
+        $return = parent::fromSimilar($context);
 
         // assimilate options
-        $this->options()->fromSimilar($options->options());
+        $this->options()->fromSimilar($context->options());
 
         // bind contexts
-        foreach($options->bindContexts as $context)
-        $this->bindContext($context);
+        foreach($context->listBindContexts() as $wrapper)
+            $this->bindWith($context->hasBind($wrapper));
 
         return $return;
     }
@@ -303,15 +329,7 @@ abstract class AbstractContext extends AbstractOptions
      */
     function fromResource($resource)
     {
-        if (!is_resource($resource))
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid Resource As Argument, given: "%s".'
-                , is_object($resource) ? get_class($resource) : gettype($resource)
-            ));
-
-        $params = stream_context_get_params($resource);
-        $this->fromArray($params);
-
+        $this->bindWith($resource);
         return $this;
     }
 
@@ -329,7 +347,7 @@ abstract class AbstractContext extends AbstractOptions
         $options = [];
         /** @var AbstractContext $context */
         while ($context = array_shift($bindContexts)) {
-            $wrapper = $context->_getWrapper();
+            $wrapper = $context->wrapperName();
             $options['options'][$wrapper] = $context->options()->toArray();
 
             $ops = &$options['options'][$wrapper];

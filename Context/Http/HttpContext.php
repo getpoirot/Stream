@@ -15,7 +15,7 @@ class HttpContext extends AbstractContext
     protected function __before_construct()
     {
         // Bind Socket Context
-        $this->bindContext(new SocketContext);
+        $this->bindWith(new SocketContext);
     }
 
     /**
