@@ -196,9 +196,8 @@ class StreamClient implements iStreamClient
         $timeout = $this->getTimeout();
 
         // persistence
-        $flags = ($this->isPersistent())
-            ? STREAM_CLIENT_PERSISTENT
-            : STREAM_CLIENT_CONNECT;
+        $flags = STREAM_CLIENT_CONNECT;
+        (!$this->isPersistent()) ?: $flags |= STREAM_CLIENT_PERSISTENT;
 
         // asynchronous
         STREAM_CLIENT_ASYNC_CONNECT;
