@@ -37,6 +37,9 @@ class StreamClient implements iStreamClient
      */
     protected $context;
 
+    /** @var iSResource */
+    protected $_c__connectedResource;
+
     /**
      * Construct
      *
@@ -174,7 +177,7 @@ class StreamClient implements iStreamClient
 
         $resource = $this->__connect_transport($sockUri);
 
-        return new SResource($resource);
+        return $this->_c__connectedResource = new SResource($resource);
     }
 
     /**
@@ -299,5 +302,15 @@ class StreamClient implements iStreamClient
     function isNoneBlocking()
     {
         return $this->noneBlocking;
+    }
+
+
+    // ...
+
+    function __destruct()
+    {
+        if ($this->_c__connectedResource && !$this->isPersistent())
+            ## close connection if not persist
+            $this->_c__connectedResource->close();
     }
 }
