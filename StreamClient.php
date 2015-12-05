@@ -176,8 +176,13 @@ class StreamClient implements iStreamClient
             ));
 
         $resource = $this->__connect_transport($sockUri);
+        $resource = new SResource($resource);
 
-        return $this->_c__connectedResource = new SResource($resource);
+        if (!$this->isPersistent())
+            ## close opened connections
+            $this->_c__connectedResource[] = $resource;
+
+        return $resource;
     }
 
     /**
@@ -309,8 +314,9 @@ class StreamClient implements iStreamClient
 
     function __destruct()
     {
-        if ($this->_c__connectedResource && !$this->isPersistent())
-            ## close connection if not persist
-            $this->_c__connectedResource->close();
+        if ($this->_c__connectedResource)
+            foreach($this->_c__connectedResource as $cn)
+                ## close connection if not persist
+                $cn->close();
     }
 }
