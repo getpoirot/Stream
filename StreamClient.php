@@ -1,6 +1,8 @@
 <?php
 namespace Poirot\Stream;
 
+use Poirot\Core\BuilderSetterTrait;
+use Poirot\Stream\Context\BaseContext;
 use Poirot\Stream\Context\Socket\SocketContext;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iSResource;
@@ -8,6 +10,8 @@ use Poirot\Stream\Interfaces\iStreamClient;
 
 class StreamClient implements iStreamClient
 {
+    use BuilderSetterTrait;
+
     /**
      * @var string
      */
@@ -42,12 +46,20 @@ class StreamClient implements iStreamClient
      *
      * TODO: socketUri Can converted to an pathUri Object
      *
-     * @param string                         $socketUri Socket Uri
+     * @param string|array                   $socketUri Socket Uri or Array of Builder Settings
      * @param iSContext|array|resource| null $context   Context Options
      */
     function __construct($socketUri, $context = null)
     {
-        $this->setSocketUri($socketUri);
+        if (is_array($socketUri) && !empty($socketUri))
+            $this->setupFromArray($socketUri);
+        elseif (is_string($socketUri))
+            $this->setSocketUri($socketUri);
+        else
+            throw new \InvalidArgumentException(sprintf(
+                'StreamClient Construct give string or array of settings builder as first argument. given "%s".'
+                , \Poirot\Core\flatten($socketUri)
+            ));
 
         if ($context !== null) {
             if ($context instanceof iSContext)
@@ -92,13 +104,17 @@ class StreamClient implements iStreamClient
     /**
      * Context Options
      *
-     * @param iSContext $context
+     * @param iSContext|array|resource $context
      *
+     * @throws \InvalidArgumentException
      * @return $this
      */
-    function setContext(iSContext $context)
+    function setContext($context)
     {
-        $this->context = $context;
+        if ($context instanceof iSContext)
+            $this->context = $context;
+        else
+            $this->context = new BaseContext($context);
 
         return $this;
     }
