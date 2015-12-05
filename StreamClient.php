@@ -219,6 +219,10 @@ class StreamClient implements iStreamClient
                 , $errstr
             ), $errno);
 
+        // Set the stream timeout
+        if (!stream_set_timeout($resource, (int) $this->getTimeout()))
+            throw new \RuntimeException('Unable to set the connection timeout');
+
         // none blocking mode:
         if ($this->isNoneBlocking())
             // it will work after connection has made on resource
