@@ -39,6 +39,6 @@ class BaseContext extends AbstractContext
         } elseif(is_string($wrapper))
             $this->wrapper = $wrapper;
 
-        $this->options()->from($options);
+        parent::__construct($options);
     }
 }
