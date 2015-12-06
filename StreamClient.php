@@ -10,6 +10,21 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamClient;
 
+/*
+$socket = new StreamClient([
+    'socket_uri'    => 'tcp://google.com:80',
+    'time_out'      => 30,
+    'persistent'    => true,
+    'none_blocking' => true,
+    'when_resource' => ['dump_debug' => function($resource) {kd($resource);}],
+]);
+
+$conn   = $socket->getConnect();
+$stream = new Streamable($conn);
+
+$stream->write((string) $request);
+*/
+
 class StreamClient implements iStreamClient
 {
     use BuilderSetterTrait;
