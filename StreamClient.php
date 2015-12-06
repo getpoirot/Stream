@@ -2,6 +2,8 @@
 namespace Poirot\Stream;
 
 use Poirot\Core\BuilderSetterTrait;
+use Poirot\Core\ErrorStack;
+use Poirot\Core\OpenCall;
 use Poirot\Stream\Context\BaseContext;
 use Poirot\Stream\Context\Socket\SocketContext;
 use Poirot\Stream\Interfaces\Context\iSContext;
@@ -40,14 +42,16 @@ class StreamClient implements iStreamClient
     /** @var iSResource */
     protected $_c__connectedResource;
 
+    // Events ....
+    /** @var OpenCall */
+    protected $_on__resource_connected;
+
     /**
      * Construct
      *
      * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
-     *
-     * TODO: socketUri Can converted to an pathUri Object
      *
      * @param string|array                   $socketUri Socket Uri or Array of Builder Settings
      * @param iSContext|array|resource| null $context   Context Options
@@ -72,14 +76,36 @@ class StreamClient implements iStreamClient
         }
     }
 
+
+    // ...
+
+    /**
+     * Add Closure Callable On Connected Resource
+     *
+     * - the closure functions will bind to this object
+     *
+     * closure:
+     * function($resource) {
+     *   // $this will point to StreamClient(current)
+     * }
+     *
+     *
+     * @return OpenCall
+     */
+    function whenResourceAvailable()
+    {
+        if (!$this->_on__resource_connected)
+            $this->_on__resource_connected = new OpenCall($this);
+
+        return $this->_on__resource_connected;
+    }
+
     /**
      * Set Socket Uri
      *
      * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
-     *
-     * TODO: socketUri Can converted to an pathUri Object
      *
      * @param string $socketUri
      *
@@ -94,8 +120,6 @@ class StreamClient implements iStreamClient
 
     /**
      * Get Current Socket Uri That Stream Built With
-     *
-     * TODO: Socket Uri Can converted to an pathUri Object
      *
      * @return string
      */
@@ -204,6 +228,8 @@ class StreamClient implements iStreamClient
 
         // get connect to resource:
         $errstr = $errno = null;
+
+        ErrorStack::handleError(E_ALL); // -------------------------------------------\
         $resource = @stream_socket_client(
             $sockUri
             , $errno
@@ -212,12 +238,18 @@ class StreamClient implements iStreamClient
             , $flags
             , $this->getContext()->toContext()
         );
-        if (!$resource)
+
+        // Fire up registered methods on resource
+        foreach($this->whenResourceAvailable()->listMethods() as $method)
+            call_user_func([$this->whenResourceAvailable(), $method], $resource);
+
+        $error = ErrorStack::handleDone();
+        if ($error)
             throw new \Exception(sprintf(
-                'Cannot Connect To Server "%s", %s.'
+                'Cannot Connect To Server "%s".'
                 , $this->getSocketUri()
-                , $errstr
-            ), $errno);
+            ), $errno, $error);
+        // ----------------------------------------------------------------------------
 
         // Set the stream timeout
         if (!stream_set_timeout($resource, (int) $this->getTimeout()))
@@ -318,8 +350,11 @@ class StreamClient implements iStreamClient
     function __destruct()
     {
         if ($this->_c__connectedResource)
-            foreach($this->_c__connectedResource as $cn)
+            foreach($this->_c__connectedResource as $cn) {
                 ## close connection if not persist
+                ErrorStack::handleError();
                 $cn->close();
+                ErrorStack::handleDone();
+            }
     }
 }
