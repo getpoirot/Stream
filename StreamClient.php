@@ -54,7 +54,7 @@ class StreamClient implements iStreamClient
      *       tcp://[fe80::1]:80
      *
      * @param string|array                   $socketUri Socket Uri or Array of Builder Settings
-     * @param iSContext|array|resource| null $context   Context Options
+     * @param iSContext|array|resource|null  $context   Context Options
      */
     function __construct($socketUri, $context = null)
     {
@@ -101,6 +101,42 @@ class StreamClient implements iStreamClient
     }
 
     /**
+     * Proxy to StreamClient::whenResourceAvailable for setupFromArray
+     *
+     * ['when_resource' =>
+     *   ['method_name' => \Closure],
+     *   ['method_name', \Closure],
+     * ]
+     *
+     * @param $methods
+     */
+    protected function setWhenResource(array $methods)
+    {
+        if ( count($methods) <= 2 && array_filter($methods, function($item) { return is_callable($item); }) )
+            ##! 'when_resource' => ['dump_debug' => function($resource) {k($resource);}]
+            $methods = [$methods];
+
+        foreach($methods as $method) {
+            $name = null;
+            if (is_array($method)) {
+                if (count($method) === 2) {
+                    ##! ['method_name', \Closure]
+                    $name = $method[0]; $fn = $method[1];
+                } elseif (array_values($method) !== $method) {
+                    ##! ['method_name' => \Closure]
+                    $name = key($method);
+                    $fn = current($method);
+                }
+            }
+
+            if ($name === null)
+                throw new \InvalidArgumentException('Unknown Method Type Provided For '.\Poirot\Core\flatten($method));
+
+            $this->whenResourceAvailable()->addMethod($name, $fn);
+        }
+    }
+
+    /**
      * Set Socket Uri
      *
      * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
@@ -129,7 +165,7 @@ class StreamClient implements iStreamClient
     }
 
     /**
-     * Context Options
+     * Set Default Base Context Options
      *
      * @param iSContext|array|resource $context
      *
@@ -147,7 +183,7 @@ class StreamClient implements iStreamClient
     }
 
     /**
-     * Get Context Options
+     * Get Default Base Context Options
      *
      * @return iSContext
      */
