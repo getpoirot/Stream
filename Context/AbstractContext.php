@@ -94,7 +94,8 @@ abstract class AbstractContext extends AbstractOptions
     {
         if (is_array($context))
             $context = stream_context_create($context);
-        elseif (is_resource($context) && get_resource_type($context) == 'stream-context')
+
+        if (is_resource($context) && get_resource_type($context) == 'stream-context')
             $context = new BaseContext($context);
 
         if (!$context instanceof iSContext)
@@ -104,8 +105,30 @@ abstract class AbstractContext extends AbstractOptions
             );
 
 
-        $this->bindContexts[] = $context;
+        $this->bindContexts[strtolower($context->wrapperName())] = $context;
         return $this;
+    }
+
+    /**
+     * Context with specific wrapper has bind?
+     *
+     * @param string $wrapperName
+     *
+     * @return false|iSContext
+     */
+    function hasBind($wrapperName)
+    {
+        return array_key_exists(strtolower($wrapperName), $this->bindContexts);
+    }
+
+    /**
+     * List of Wrapper Name Of Currently Bind Contexts
+     *
+     * @return array[ (string) wrapperName ]
+     */
+    function listBindContexts()
+    {
+        return array_keys($this->bindContexts);
     }
 
     // Params:
