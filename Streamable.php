@@ -203,9 +203,9 @@ class Streamable implements iStreamable
      * Writes the contents of string to the file stream
      *
      * @param string $content The string that is to be written
-     * @param int $inByte Writing will stop after length bytes
-     *                          have been written or the end of string
-     *                          is reached
+     * @param int    $inByte  Writing will stop after length bytes
+     *                        have been written or the end of string
+     *                        is reached
      *
      * @return $this
      */
@@ -219,6 +219,8 @@ class Streamable implements iStreamable
             ? $this->getBuffer()
             : $inByte;
 
+
+        $content = (string) $content;
         if (null === $inByte)
             $ret = fwrite($stream, $content);
         else
