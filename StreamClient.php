@@ -266,7 +266,7 @@ class StreamClient implements iStreamClient
         $errstr = $errno = null;
 
         ErrorStack::handleError(E_ALL); // -------------------------------------------\
-        $resource = @stream_socket_client(
+        $resource = stream_socket_client(
             $sockUri
             , $errno
             , $errstr
