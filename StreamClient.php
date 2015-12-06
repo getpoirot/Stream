@@ -11,6 +11,7 @@ use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamClient;
 
 /*
+
 $socket = new StreamClient([
     'socket_uri'    => 'tcp://google.com:80',
     'time_out'      => 30,
@@ -23,6 +24,29 @@ $conn   = $socket->getConnect();
 $stream = new Streamable($conn);
 
 $stream->write((string) $request);
+
+// ======================================================
+
+$socket = new StreamClient([
+    'socket_uri'    => 'tcp://google.com:80',
+    'time_out'      => 30,
+]);
+
+$conn   = $socket->getConnect();
+$stream = new Streamable($conn);
+
+$request = (new HttpRequest(['method' => 'GET', 'host' => 'localhost', 'headers' => [
+    'Accept' => ' * /*',
+    'User-Agent' => 'Poirot/Client HTTP',
+]]))->toString();
+
+$stream->write($request);
+$response = $stream->read();
+$response = new HttpResponse($response);
+$response->getPluginManager()->set(new Status());
+if ($response->plugin()->status()->isSuccess())
+    echo $response->getBody();
+
 */
 
 class StreamClient implements iStreamClient
