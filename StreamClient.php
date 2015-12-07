@@ -95,13 +95,13 @@ class StreamClient implements iStreamClient
      * @param string|array                   $socketUri Socket Uri or Array of Builder Settings
      * @param iSContext|array|resource|null  $context   Context Options
      */
-    function __construct($socketUri, $context = null)
+    function __construct($socketUri = null, $context = null)
     {
         if (is_array($socketUri) && !empty($socketUri))
             $this->setupFromArray($socketUri);
         elseif (is_string($socketUri))
             $this->setSocketUri($socketUri);
-        else
+        elseif ($socketUri !== null)
             throw new \InvalidArgumentException(sprintf(
                 'StreamClient Construct give string or array of settings builder as first argument. given "%s".'
                 , \Poirot\Core\flatten($socketUri)
