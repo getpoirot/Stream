@@ -303,10 +303,10 @@ abstract class AbstractContext extends AbstractOptions
      */
     function fromResource($resource)
     {
-        if (!is_resource($resource))
+        if (!is_resource($resource) && get_resource_type($resource) !== 'stream-context')
             throw new \InvalidArgumentException(sprintf(
-                'Invalid Resource As Argument, given: "%s".'
-                , is_object($resource) ? get_class($resource) : gettype($resource)
+                'Invalid Context Resource Passed, given: "%s".'
+                , \Poirot\Core\flatten($resource)
             ));
 
         $params = stream_context_get_params($resource);
