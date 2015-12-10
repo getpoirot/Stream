@@ -1,6 +1,7 @@
 <?php
 namespace Poirot\Stream;
 
+use Poirot\Stream\Context\BaseContext;
 use Poirot\Stream\Context\Socket\SocketContext;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iSResource;
@@ -181,13 +182,17 @@ class WrapperClient implements iWrapperClient
     /**
      * Context Options
      *
-     * @param iSContext $context
+     * @param iSContext|array|resource $context
      *
+     * @throws \InvalidArgumentException
      * @return $this
      */
-    function setContext(iSContext $context)
+    function setContext($context)
     {
-        $this->context = $context;
+        if ($context instanceof iSContext)
+            $this->context = $context;
+        else
+            $this->context = new BaseContext($context);
 
         return $this;
     }

@@ -20,7 +20,41 @@ interface iSContext extends iOptionImplement
      * @throws \Exception Wrapper not defined
      * @return string
      */
-    function _getWrapper();
+    function wrapperName();
+
+    /**
+     * Bind Another Context Along this
+     *
+     * [
+     *   'socket' => [
+     *     'bindto' => '192.168.0.100:7000',
+     *   ],
+     *   'http' => [
+     *      ...
+     *   ]
+     * ]
+     *
+     * @param iSContext|array|resource $context
+     *
+     * @return $this
+     */
+    function bindWith($context);
+
+    /**
+     * Context with specific wrapper has bind?
+     *
+     * @param string $wrapperName
+     *
+     * @return false|iSContext
+     */
+    function hasBind($wrapperName);
+
+    /**
+     * List of Wrapper Name Of Currently Bind Contexts
+     *
+     * @return array[ (string) wrapperName ]
+     */
+    function listBindContexts();
 
     /**
      * Set/Retrieves specific socket options
