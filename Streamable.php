@@ -184,7 +184,7 @@ class Streamable implements iStreamable
         $inByte = ($inByte === null)
             ?
             (
-                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+                ($this->getBuffer() === null) ? 0 : $this->getBuffer()
             )
             : $inByte;
 
