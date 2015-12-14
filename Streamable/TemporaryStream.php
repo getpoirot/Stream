@@ -22,10 +22,10 @@ class TemporaryStream extends Streamable
             ));
 
         $phpTmp  = new WrapperClient('php://temp', $openMode);
-        $this->setResource($phpTmp->getConnect());
+        ## set resource for this streamable
+        parent::__construct($phpTmp->getConnect());
 
         if (is_string($resource))
             $this->write($resource);
     }
 }
- 

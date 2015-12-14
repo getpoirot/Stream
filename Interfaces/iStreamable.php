@@ -80,7 +80,7 @@ interface iStreamable
      * @param string $ending
      * @param int    $inByte
      *
-     * @return string
+     * @return string|null
      */
     function readLine($ending = "\n", $inByte = null);
 

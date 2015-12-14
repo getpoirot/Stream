@@ -175,7 +175,7 @@ class Streamable implements iStreamable
      * @param string $ending
      * @param int    $inByte
      *
-     * @return string
+     * @return string|null
      */
     function readLine($ending = "\n", $inByte = null)
     {
@@ -191,7 +191,8 @@ class Streamable implements iStreamable
         $stream = $this->getResource()->getRHandler();
         $data   = stream_get_line($stream, $inByte, $ending);
         if (false === $data)
-            throw new \RuntimeException('Cannot read stream.');
+            return null;
+//            throw new \RuntimeException('Cannot read stream.');
 
         $transCount = mb_strlen($data, '8bit');
         $this->__resetTransCount($transCount);
