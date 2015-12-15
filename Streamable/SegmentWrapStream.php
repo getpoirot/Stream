@@ -91,6 +91,40 @@ class SegmentWrapStream extends Streamable
     }
 
     /**
+     * Gets line from stream resource up to a given delimiter
+     *
+     * Reading ends when length bytes have been read,
+     * when the string specified by ending is found
+     * (which is not included in the return value),
+     * or on EOF (whichever comes first)
+     *
+     * ! does not return the ending delimiter itself
+     *
+     * @param string $ending
+     * @param int    $inByte
+     *
+     * @return string|null
+     */
+    function readLine($ending = "\n", $inByte = null)
+    {
+        if ($this->getSegmentLimit() == -1)
+            return $this->_w__stream->readLine($ending, $inByte);
+
+        $inByte = ($inByte === null)
+            ?
+            (
+            ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
+            )
+            : $inByte;
+
+        $remain = $this->getSegmentLimit() - $this->getCurrOffset();
+        if ($remain > 0)
+            return $this->_w__stream->readLine($ending, min($remain, $inByte));
+
+        return null;
+    }
+
+    /**
      * Move the file pointer to a new position
      *
      * - The new position, measured in bytes from the beginning of the file,
@@ -132,6 +166,23 @@ class SegmentWrapStream extends Streamable
             $offset = $endOffset;
 
         return $this->_w__stream->seek($offset, $whence);
+    }
+
+    /**
+     * Move the file pointer to the beginning of the stream
+     *
+     * ! php doesn't support seek/rewind on non-local streams
+     *   we can using temp/cache piped stream.
+     *
+     * ! If you have opened the file in append ("a" or "a+") mode,
+     *   any data you write to the file will always be appended,
+     *   regardless of the file position.
+     *
+     * @return $this
+     */
+    function rewind()
+    {
+        return $this->seek(0);
     }
 
     /**
@@ -274,41 +325,6 @@ class SegmentWrapStream extends Streamable
     }
 
     /**
-     * Gets line from stream resource up to a given delimiter
-     *
-     * Reading ends when length bytes have been read,
-     * when the string specified by ending is found
-     * (which is not included in the return value),
-     * or on EOF (whichever comes first)
-     *
-     * ! does not return the ending delimiter itself
-     *
-     * @param string $ending
-     * @param int    $inByte
-     *
-     * @return string|null
-     */
-    function readLine($ending = "\n", $inByte = null)
-    {
-        return $this->_w__stream->readLine($ending, $inByte);
-    }
-
-    /**
-     * Writes the contents of string to the file stream
-     *
-     * @param string $content The string that is to be written
-     * @param int    $inByte  Writing will stop after length bytes
-     *                        have been written or the end of string
-     *                        is reached
-     *
-     * @return $this
-     */
-    function write($content, $inByte = null)
-    {
-        return $this->_w__stream->write($content, $inByte);
-    }
-
-    /**
      * Sends the specified data through the socket,
      * whether it is connected or not
      *
@@ -341,6 +357,21 @@ class SegmentWrapStream extends Streamable
     }
 
     /**
+     * Writes the contents of string to the file stream
+     *
+     * @param string $content The string that is to be written
+     * @param int    $inByte  Writing will stop after length bytes
+     *                        have been written or the end of string
+     *                        is reached
+     *
+     * @return $this
+     */
+    function write($content, $inByte = null)
+    {
+        return $this->_w__stream->write($content, $inByte);
+    }
+
+    /**
      * Get Total Count Of Bytes After Each Read/Write
      *
      * @return int
@@ -348,22 +379,5 @@ class SegmentWrapStream extends Streamable
     function getTransCount()
     {
         return $this->_w__stream->getTransCount();
-    }
-
-    /**
-     * Move the file pointer to the beginning of the stream
-     *
-     * ! php doesn't support seek/rewind on non-local streams
-     *   we can using temp/cache piped stream.
-     *
-     * ! If you have opened the file in append ("a" or "a+") mode,
-     *   any data you write to the file will always be appended,
-     *   regardless of the file position.
-     *
-     * @return $this
-     */
-    function rewind()
-    {
-        return $this->_w__stream->rewind();
     }
 }
