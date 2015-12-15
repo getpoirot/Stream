@@ -23,8 +23,11 @@ class AggregateStream extends Streamable
 
     /** @var AggregateResource */
     protected $resource;
+
+    /** @var int Current Offset */
+    protected $currOffset;
     /** @var int Current Stream */
-    public $_curr_stream__index = 0;
+    protected $_curr_stream__index = 0;
 
 
     /**
@@ -111,7 +114,7 @@ class AggregateStream extends Streamable
             : $maxByte;
 
         ## get current offset
-        $currOffset = $this->getResource()->getCurrOffset();
+        $currOffset = $this->getCurrOffset();
         $this->seek($offset);
 
         ## copy data
@@ -155,7 +158,7 @@ class AggregateStream extends Streamable
 
             $currStream = $this->streams[$this->_curr_stream__index];
             $result     = $currStream->read($inByte);
-            if ($result == null && $currStream->getResource()->isEOF()) {
+            if ($result == null && $currStream->isEOF()) {
                 ## loose comparison to match on '', false, and null
                 $this->_curr_stream__index++; ## next stream
                 continue;
@@ -175,7 +178,7 @@ class AggregateStream extends Streamable
 
         $this->__resetTransCount($transCount);
         ## move current offset in resource
-        $this->getResource()->currOffset += $this->getTransCount();
+        $this->currOffset += $this->getTransCount();
 
         return $rData;
     }
@@ -197,7 +200,7 @@ class AggregateStream extends Streamable
      */
     function readLine($ending = "\n", $inByte = null)
     {
-        $currOffset = $this->getResource()->getCurrOffset();
+        $currOffset = $this->getCurrOffset();
 
         $rData = $this->read($inByte);
         if (($i = strpos($rData, $ending)) !== false) {
@@ -319,11 +322,39 @@ class AggregateStream extends Streamable
             }
 
         // Seek to the actual position by reading from each stream
-        while ($this->getResource()->getCurrOffset() < $offset && !$this->getResource()->isEOF()) {
-            $result = $this->read(min(8096, $offset - $this->getResource()->getCurrOffset()));
+        while ($this->getCurrOffset() < $offset && !$this->isEOF()) {
+            $result = $this->read(min(8096, $offset - $this->getCurrOffset()));
             if ($result == null)
                 break;
         }
+    }
+
+    /**
+     * Get the position of the file pointer
+     *
+     * Note: Because PHP's integer type is signed and many platforms
+     *       use 32bit integers, some filesystem functions may return
+     *       unexpected results for files which are larger than 2GB.
+     *
+     * @return int
+     */
+    function getCurrOffset()
+    {
+        return $this->currOffset;
+    }
+
+    /**
+     * Is Stream Positioned At The End?
+     *
+     * @return boolean
+     */
+    function isEOF()
+    {
+        $streams = $this->streams;
+        return empty($streams) || (
+            $this->_curr_stream__index + 1 >= count($streams)
+            && $streams[$this->_curr_stream__index]->isEOF()
+        );
     }
 
     /**

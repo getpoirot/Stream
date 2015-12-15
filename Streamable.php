@@ -366,6 +366,20 @@ class Streamable implements iStreamable
     }
 
     /**
+     * Get the position of the file pointer
+     *
+     * Note: Because PHP's integer type is signed and many platforms
+     *       use 32bit integers, some filesystem functions may return
+     *       unexpected results for files which are larger than 2GB.
+     *
+     * @return int
+     */
+    function getCurrOffset()
+    {
+        return ftell($this->getResource()->getRHandler());
+    }
+
+    /**
      * Move the file pointer to the beginning of the stream
      *
      * ! php doesn't support seek/rewind on non-local streams
@@ -389,6 +403,15 @@ class Streamable implements iStreamable
         return $this;
     }
 
+    /**
+     * Is Stream Positioned At The End?
+     *
+     * @return boolean
+     */
+    function isEOF()
+    {
+        return feof($this->getResource()->getRHandler());
+    }
 
     // ...
 

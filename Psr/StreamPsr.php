@@ -143,7 +143,7 @@ class StreamPsr implements StreamInterface
         if (!$this->__assertUsable())
             throw new \RuntimeException('No resource available; cannot tell position');
 
-        return $this->stream->getResource()->getCurrOffset();
+        return $this->stream->getCurrOffset();
     }
 
     /**
@@ -156,7 +156,7 @@ class StreamPsr implements StreamInterface
         if (!$this->__assertUsable())
             return true;
 
-        return $this->stream->getResource()->isEOF();
+        return $this->stream->isEOF();
     }
 
     /**

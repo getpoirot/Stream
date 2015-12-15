@@ -8,9 +8,6 @@ use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 
 class AggregateResource implements iSResource
 {
-    /** @var int Current Offset */
-    public $currOffset;
-
     /**
      * Construct
      *
@@ -88,34 +85,6 @@ class AggregateResource implements iSResource
             $strm->getResource()->removeFilter($filter);
 
         return $this;
-    }
-
-    /**
-     * Get the position of the file pointer
-     *
-     * Note: Because PHP's integer type is signed and many platforms
-     *       use 32bit integers, some filesystem functions may return
-     *       unexpected results for files which are larger than 2GB.
-     *
-     * @return int
-     */
-    function getCurrOffset()
-    {
-        return $this->currOffset;
-    }
-
-    /**
-     * Is Stream Positioned At The End?
-     *
-     * @return boolean
-     */
-    function isEOF()
-    {
-        $streams = $this->_aggrStream->getIterator();
-        return empty($streams) || (
-            $this->_aggrStream->_curr_stream__index + 1 >= count($streams)
-            && $streams[$this->_aggrStream->_curr_stream__index]->isEOF()
-        );
     }
 
     /**

@@ -33,20 +33,20 @@ class SResource implements iSResource
      * ! the StreamInterface as argument can be used
      *   it will converted into resource by psr wrapper
      *
-     * @param resource|StreamInterface $rHandler
+     * @param resource|StreamInterface $sResource
      */
-    function __construct($rHandler)
+    function __construct($sResource)
     {
-        if ($rHandler instanceof StreamInterface)
-            $rHandler = SPsrWrapper::convertToResource($rHandler);
+        if ($sResource instanceof StreamInterface)
+            $sResource = SPsrWrapper::convertToResource($sResource);
 
-        if (!is_resource($rHandler))
+        if (!is_resource($sResource))
             throw new \InvalidArgumentException(sprintf(
                 '(%s) given instead of stream resource.',
-                \Poirot\Core\flatten($rHandler)
+                \Poirot\Core\flatten($sResource)
             ));
 
-        $this->rHandler = $rHandler;
+        $this->rHandler = $sResource;
     }
 
     /**
@@ -173,30 +173,6 @@ class SResource implements iSResource
         }
 
         return $this;
-    }
-
-    /**
-     * Get the position of the file pointer
-     *
-     * Note: Because PHP's integer type is signed and many platforms
-     *       use 32bit integers, some filesystem functions may return
-     *       unexpected results for files which are larger than 2GB.
-     *
-     * @return int
-     */
-    function getCurrOffset()
-    {
-        return ftell($this->getRHandler());
-    }
-
-    /**
-     * Is Stream Positioned At The End?
-     *
-     * @return boolean
-     */
-    function isEOF()
-    {
-        return feof($this->getRHandler());
     }
 
     /**

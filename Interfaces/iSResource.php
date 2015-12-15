@@ -76,20 +76,6 @@ interface iSResource
     // :
 
     /**
-     * Get the position of the file pointer
-     *
-     * @return int
-     */
-    function getCurrOffset();
-
-    /**
-     * Is Stream Positioned At The End?
-     *
-     * @return boolean
-     */
-    function isEOF();
-
-    /**
      * Checks If Stream Is Local One Or Not?
      *
      * @return boolean

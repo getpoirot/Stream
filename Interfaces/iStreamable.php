@@ -162,6 +162,13 @@ interface iStreamable
     function seek($offset, $whence = SEEK_SET);
 
     /**
+     * Get the position of the file pointer
+     *
+     * @return int
+     */
+    function getCurrOffset();
+
+    /**
      * Move the file pointer to the beginning of the stream
      *
      * ! php doesn't support seek/rewind on non-local streams
@@ -174,4 +181,11 @@ interface iStreamable
      * @return $this
      */
     function rewind();
+
+    /**
+     * Is Stream Positioned At The End?
+     *
+     * @return boolean
+     */
+    function isEOF();
 }
