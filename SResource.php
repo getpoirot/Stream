@@ -2,6 +2,7 @@
 namespace Poirot\Stream;
 
 use Poirot\Stream\Interfaces\Filter\iSFilter;
+use Poirot\Stream\Interfaces\Filter\iSUserFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 use Poirot\Stream\Psr\StreamInterface;
@@ -117,19 +118,10 @@ class SResource implements iSResource
      */
     function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
-        if (!SFilterManager::has($filter))
-            // register filter if not exists in registry
-            SFilterManager::register($filter);
-
-        $filterRes = stream_filter_append(
-            $this->getRHandler()
-            , $filter->getLabel()
-            , $rwFlag, $filter->options()->toArray()
-        );
+        $filterRes = $filter->appendTo($this);
 
         // store attached filter resource, so we can remove it from stream handler later
         $this->attachedFilters[$filter->getLabel()] = $filterRes;
-
         return $this;
     }
 
@@ -143,15 +135,10 @@ class SResource implements iSResource
      */
     function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
-        if (!SFilterManager::has($filter))
-            // register filter if not exists in registry
-            SFilterManager::register($filter);
-
-        $filterRes = stream_filter_prepend($this->getRHandler(), $filter->getLabel(), $rwFlag, $filter->params);
+        $filterRes = $filter->prependTo($this);
 
         // store attached filter resource, so we can remove it from stream handler later
         $this->attachedFilters[$filter->getLabel()] = $filterRes;
-
         return $this;
     }
 

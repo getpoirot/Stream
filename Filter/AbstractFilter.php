@@ -2,12 +2,12 @@
 namespace Poirot\Stream\Filter;
 
 use Poirot\Core\AbstractOptions;
-use Poirot\Core\Interfaces\iPoirotOptions;
 use Poirot\Core\OpenOptions;
-use Poirot\Stream\Interfaces\Filter\iSFilter;
+use Poirot\Stream\Interfaces\Filter\iSUserFilter;
 use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\SFilterManager;
 
-abstract class AbstractFilter implements iSFilter
+abstract class AbstractFilter implements iSUserFilter
 {
     /**
     * filter name passed to class
@@ -45,7 +45,7 @@ abstract class AbstractFilter implements iSFilter
      */
     function __construct($options = null)
     {
-        if ($options instanceof iPoirotOptions)
+        if ($options !== null)
             $this->options()->from($options);
     }
 
@@ -119,13 +119,22 @@ abstract class AbstractFilter implements iSFilter
      * @param iSResource $streamResource
      * @param int $rwFlag
      *
-     * @return $this
+     * @return resource
      */
     function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
-        $streamResource->appendFilter($this, $rwFlag);
+        if (!SFilterManager::has($this))
+            // register filter if not exists in registry
+            SFilterManager::register($this);
 
-        return $this;
+        $filterRes = stream_filter_append(
+            $streamResource->getRHandler()
+            , $this->getLabel()
+            , $rwFlag
+            , $this->options()->toArray()
+        );
+
+        return $filterRes;
     }
 
     /**
@@ -134,13 +143,22 @@ abstract class AbstractFilter implements iSFilter
      * @param iSResource $streamResource
      * @param int $rwFlag
      *
-     * @return $this
+     * @return resource
      */
     function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
-        $streamResource->prependFilter($this, $rwFlag);
+        if (!SFilterManager::has($this))
+            // register filter if not exists in registry
+            SFilterManager::register($this);
 
-        return $this;
+        $filterRes = stream_filter_prepend(
+            $streamResource->getRHandler()
+            , $this->getLabel()
+            , $rwFlag
+            , $this->options()->toArray()
+        );
+
+        return $filterRes;
     }
 
     /**
