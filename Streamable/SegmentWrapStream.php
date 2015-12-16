@@ -1,9 +1,7 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamable;
-use Poirot\Stream\SResource;
 use Poirot\Stream\Streamable;
 
 /**
