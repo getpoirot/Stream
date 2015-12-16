@@ -6,6 +6,18 @@ use Poirot\Core\OpenOptions;
 use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
+/*
+$socket = new StreamClient([
+    'socket_uri'    => 'tcp://google.com:80',
+    'time_out'      => 30,
+]);
+
+$resource = $socket->getConnect();
+$resource->appendFilter(new PhpRegisteredFilter('zlib.inflate'), STREAM_FILTER_READ);
+
+$stream   = new Streamable($resource);
+*/
+
 class PhpRegisteredFilter implements iSFilter
 {
     protected $label;
