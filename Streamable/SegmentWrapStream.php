@@ -11,8 +11,7 @@ use Poirot\Stream\Streamable;
  */
 class SegmentWrapStream extends Streamable
 {
-    /** @var iStreamable Wrapped Stream */
-    protected $_w__stream;
+    use StreamWrapTrait;
 
     protected $segmentOffset = 0;
     protected $segmentLimit  = -1;
@@ -27,7 +26,7 @@ class SegmentWrapStream extends Streamable
      */
     function __construct(iStreamable $streamable, $limit = -1, $offset = 0)
     {
-        $this->_w__stream = $streamable;
+        $this->_t__wrap_stream = $streamable;
 
         $this->setSegmentLimit($limit);
         $this->setSegmentOffset($offset);
@@ -56,9 +55,9 @@ class SegmentWrapStream extends Streamable
     {
         ## get real offset of wrapped stream
         $this->seek($offset);
-        $offset = $this->_w__stream->getCurrOffset();
+        $offset = $this->_t__wrap_stream->getCurrOffset();
 
-        return $this->_w__stream->pipeTo($destStream, $maxByte, $offset);
+        return $this->_t__wrap_stream->pipeTo($destStream, $maxByte, $offset);
     }
 
     /**
@@ -74,7 +73,7 @@ class SegmentWrapStream extends Streamable
     function read($inByte = null)
     {
         if ($this->getSegmentLimit() == -1)
-            return $this->_w__stream->read($inByte);
+            return $this->_t__wrap_stream->read($inByte);
 
         $inByte = ($inByte === null)
             ?
@@ -85,7 +84,7 @@ class SegmentWrapStream extends Streamable
 
         $remain = $this->getSegmentLimit() - $this->getCurrOffset();
         if ($remain > 0)
-            return $this->_w__stream->read(min($remain, $inByte));
+            return $this->_t__wrap_stream->read(min($remain, $inByte));
 
         return '';
     }
@@ -108,7 +107,7 @@ class SegmentWrapStream extends Streamable
     function readLine($ending = "\n", $inByte = null)
     {
         if ($this->getSegmentLimit() == -1)
-            return $this->_w__stream->readLine($ending, $inByte);
+            return $this->_t__wrap_stream->readLine($ending, $inByte);
 
         $inByte = ($inByte === null)
             ?
@@ -119,7 +118,7 @@ class SegmentWrapStream extends Streamable
 
         $remain = $this->getSegmentLimit() - $this->getCurrOffset();
         if ($remain > 0)
-            return $this->_w__stream->readLine($ending, min($remain, $inByte));
+            return $this->_t__wrap_stream->readLine($ending, min($remain, $inByte));
 
         return null;
     }
@@ -147,13 +146,13 @@ class SegmentWrapStream extends Streamable
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->_w__stream->getResource()->isSeekable()) {
-            $cur = $this->_w__stream->getCurrOffset();
+        if (!$this->_t__wrap_stream->getResource()->isSeekable()) {
+            $cur = $this->_t__wrap_stream->getCurrOffset();
             if ($cur > $this->getSegmentOffset())
                 throw new \RuntimeException('Could not seek to stream offset.');
 
             ## when stream is not seekable read til offset
-            $this->_w__stream->read($offset);
+            $this->_t__wrap_stream->read($offset);
             return $this;
         }
 
@@ -165,7 +164,7 @@ class SegmentWrapStream extends Streamable
         )
             $offset = $endOffset;
 
-        return $this->_w__stream->seek($offset, $whence);
+        return $this->_t__wrap_stream->seek($offset, $whence);
     }
 
     /**
@@ -196,7 +195,7 @@ class SegmentWrapStream extends Streamable
      */
     function getCurrOffset()
     {
-        return $this->_w__stream->getCurrOffset() - $this->getSegmentOffset();
+        return $this->_t__wrap_stream->getCurrOffset() - $this->getSegmentOffset();
     }
 
     /**
@@ -206,14 +205,14 @@ class SegmentWrapStream extends Streamable
      */
     function isEOF()
     {
-        if ($this->_w__stream->isEOF())
+        if ($this->_t__wrap_stream->isEOF())
             ## wrap stream is on the end
             return true;
 
         if ($this->getSegmentLimit() == -1)
             return false;
 
-        return ($this->_w__stream->getCurrOffset() >= $this->getSegmentOffset() + $this->getSegmentLimit());
+        return ($this->_t__wrap_stream->getCurrOffset() >= $this->getSegmentOffset() + $this->getSegmentLimit());
     }
 
     /**
@@ -223,7 +222,7 @@ class SegmentWrapStream extends Streamable
      */
     function getSize()
     {
-        $size = $this->_w__stream->getSize();
+        $size = $this->_t__wrap_stream->getSize();
         if ($size !== null) {
             $segmentSize = $size - $this->getSegmentOffset();
             $size = ($this->getSegmentLimit() == -1)
@@ -272,112 +271,5 @@ class SegmentWrapStream extends Streamable
     public function getSegmentOffset()
     {
         return $this->segmentOffset;
-    }
-
-    // Wrap:
-
-    /**
-     * Set Stream Handler Resource
-     *
-     * @param iSResource $resource
-     *
-     * @return $this
-     */
-    function setResource(iSResource $resource)
-    {
-        return $this->_w__stream->setResource($resource);
-    }
-
-    /**
-     * Get Stream Handler Resource
-     *
-     * @return SResource|iSResource
-     */
-    function getResource()
-    {
-        return $this->_w__stream->getResource();
-    }
-
-    /**
-     * Set R/W Buffer Size
-     *
-     * @param int|null $buffer
-     *
-     * @return $this
-     */
-    function setBuffer($buffer)
-    {
-        return $this->_w__stream->setBuffer($buffer);
-    }
-
-    /**
-     * Get Current R/W Buffer Size
-     *
-     * - usually null mean all stream content
-     * - used as default $inByte argument value on
-     *   read/write methods
-     *
-     * @return int|null
-     */
-    function getBuffer()
-    {
-        return $this->_w__stream->getBuffer();
-    }
-
-    /**
-     * Sends the specified data through the socket,
-     * whether it is connected or not
-     *
-     * @param string   $data  The data to be sent
-     * @param int|null $flags Provides a RDM (Reliably-delivered messages) socket
-     *                        The value of flags can be any combination of the following:
-     *                        - STREAM_SOCK_RDM
-     *                        - STREAM_PEEK
-     *                        - STREAM_OOB       process OOB (out-of-band) data
-     *                        - null             auto choose the value
-     *
-     * @return $this
-     */
-    function sendData($data, $flags = null)
-    {
-        return $this->_w__stream->sendData($data, $flags);
-    }
-
-    /**
-     * Receives data from a socket, connected or not
-     *
-     * @param int $maxByte
-     * @param int $flags
-     *
-     * @return string
-     */
-    function receiveFrom($maxByte, $flags = STREAM_OOB)
-    {
-        return $this->_w__stream->receiveFrom($maxByte, $flags);
-    }
-
-    /**
-     * Writes the contents of string to the file stream
-     *
-     * @param string $content The string that is to be written
-     * @param int    $inByte  Writing will stop after length bytes
-     *                        have been written or the end of string
-     *                        is reached
-     *
-     * @return $this
-     */
-    function write($content, $inByte = null)
-    {
-        return $this->_w__stream->write($content, $inByte);
-    }
-
-    /**
-     * Get Total Count Of Bytes After Each Read/Write
-     *
-     * @return int
-     */
-    function getTransCount()
-    {
-        return $this->_w__stream->getTransCount();
     }
 }
