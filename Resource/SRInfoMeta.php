@@ -70,6 +70,8 @@ class SRInfoMeta implements iSResMetaReader
      */
     function getMetaKey($key, $default = null)
     {
+        $this->assertMetaData();
+
         if (isset($this->__metaData[$key]))
             return $this->__metaData[$key];
 
