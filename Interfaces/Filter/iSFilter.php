@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Filter;
 
-use Poirot\Core\Interfaces\OptionsProviderInterface;
+use Poirot\Core\Interfaces\iOptionsProvider;
 use Poirot\Stream\Interfaces\iSResource;
 
 /**
@@ -14,7 +14,7 @@ use Poirot\Stream\Interfaces\iSResource;
  * Separately on each action
  *
  */
-interface iSFilter extends OptionsProviderInterface
+interface iSFilter extends iOptionsProvider
 {
     /**
      * Filter processed successfully with data available in the out bucket

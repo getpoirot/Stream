@@ -35,7 +35,7 @@ class PhpRegisteredFilter implements iSFilter
         $this->label = $filtername;
 
         if ($options !== null)
-            $this->options()->from($options);
+            $this->inOptions()->from($options);
     }
 
     /**
@@ -104,10 +104,10 @@ class PhpRegisteredFilter implements iSFilter
     /**
      * @return OpenOptions
      */
-    function options()
+    function inOptions()
     {
         if (!$this->options)
-            $this->options = self::optionsIns();
+            $this->options = self::newOptions();
 
         return $this->options;
     }
@@ -126,7 +126,7 @@ class PhpRegisteredFilter implements iSFilter
      *
      * @return OpenOptions
      */
-    static function optionsIns()
+    static function newOptions()
     {
         return new OpenOptions;
     }

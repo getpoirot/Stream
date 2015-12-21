@@ -37,9 +37,9 @@ class SocketContext extends AbstractContext
      *
      * @return SCSocketOptions
      */
-    function options()
+    function inOptions()
     {
-        return parent::options();
+        return parent::inOptions();
     }
 
     /**
@@ -56,7 +56,7 @@ class SocketContext extends AbstractContext
      *
      * @return SCSocketOptions
      */
-    static function optionsIns()
+    static function newOptions()
     {
         return new SCSocketOptions;
     }

@@ -2,7 +2,7 @@
 namespace Poirot\Stream\Wrapper;
 
 use Poirot\Core\AbstractOptions;
-use Poirot\Core\Interfaces\OptionsProviderInterface;
+use Poirot\Core\Interfaces\iOptionsProvider;
 use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
 use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
 
@@ -42,7 +42,7 @@ class AccessControlWrapper extends AbstractWrapper
     function __construct($options = null)
     {
        if ($options !== null)
-           $this->options()->from($options);
+           $this->inOptions()->from($options);
     }
 
     /**
@@ -60,9 +60,9 @@ class AccessControlWrapper extends AbstractWrapper
     /**
      * @return ACWOptions
      */
-    function options()
+    function inOptions()
     {
-        return parent::options();
+        return parent::inOptions();
     }
 
     /**
@@ -79,7 +79,7 @@ class AccessControlWrapper extends AbstractWrapper
      *
      * @return ACWOptions
      */
-    static function optionsIns()
+    static function newOptions()
     {
         return new ACWOptions;
     }
@@ -88,13 +88,13 @@ class AccessControlWrapper extends AbstractWrapper
 
     protected function assertReadAccess()
     {
-        if (!$this->options()->getPermissions()->hasReadAccess())
+        if (!$this->inOptions()->getPermissions()->hasReadAccess())
             throw new \Exception('Access Was Denied On Reading.');
     }
 
     protected function assertWriteAccess()
     {
-        if (!$this->options()->getPermissions()->hasWriteAccess())
+        if (!$this->inOptions()->getPermissions()->hasWriteAccess())
             throw new \Exception('Access Was Denied On Writing.');
     }
 

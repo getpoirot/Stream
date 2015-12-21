@@ -35,7 +35,7 @@ class BaseContext extends AbstractContext
     {
         if ($wrapper instanceof iSWrapper) {
             $this->wrapper = $wrapper->getLabel();
-            $this->options()->from($wrapper->options());
+            $this->inOptions()->from($wrapper->inOptions());
         } elseif(is_string($wrapper))
             $this->wrapper = $wrapper;
         else

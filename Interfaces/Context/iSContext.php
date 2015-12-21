@@ -64,7 +64,7 @@ interface iSContext extends iOptionImplement
      *
      * @return iPoirotOptions
      */
-    function options();
+    function inOptions();
 
     /**
      * Set Options From Context Resource

@@ -26,9 +26,9 @@ class HttpContext extends AbstractContext
      *
      * @return SCHttpOptions
      */
-    function options()
+    function inOptions()
     {
-        return parent::options();
+        return parent::inOptions();
     }
 
     /**
@@ -45,7 +45,7 @@ class HttpContext extends AbstractContext
      *
      * @return SCHttpOptions
      */
-    static function optionsIns()
+    static function newOptions()
     {
         return new SCHttpOptions;
     }

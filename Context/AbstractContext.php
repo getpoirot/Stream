@@ -5,7 +5,7 @@ use Poirot\Core;
 use Poirot\Core\AbstractOptions;
 use Poirot\Core\Interfaces\iOptionImplement;
 use Poirot\Core\Interfaces\iPoirotOptions;
-use Poirot\Core\Interfaces\OptionsProviderInterface;
+use Poirot\Core\Interfaces\iOptionsProvider;
 use Poirot\Core\OpenOptions;
 use Poirot\Stream\Interfaces\Context\iSContext;
 
@@ -14,7 +14,7 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 abstract class AbstractContext extends AbstractOptions
     implements
     iSContext,
-    OptionsProviderInterface
+    iOptionsProvider
 {
     protected $wrapper = null;
 
@@ -166,10 +166,10 @@ abstract class AbstractContext extends AbstractOptions
      *
      * @return OpenOptions
      */
-    function options()
+    function inOptions()
     {
         if (!$this->options)
-            $this->options = static::optionsIns();
+            $this->options = static::newOptions();
 
         return $this->options;
     }
@@ -188,7 +188,7 @@ abstract class AbstractContext extends AbstractOptions
      *
      * @return OpenOptions
      */
-    static function optionsIns()
+    static function newOptions()
     {
         return new OpenOptions;
     }
@@ -298,7 +298,7 @@ abstract class AbstractContext extends AbstractOptions
             /** @var iSContext $context */
             $wrapper = $context->wrapperName();
             if (isset($opts[$wrapper])) {
-                $context->options()->fromArray($opts[$wrapper]);
+                $context->inOptions()->fromArray($opts[$wrapper]);
                 unset($params[$wrapper]);
             }
         }
@@ -329,7 +329,7 @@ abstract class AbstractContext extends AbstractOptions
         $return = parent::fromSimilar($context);
 
         // assimilate options
-        $this->options()->fromSimilar($context->options());
+        $this->inOptions()->fromSimilar($context->inOptions());
 
         // bind contexts
         foreach($context->listBindContexts() as $wrapper)
@@ -371,7 +371,7 @@ abstract class AbstractContext extends AbstractOptions
         /** @var AbstractContext $context */
         while ($context = array_shift($bindContexts)) {
             $wrapper = $context->wrapperName();
-            $options['options'][$wrapper] = $context->options()->toArray();
+            $options['options'][$wrapper] = $context->inOptions()->toArray();
 
             $ops = &$options['options'][$wrapper];
             foreach ($ops as $key => &$p) {

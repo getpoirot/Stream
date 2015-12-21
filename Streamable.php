@@ -417,8 +417,8 @@ class Streamable implements iStreamable
 
     protected function __assertStreamAlive()
     {
-        if (!$this->getResource()->isAlive())
-            throw new \Exception('Cannot seek on a closed stream');
+        if (!$this->getResource()->isAlive() || $this->getResource()->meta()->isTimedOut())
+            throw new \Exception('Stream is not alive it can be closed or timeout.');
     }
 
     protected function __assertSeekable()

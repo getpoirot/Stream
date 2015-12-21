@@ -51,10 +51,10 @@ abstract class AbstractWrapper
     /**
      * @return AbstractOptions
      */
-    function options()
+    function inOptions()
     {
         if (!$this->options)
-            $this->options = self::optionsIns();
+            $this->options = self::newOptions();
 
         if ($this->context) {
             ## set options from injected context
@@ -81,7 +81,7 @@ abstract class AbstractWrapper
      *
      * @return AbstractOptions
      */
-    static function optionsIns()
+    static function newOptions()
     {
         return new OpenOptions;
     }
