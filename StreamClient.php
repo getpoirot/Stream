@@ -49,6 +49,8 @@ if ($response->plugin()->status()->isSuccess())
 
 */
 
+// TODO Implement Async
+
 class StreamClient implements iStreamClient
 {
     use BuilderSetterTrait;
