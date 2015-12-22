@@ -113,13 +113,18 @@ class Streamable implements iStreamable
             )
             : $maxByte;
 
-        $count = stream_copy_to_stream(
-            $this->getResource()->getRHandler()
-            , $destStream->getResource()->getRHandler()
-            , $maxByte
-            , $offset
-        );
+        $currOffset = $this->getCurrOffset();
 
+        // TODO implement maxbyte
+
+        $this->seek($offset);
+        $count = 0;
+        while($data = $this->read(1024)) {
+            $destStream->write($data);
+            $count += $destStream->getTransCount();
+        }
+
+        $this->seek($currOffset);
         $this->__resetTransCount($count);
 
         return $this;
