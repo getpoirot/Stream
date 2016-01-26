@@ -11,6 +11,9 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 
 !defined('POIROT_CORE_LOADED') and include_once 'Core.php';
 
+/**
+ * TODO contexts
+ */
 abstract class AbstractContext extends OpenOptions
     implements
     iSContext,
