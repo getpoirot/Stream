@@ -199,6 +199,9 @@ abstract class AbstractContext extends AbstractOptions
      * $cntx->socket->setBindTo(..)
      * $cntx->http->setConnection(...)
      *
+     * TODO
+     * $cntx->setSocket(['bindTo' => ..])
+     * $cntx->setHttp(['connection' => ..])
      */
     function __call($method, $args)
     {
