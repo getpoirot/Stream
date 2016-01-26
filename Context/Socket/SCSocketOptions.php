@@ -2,8 +2,9 @@
 namespace Poirot\Stream\Context\Socket;
 
 use Poirot\Core\AbstractOptions;
+use Poirot\Core\OpenOptions;
 
-class SCSocketOptions extends AbstractOptions
+class SCSocketOptions extends OpenOptions
 {
     protected $bindto;
     protected $backlog;

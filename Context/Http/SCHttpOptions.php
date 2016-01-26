@@ -2,8 +2,9 @@
 namespace Poirot\Stream\Context\Http;
 
 use Poirot\Core\AbstractOptions;
+use Poirot\Core\OpenOptions;
 
-class SCHttpOptions extends AbstractOptions
+class SCHttpOptions extends OpenOptions
 {
     /**
      * @var string
