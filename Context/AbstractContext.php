@@ -358,6 +358,12 @@ abstract class AbstractContext extends OpenOptions
      */
     function fromResource($resource)
     {
+        if (!is_resource($resource) && get_resource_type($resource) !== 'stream-context')
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid Context Resource Passed, given: "%s".'
+                , \Poirot\Core\flatten($resource)
+            ));
+
         $this->bindWith($resource);
         return $this;
     }
