@@ -11,9 +11,8 @@ class TemporaryStream extends Streamable
      * Construct
      *
      * @param null|string          $resource
-     * @param iSRAccessMode|string $openMode
      */
-    function __construct($resource = null, $openMode = iSRAccessMode::MODE_RWB)
+    function __construct($resource = null)
     {
         if ($resource !== null && !is_string($resource))
             throw new \InvalidArgumentException(sprintf(
@@ -21,7 +20,7 @@ class TemporaryStream extends Streamable
                 , \Poirot\Core\flatten($resource)
             ));
 
-        $phpTmp  = new WrapperClient('php://temp', $openMode);
+        $phpTmp  = new WrapperClient('php://temp', iSRAccessMode::MODE_RWB);
         ## set resource for this streamable
         parent::__construct($phpTmp->getConnect());
 
