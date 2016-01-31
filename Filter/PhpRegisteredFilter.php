@@ -77,7 +77,7 @@ class PhpRegisteredFilter implements iSFilter
     function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag);
+        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag, $this->inOptions()->toArray());
 
         return $resource;
     }
@@ -93,7 +93,7 @@ class PhpRegisteredFilter implements iSFilter
     function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag);
+        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag, $this->inOptions()->toArray());
 
         return $resource;
     }
