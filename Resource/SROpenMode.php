@@ -65,6 +65,11 @@ class SROpenMode implements iSRAccessMode
     /**
      * Set From String
      *
+     * [code:]
+     *  fromString('bRWB');
+     *  fromString('bw+');
+     * [code]
+     *
      * - reset object
      *
      * @param string $modStr
@@ -87,10 +92,11 @@ class SROpenMode implements iSRAccessMode
             $modStr = str_replace('b', '', $modStr); // remove binary sign
         }
 
+        // default modes (r+):
+        $modXXX = array_search(strtolower($modStr), $this->mode_available);
 
-        // Setup Object:
-        $modXXX = strtoupper($modStr);
-
+        // Mode XXX (RWB):
+        $modXXX = ($modXXX!==false) ? $modXXX : strtoupper($modStr);
         for($i=0; $i < strlen($modXXX); $i++) {
             $c = $modXXX[$i];
             switch ($c) {

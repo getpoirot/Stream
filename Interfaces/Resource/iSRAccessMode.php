@@ -18,14 +18,14 @@ interface iSRAccessMode
     ++*/
     const MODE_RB    = 'r' ;
     const MODE_RWB   = 'r+';
-    const MODE_WBCT  = 'W' ;
-    const MODE_RWBCT = 'W+';
+    const MODE_WBCT  = 'w' ;
+    const MODE_RWBCT = 'w+';
     const MODE_WAC   = 'a' ;
     const MODE_RWAC  = 'a+';
-    const MODE_WBX   = 'X' ;
-    const MODE_RWBX  = 'X+';
-    const MODE_WBC   = 'C' ;
-    const MODE_RWBC  = 'C+';
+    const MODE_WBX   = 'x' ;
+    const MODE_RWBX  = 'x+';
+    const MODE_WBC   = 'c' ;
+    const MODE_RWBC  = 'c+';
 
     /**
      * Construct
