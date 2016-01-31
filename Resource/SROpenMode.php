@@ -79,12 +79,6 @@ class SROpenMode implements iSRAccessMode
      */
     function fromString($modStr)
     {
-        if (!is_string($modStr) || empty($modStr) || strlen($modStr) > 3)
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid Open Mode Format For "%s".',
-                $modStr
-            ));
-
         $this->__reset();
 
         if (strpos($modStr, 'b') !== false) {
