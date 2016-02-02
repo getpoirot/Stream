@@ -146,7 +146,7 @@ abstract class AbstractContext extends OpenOptions
      */
     public function setNotification($notification)
     {
-        if (!is_callable($notification))
+        if ($notification !== null && !is_callable($notification))
             throw new \InvalidArgumentException('Notification handler must be a callable.');
 
         $this->notification = $notification;
