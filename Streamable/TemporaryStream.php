@@ -1,19 +1,25 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
 use Poirot\Stream\Resource\SROpenMode;
 use Poirot\Stream\Streamable;
 use Poirot\Stream\WrapperClient;
 
 class TemporaryStream extends Streamable
 {
+    /** @see http://php.net/manual/en/wrappers.php.php */
+    const PHP_MEMORY = 'php://memory';
+    const PHP_TEMP   = 'php://temp';
+
     /**
      * Construct
      *
-     * @param null|string          $resource
+     * @param null|string $resource
+     * @param string      $io
+     *
+     * @throws \Exception
      */
-    function __construct($resource = null)
+    function __construct($resource = null, $io = self::PHP_MEMORY)
     {
         if ($resource !== null && !is_string($resource))
             throw new \InvalidArgumentException(sprintf(
