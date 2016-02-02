@@ -56,12 +56,12 @@ interface iStreamClient extends iStreamCommon
      *
      * @return $this
      */
-    function setPersistent($flag = true);
+    function setPersist($flag = true);
 
     /**
      * Indicate Is Connection Have To Built On Persistent Mode
      *
      * @return boolean
      */
-    function isPersistent();
+    function isPersist();
 }
