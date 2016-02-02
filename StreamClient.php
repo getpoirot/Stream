@@ -55,29 +55,19 @@ class StreamClient implements iStreamClient
 {
     use BuilderSetterTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $socketUri;
-
-    /**
-     * @var float
-     */
+    /** @var float */
     protected $timeout;
-
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     protected $persistent;
-
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     protected $noneBlocking;
+    /** @var boolean */
+    protected $async;
 
-    /**
-     * @var iSContext
-     */
+
+    /** @var iSContext */
     protected $context;
 
     /** @var iSResource */
@@ -299,9 +289,9 @@ class StreamClient implements iStreamClient
         // persistence
         $flags = STREAM_CLIENT_CONNECT;
         (!$this->isPersistent()) ?: $flags |= STREAM_CLIENT_PERSISTENT;
-
         // asynchronous
-        STREAM_CLIENT_ASYNC_CONNECT;
+        (!$this->isAsync()) ?: $flags |= STREAM_CLIENT_ASYNC_CONNECT;
+
 
         // get connect to resource:
         $errstr = $errno = null;
@@ -421,6 +411,23 @@ class StreamClient implements iStreamClient
         return $this->noneBlocking;
     }
 
+    /**
+     * @param boolean $async
+     * @return $this
+     */
+    function setAsync($async = true)
+    {
+        $this->async = (boolean) $async;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    function isAsync()
+    {
+        return $this->async;
+    }
 
     // ...
 
