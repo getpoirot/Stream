@@ -15,7 +15,7 @@ $socket = new StreamClient([
     'time_out'      => 30,
     'persistent'    => true,
     'none_blocking' => true,
-    'when_resource' => ['dump_debug' => function($resource) {kd($resource);}],
+    'on_resource'   => ['dump_debug' => function($resource) {kd($resource);}],
 ]);
 
 $conn   = $socket->getConnect();
@@ -105,7 +105,7 @@ class StreamClient implements iStreamClient
      *
      * @return OpenCall
      */
-    function whenResourceAvailable()
+    function onResourceAvailable()
     {
         if (!$this->_on__resource_connected)
             $this->_on__resource_connected = new OpenCall($this);
@@ -116,17 +116,17 @@ class StreamClient implements iStreamClient
     /**
      * Proxy to StreamClient::whenResourceAvailable for setupFromArray
      *
-     * ['when_resource' =>
+     * ['on_resource' =>
      *   ['method_name' => \Closure],
      *   ['method_name', \Closure],
      * ]
      *
      * @param $methods
      */
-    protected function setWhenResource(array $methods)
+    protected function setOnResource(array $methods)
     {
         if ( count($methods) <= 2 && array_filter($methods, function($item) { return is_callable($item); }) )
-            ##! 'when_resource' => ['dump_debug' => function($resource) {k($resource);}]
+            ##! 'on_resource' => ['dump_debug' => function($resource) {k($resource);}]
             $methods = [$methods];
 
         foreach($methods as $method) {
@@ -145,7 +145,7 @@ class StreamClient implements iStreamClient
             if ($name === null)
                 throw new \InvalidArgumentException('Unknown Method Type Provided For '.\Poirot\Core\flatten($method));
 
-            $this->whenResourceAvailable()->addMethod($name, $fn);
+            $this->onResourceAvailable()->addMethod($name, $fn);
         }
     }
 
@@ -232,8 +232,8 @@ class StreamClient implements iStreamClient
         );
 
         // Fire up registered methods on resource
-        foreach($this->whenResourceAvailable()->listMethods() as $method)
-            call_user_func([$this->whenResourceAvailable(), $method], $resource);
+        foreach($this->onResourceAvailable()->listMethods() as $method)
+            call_user_func([$this->onResourceAvailable(), $method], $resource);
 
         $error = ErrorStack::handleDone();
         if ($error)
