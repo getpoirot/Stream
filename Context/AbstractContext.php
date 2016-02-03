@@ -11,9 +11,6 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 
 !defined('POIROT_CORE_LOADED') and include_once 'Core.php';
 
-/**
- * TODO contexts
- */
 abstract class AbstractContext extends OpenOptions
     implements
     iSContext,
@@ -121,7 +118,10 @@ abstract class AbstractContext extends OpenOptions
      */
     function hasBind($wrapperName)
     {
-        return array_key_exists(strtolower($wrapperName), $this->bindContexts);
+        $normalized = strtolower($wrapperName);
+        return (array_key_exists($normalized, $this->bindContexts))
+            ? $this->bindContexts[$normalized]
+            : false;
     }
 
     /**
