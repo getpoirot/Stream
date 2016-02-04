@@ -124,10 +124,12 @@ class PhpRegisteredFilter implements iSFilter
      *      $class = new Filesystem($opt);
      *   [/php]
      *
+     * @param null|mixed $builder Builder Options as Constructor
+     *
      * @return OpenOptions
      */
-    static function newOptions()
+    static function newOptions($builder = null)
     {
-        return new OpenOptions;
+        return new OpenOptions($builder);
     }
 }

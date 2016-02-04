@@ -8,15 +8,18 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 trait StreamClientOptionsTrait
 {
     /** @var string */
-    protected $socketUri;
+    protected $socketUri    = VOID;
+
+    // default options
+
     /** @var float */
-    protected $timeout;
+    protected $timeout      = 20;
     /** @var boolean */
-    protected $persist;
+    protected $persist      = false;
     /** @var boolean */
-    protected $noneBlocking;
+    protected $noneBlocking = false;
     /** @var boolean */
-    protected $async;
+    protected $async        = false;
     /** @var iSContext */
     protected $context;
 
@@ -34,7 +37,6 @@ trait StreamClientOptionsTrait
     function setSocketUri($socketUri)
     {
         $this->socketUri = $socketUri;
-
         return $this;
     }
 
@@ -61,7 +63,7 @@ trait StreamClientOptionsTrait
         if ($context instanceof iSContext)
             $this->context = $context;
         else
-            $this->context = new BaseContext($context);
+            $this->getContext()->from($context);
 
         return $this;
     }
@@ -91,7 +93,6 @@ trait StreamClientOptionsTrait
     function setTimeout($seconds)
     {
         $this->timeout = $seconds;
-
         return $this;
     }
 
@@ -119,7 +120,6 @@ trait StreamClientOptionsTrait
     function setPersist($flag = true)
     {
         $this->persist = (boolean) $flag;
-
         return $this;
     }
 
@@ -146,7 +146,6 @@ trait StreamClientOptionsTrait
     function setNoneBlocking($flag = true)
     {
         $this->noneBlocking = (boolean) $flag;
-
         return $this;
     }
 

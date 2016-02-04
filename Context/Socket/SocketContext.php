@@ -54,9 +54,11 @@ class SocketContext extends AbstractContext
      *      $class = new Filesystem($opt);
      *   [/php]
      *
+     * @param null|mixed $builder Builder Options as Constructor
+     *
      * @return SCSocketOptions
      */
-    static function newOptions()
+    static function newOptions($builder = null)
     {
         return new SCSocketOptions;
     }
