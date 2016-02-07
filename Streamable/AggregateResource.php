@@ -196,12 +196,13 @@ class AggregateResource implements iSResource
     /**
      * Meta Data About Handler
      *
-     * @throws \Exception
-     * @return iSResMetaReader
+     * - meta may not available for some streams
+     *   so it must return false
+     *
+     * @return iSResMetaReader|false
      */
     function meta()
     {
-        throw new \Exception('Meta not available fo Aggregate Streams.');
+        return false;
     }
 }
- 

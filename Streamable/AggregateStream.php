@@ -40,10 +40,15 @@ class AggregateStream extends Streamable
         if ($streams !== null)
             foreach($streams as $strm)
                 $this->addStream($strm);
+
+        parent::__construct(null); // no resource
     }
 
     /**
      * Append Stream
+     *
+     * // TODO rewind stream if possible
+     * // TODO tag stream by name for reading seek
      *
      * @param iStreamable $stream
      *
@@ -308,7 +313,7 @@ class AggregateStream extends Streamable
             throw new \RuntimeException('The AggregateStream can only seek with SEEK_SET.');
 
 
-        $this->getResource()->currOffset = $this->_curr_stream__index = 0;
+        $this->currOffset = $this->_curr_stream__index = 0;
 
         // Rewind each stream
         foreach ($this->streams as $i => $stream)
@@ -327,6 +332,8 @@ class AggregateStream extends Streamable
             if ($result == null)
                 break;
         }
+
+        return $this;
     }
 
     /**
@@ -371,7 +378,7 @@ class AggregateStream extends Streamable
      */
     function rewind()
     {
-        $this->seek(0);
+        return $this->seek(0);
     }
 
 

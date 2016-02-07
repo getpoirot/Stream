@@ -36,7 +36,10 @@ interface iSResource
     /**
      * Meta Data About Handler
      *
-     * @return iSResMetaReader
+     * - meta may not available for some streams
+     *   so it must return false
+     *
+     * @return iSResMetaReader|false
      */
     function meta();
 
