@@ -49,11 +49,11 @@ interface iStreamable
      *
      * @param iStreamable $destStream The destination stream
      * @param null        $maxByte    Maximum bytes to copy
-     * @param int         $offset     The offset where to start to copy data
+     * @param int         $offset     The offset where to start to copy data, null mean current
      *
      * @return $this
      */
-    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0);
+    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = null);
     
     /**
      * Read Data From Stream

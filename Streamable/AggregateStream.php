@@ -94,45 +94,6 @@ class AggregateStream extends Streamable
     }
 
     /**
-     * Copies Data From One Stream To Another
-     *
-     * - If maxlength is not specified,
-     *   all remaining content in source will be copied
-     *
-     * - reset and count into transCount
-     *
-     * @param iStreamable $destStream The destination stream
-     * @param null $maxByte Maximum bytes to copy
-     * @param int $offset The offset where to start to copy data
-     *
-     * @return $this
-     */
-    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0)
-    {
-        $this->__assertStreamAlive();
-
-        $maxByte = ($maxByte === null)
-            ?
-            (
-                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
-            )
-            : $maxByte;
-
-        ## get current offset
-        $currOffset = $this->getCurrOffset();
-        $this->seek($offset);
-
-        ## copy data
-        $data  = $this->read($maxByte);
-        $destStream->write($data);
-        $this->__resetTransCount($destStream->getTransCount());
-
-        ## get back to current offset
-        $this->seek($currOffset);
-        return $this;
-    }
-
-    /**
      * Read Data From Stream
      *
      * - if $inByte argument not set, read entire stream

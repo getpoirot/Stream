@@ -98,11 +98,11 @@ class Streamable implements iStreamable
      *
      * @param iStreamable $destStream The destination stream
      * @param null        $maxByte    Maximum bytes to copy
-     * @param int         $offset     The offset where to start to copy data
+     * @param int         $offset     The offset where to start to copy data, null mean current
      *
      * @return $this
      */
-    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0)
+    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = null)
     {
         $this->__assertStreamAlive();
 
@@ -113,19 +113,14 @@ class Streamable implements iStreamable
             )
             : $maxByte;
 
-        $currOffset = $this->getCurrOffset();
 
-        // TODO implement maxbyte
+        if ($offset !== null)
+            $this->seek($offset);
 
-        $this->seek($offset);
-        $count = 0;
-        while($data = $this->read(1024)) {
-            $destStream->write($data);
-            $count += $destStream->getTransCount();
-        }
-
-        $this->seek($currOffset);
-        $this->__resetTransCount($count);
+        ## copy data
+        $data  = $this->read($maxByte);
+        $destStream->write($data);
+        $this->__resetTransCount($destStream->getTransCount());
 
         return $this;
     }
@@ -427,8 +422,9 @@ class Streamable implements iStreamable
                 $this->getResource()->meta()
                 && $this->getResource()->meta()->isTimedOut()
             )
-        )
+        ) {
             throw new \Exception('Stream is not alive it can be closed or timeout.');
+        }
     }
 
     protected function __assertSeekable()
