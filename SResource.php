@@ -2,7 +2,6 @@
 namespace Poirot\Stream;
 
 use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\Filter\iSUserFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 use Poirot\Stream\Psr\StreamInterface;
