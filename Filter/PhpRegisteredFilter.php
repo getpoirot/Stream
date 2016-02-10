@@ -18,6 +18,11 @@ $resource->appendFilter(new PhpRegisteredFilter('zlib.inflate'), STREAM_FILTER_R
 $stream   = new Streamable($resource);
 */
 
+/**
+ * !! If you just add an zlib.inflate filter to a stream, it's not going to work.
+ * You have to skip the first two bytes before attaching the filter.
+ */
+
 class PhpRegisteredFilter implements iSFilter
 {
     protected $label;
