@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Wrapper\AccessControl;
 
-use Poirot\Core\AbstractOptions;
+use Poirot\Std\AbstractOptions;
 
 class ACWOptions extends AbstractOptions
 {

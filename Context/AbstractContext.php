@@ -1,12 +1,12 @@
 <?php
 namespace Poirot\Stream\Context;
 
-use Poirot\Core;
-use Poirot\Core\AbstractOptions;
-use Poirot\Core\Interfaces\iOptionImplement;
-use Poirot\Core\Interfaces\iPoirotOptions;
-use Poirot\Core\Interfaces\iOptionsProvider;
-use Poirot\Core\OpenOptions;
+use Poirot\Std;
+use Poirot\Std\AbstractOptions;
+use Poirot\Std\Interfaces\iOptionImplement;
+use Poirot\Std\Interfaces\iPoirotOptions;
+use Poirot\Std\Interfaces\iOptionsProvider;
+use Poirot\Std\OpenOptions;
 use Poirot\Stream\Interfaces\Context\iSContext;
 
 !defined('POIROT_CORE_LOADED') and include_once 'Core.php';
@@ -363,7 +363,7 @@ abstract class AbstractContext extends OpenOptions
         if (!is_resource($resource) && get_resource_type($resource) !== 'stream-context')
             throw new \InvalidArgumentException(sprintf(
                 'Invalid Context Resource Passed, given: "%s".'
-                , \Poirot\Core\flatten($resource)
+                , \Poirot\Std\flatten($resource)
             ));
 
         $this->bindWith($resource);
@@ -402,7 +402,7 @@ abstract class AbstractContext extends OpenOptions
                 unset($params[$key]);
         }
 
-        $result = Core\array_merge($params, $options);
+        $result = Std\array_merge($params, $options);
         return $result;
     }
 

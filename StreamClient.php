@@ -1,9 +1,9 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Core\BuilderSetterTrait;
-use Poirot\Core\ErrorStack;
-use Poirot\Core\OpenCall;
+use Poirot\Std\BuilderSetterTrait;
+use Poirot\Std\ErrorStack;
+use Poirot\Std\OpenCall;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamClient;
@@ -78,7 +78,7 @@ class StreamClient implements iStreamClient
         elseif ($socketUri !== null)
             throw new \InvalidArgumentException(sprintf(
                 'StreamClient Construct give string or array of settings builder as first argument. given "%s".'
-                , \Poirot\Core\flatten($socketUri)
+                , \Poirot\Std\flatten($socketUri)
             ));
 
         if ($context !== null) {
@@ -143,7 +143,7 @@ class StreamClient implements iStreamClient
             }
 
             if ($name === null)
-                throw new \InvalidArgumentException('Unknown Method Type Provided For '.\Poirot\Core\flatten($method));
+                throw new \InvalidArgumentException('Unknown Method Type Provided For '.\Poirot\Std\flatten($method));
 
             $this->onResourceAvailable()->addMethod($name, $fn);
         }

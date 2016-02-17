@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Filter;
 
-use Poirot\Core\AbstractOptions;
-use Poirot\Core\OpenOptions;
+use Poirot\Std\AbstractOptions;
+use Poirot\Std\OpenOptions;
 use Poirot\Stream\Interfaces\Filter\iSUserFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\SFilterManager;

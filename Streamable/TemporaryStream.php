@@ -25,7 +25,7 @@ class TemporaryStream extends Streamable
         if ($resource !== null && !(is_string($resource) || $resource instanceof iStreamable))
             throw new \InvalidArgumentException(sprintf(
                 'Temporary Stream Can Get Only The String as default prepared data. given: "%s".'
-                , \Poirot\Core\flatten($resource)
+                , \Poirot\Std\flatten($resource)
             ));
 
         $phpTmp  = new WrapperClient('php://temp', new SROpenMode('bRWB'));

@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Interfaces\Context;
 
-use Poirot\Core\Interfaces\iOptionImplement;
-use Poirot\Core\Interfaces\iPoirotOptions;
+use Poirot\Std\Interfaces\iOptionImplement;
+use Poirot\Std\Interfaces\iPoirotOptions;
 
 /**
  * Note: Don't include wrapper type for toArray

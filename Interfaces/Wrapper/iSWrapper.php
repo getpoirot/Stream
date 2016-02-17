@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Wrapper;
 
-use Poirot\Core\Interfaces\iOptionsProvider;
+use Poirot\Std\Interfaces\iOptionsProvider;
 
 /**
  * Just a Prototype Class to Describe Methods

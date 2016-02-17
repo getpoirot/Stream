@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Wrapper\Psr;
 
-use Poirot\Core\OpenOptions;
+use Poirot\Std\OpenOptions;
 use Poirot\Stream\Psr\StreamInterface;
 
 class SPsrOpts extends OpenOptions

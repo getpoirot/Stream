@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Core\AbstractOptions;
-use Poirot\Core\Interfaces\iOptionsProvider;
+use Poirot\Std\AbstractOptions;
+use Poirot\Std\Interfaces\iOptionsProvider;
 use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
 use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
 

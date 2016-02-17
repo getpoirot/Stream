@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Context\Http;
 
-use Poirot\Core\AbstractOptions;
-use Poirot\Core\OpenOptions;
+use Poirot\Std\AbstractOptions;
+use Poirot\Std\OpenOptions;
 
 class SCHttpOptions extends OpenOptions
 {

@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Core\AbstractOptions;
-use Poirot\Core\OpenOptions;
+use Poirot\Std\AbstractOptions;
+use Poirot\Std\OpenOptions;
 use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
 
 /*

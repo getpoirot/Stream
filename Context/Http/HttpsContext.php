@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Context\Http;
 
-use Poirot\Core\AbstractOptions;
+use Poirot\Std\AbstractOptions;
 
 class HttpsContext extends HttpContext
 {

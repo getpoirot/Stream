@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-use Poirot\Core\Interfaces\iPoirotOptions;
+use Poirot\Std\Interfaces\iPoirotOptions;
 use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 

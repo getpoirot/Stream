@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Psr;
 
-use Poirot\Core\ErrorStack;
+use Poirot\Std\ErrorStack;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\SResource;
@@ -52,7 +52,7 @@ class StreamPsr implements StreamInterface
             throw new \InvalidArgumentException(sprintf(
                 'Invalid stream provided; must be a string stream identifier or resource.'
                 . ' given: "%s"'
-                , \Poirot\Core\flatten($resource)
+                , \Poirot\Std\flatten($resource)
             ));
 
         $this->stream = new Streamable($resource);

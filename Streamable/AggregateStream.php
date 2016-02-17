@@ -59,7 +59,7 @@ class AggregateStream extends Streamable
         if (!$stream->getResource()->isReadable())
             throw new \InvalidArgumentException(sprintf(
                 'Stream "%s" is not readable.'
-                , \Poirot\Core\flatten($stream)
+                , \Poirot\Std\flatten($stream)
             ));
 
 
