@@ -11,7 +11,7 @@ namespace Poirot\Stream\Interfaces\Filter;
  * Separately on each action
  *
  */
-interface iSUserFilter extends iSFilter
+interface iSUserFilter extends ipSFilter
 {
     /*
     php_user_filter prototype

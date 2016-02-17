@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
+use Poirot\Stream\Interfaces\Filter\ipSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
@@ -40,12 +40,12 @@ class AggregateResource implements iSResource
      *  $filter->appendTo($this)
      * [/code]
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      * @param int $rwFlag @see iSFilter::AppendTo
      *
      * @return $this
      */
-    function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function appendFilter(ipSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
@@ -57,12 +57,12 @@ class AggregateResource implements iSResource
     /**
      * Attach a filter to a stream
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      * @param int $rwFlag
      *
      * @return $this
      */
-    function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function prependFilter(ipSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
@@ -74,11 +74,11 @@ class AggregateResource implements iSResource
     /**
      * Remove Given Filter From Resource
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      *
      * @return $this
      */
-    function removeFilter(iSFilter $filter)
+    function removeFilter(ipSFilter $filter)
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)

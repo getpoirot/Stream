@@ -1,7 +1,6 @@
 <?php
 namespace Poirot\Stream\Context\Http;
 
-use Poirot\Std\AbstractOptions;
 use Poirot\Stream\Context\AbstractContext;
 use Poirot\Stream\Context\Socket\SocketContext;
 

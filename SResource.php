@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
+use Poirot\Stream\Interfaces\Filter\ipSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 use Poirot\Stream\Psr\StreamInterface;
@@ -110,12 +110,12 @@ class SResource implements iSResource
      *  $filter->appendTo($this)
      * [/code]
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      * @param int $rwFlag @see iSFilter::AppendTo
      *
      * @return $this
      */
-    function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function appendFilter(ipSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         $filterRes = $filter->appendTo($this);
 
@@ -127,12 +127,12 @@ class SResource implements iSResource
     /**
      * Attach a filter to a stream
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      * @param int $rwFlag
      *
      * @return $this
      */
-    function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function prependFilter(ipSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         $filterRes = $filter->prependTo($this);
 
@@ -144,11 +144,11 @@ class SResource implements iSResource
     /**
      * Remove Given Filter From Resource
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      *
      * @return $this
      */
-    function removeFilter(iSFilter $filter)
+    function removeFilter(ipSFilter $filter)
     {
         $filterName = $filter->getLabel();
         if (isset($this->attachedFilters[$filterName])) {

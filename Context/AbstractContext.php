@@ -2,19 +2,18 @@
 namespace Poirot\Stream\Context;
 
 use Poirot\Std;
-use Poirot\Std\AbstractOptions;
-use Poirot\Std\Interfaces\iOptionImplement;
-use Poirot\Std\Interfaces\iPoirotOptions;
-use Poirot\Std\Interfaces\iOptionsProvider;
-use Poirot\Std\OpenOptions;
+use Poirot\Std\Interfaces\ipOptions;
+use Poirot\Std\Interfaces\ipOptionsProvider;
+use Poirot\Std\Interfaces\Struct\iOptionStruct;
+use Poirot\Std\Struct\OpenOptions;
 use Poirot\Stream\Interfaces\Context\iSContext;
 
-!defined('POIROT_CORE_LOADED') and include_once 'Core.php';
+!defined('POIROT_CORE_LOADED') and include_once 'functions.php';
 
 abstract class AbstractContext extends OpenOptions
     implements
     iSContext,
-    iOptionsProvider
+    ipOptionsProvider
 {
     protected $wrapper = null;
 
@@ -28,7 +27,7 @@ abstract class AbstractContext extends OpenOptions
     // options
 
     /**
-     * @var iOptionImplement
+     * @var iOptionStruct
      */
     protected $options;
 
@@ -40,7 +39,7 @@ abstract class AbstractContext extends OpenOptions
     /**
      * Construct
      *
-     * @param array|iPoirotOptions $options Options
+     * @param array|ipOptions $options Options
      */
     function __construct($options = null)
     {
@@ -227,7 +226,7 @@ abstract class AbstractContext extends OpenOptions
      *
      * ! called by __construct
      *
-     * @param array|iPoirotOptions|resource $options
+     * @param array|ipOptions|resource $options
      *
      * @return $this
      */
@@ -237,7 +236,7 @@ abstract class AbstractContext extends OpenOptions
             $this->fromArray($options);
         elseif (is_resource($options))
             $this->fromResource($options);
-        elseif ($options instanceof iPoirotOptions)
+        elseif ($options instanceof ipOptions)
             $this->fromSimilar($options);
 
         return $this;

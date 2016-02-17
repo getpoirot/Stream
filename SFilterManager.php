@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
+use Poirot\Stream\Interfaces\Filter\ipSFilter;
 use Poirot\Stream\Interfaces\Filter\iSFManager;
 
 class SFilterManager implements iSFManager
@@ -13,14 +13,14 @@ class SFilterManager implements iSFManager
      *
      * - when the filter registered it can't be removed
      *
-     * @param iSFilter  $filter
+     * @param ipSFilter  $filter
      * @param null      $label   Wrapper Label
      *                           - If Not Set Using iSFilter
      *
      * @throws \Exception If Wrapper Registered Before
      *                    Error on Registering Filter
      */
-    static function register(iSFilter $filter, $label = null)
+    static function register(ipSFilter $filter, $label = null)
     {
         $name = $filter->getLabel();
 
@@ -45,7 +45,7 @@ class SFilterManager implements iSFManager
      * @param string $filterName
      *
      * @throws \Exception Filter Not Found
-     * @return iSFilter
+     * @return ipSFilter
      */
     static function get($filterName)
     {
@@ -61,13 +61,13 @@ class SFilterManager implements iSFManager
     /**
      * Has Filter ?
      *
-     * @param string|iSFilter $filterName
+     * @param string|ipSFilter $filterName
      *
      * @return boolean
      */
     static function has($filterName)
     {
-        if ($filterName instanceof iSFilter)
+        if ($filterName instanceof ipSFilter)
             $filterName = $filterName->getLabel();
 
         $result = in_array($filterName, self::listFilters());

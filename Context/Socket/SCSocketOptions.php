@@ -1,8 +1,7 @@
 <?php
 namespace Poirot\Stream\Context\Socket;
 
-use Poirot\Std\AbstractOptions;
-use Poirot\Std\OpenOptions;
+use Poirot\Std\Struct\OpenOptions;
 
 class SCSocketOptions extends OpenOptions
 {

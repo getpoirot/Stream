@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Interfaces\Context;
 
-use Poirot\Std\Interfaces\iOptionImplement;
-use Poirot\Std\Interfaces\iPoirotOptions;
+use Poirot\Std\Interfaces\Struct\iOptionStruct;
+use Poirot\Std\Interfaces\ipOptions;
 
 /**
  * Note: Don't include wrapper type for toArray
@@ -10,7 +10,7 @@ use Poirot\Std\Interfaces\iPoirotOptions;
  *       such as: $arr['wrapper']['option'] = $value
  *
  */
-interface iSContext extends iOptionImplement
+interface iSContext extends iOptionStruct
 {
     /**
      * Used To Create Context, as php on creating streams
@@ -62,7 +62,7 @@ interface iSContext extends iOptionImplement
      * - data params used on $this::toContext
      *   to set params of context
      *
-     * @return iPoirotOptions
+     * @return ipOptions
      */
     function inOptions();
 

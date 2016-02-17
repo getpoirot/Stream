@@ -1,7 +1,6 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Stream\Context\BaseContext;
 use Poirot\Stream\Context\Socket\SocketContext;
 use Poirot\Stream\Interfaces\Context\iSContext;
 

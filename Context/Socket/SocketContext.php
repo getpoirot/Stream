@@ -1,10 +1,7 @@
 <?php
 namespace Poirot\Stream\Context\Socket;
 
-use Poirot\Std\AbstractOptions;
 use Poirot\Stream\Context\AbstractContext;
-use Poirot\Stream\Context\Http\SCHttpOptions;
-use Poirot\Stream\Interfaces\Context\iSContext;
 
 /**
  * Socket context options are available for all wrappers

@@ -1,12 +1,12 @@
 <?php
 namespace Poirot\Stream\Interfaces\Wrapper;
 
-use Poirot\Std\Interfaces\iOptionsProvider;
+use Poirot\Std\Interfaces\ipOptionsProvider;
 
 /**
  * Just a Prototype Class to Describe Methods
  */
-interface iSWrapper extends iOptionsProvider
+interface ipSWrapper extends ipOptionsProvider
 {
     /**
      * Context Wrapper Options

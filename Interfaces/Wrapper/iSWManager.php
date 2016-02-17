@@ -6,25 +6,25 @@ interface iSWManager
     /**
      * Register Stream Wrapper
      *
-     * @param iSWrapper $wrapper
+     * @param ipSWrapper $wrapper
      * @param null      $label   Wrapper Label
      *        - If Not Set Using iSWrapper
      *
      * @throw \Exception If Wrapper Registered Before
      */
-    static function register(iSWrapper $wrapper, $label = null);
+    static function register(ipSWrapper $wrapper, $label = null);
 
     /**
      * UnRegister Wrapper
      *
-     * @param string|iSWrapper $label
+     * @param string|ipSWrapper $label
      */
     static function unregister($label);
 
     /**
      * Has Registered Wrapper With Name?
      *
-     * @param string|iSWrapper $wrapper
+     * @param string|ipSWrapper $wrapper
      *
      * @return boolean
      */

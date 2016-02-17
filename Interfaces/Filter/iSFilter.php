@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Filter;
 
-use Poirot\Std\Interfaces\iOptionsProvider;
+use Poirot\Std\Interfaces\ipOptionsProvider;
 use Poirot\Stream\Interfaces\iSResource;
 
 /**
@@ -14,7 +14,7 @@ use Poirot\Stream\Interfaces\iSResource;
  * Separately on each action
  *
  */
-interface iSFilter extends iOptionsProvider
+interface ipSFilter extends ipOptionsProvider
 {
     /**
      * Filter processed successfully with data available in the out bucket

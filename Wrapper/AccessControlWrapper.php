@@ -1,9 +1,6 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Std\AbstractOptions;
-use Poirot\Std\Interfaces\iOptionsProvider;
-use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
 use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
 
 /**
@@ -77,11 +74,13 @@ class AccessControlWrapper extends AbstractWrapper
      *      $class = new Filesystem($opt);
      *   [/php]
      *
+     * @param null|mixed $builder Builder Options as Constructor
+     *
      * @return ACWOptions
      */
-    static function newOptions()
+    static function newOptions($builder = null)
     {
-        return new ACWOptions;
+        return new ACWOptions($builder);
     }
 
     // Implement Wrapper:

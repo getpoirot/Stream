@@ -2,20 +2,20 @@
 namespace Poirot\Stream;
 
 use Poirot\Stream\Interfaces\Wrapper\iSWManager;
-use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
+use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
 
 class SWrapperManager implements iSWManager
 {
     /**
      * Register Stream Wrapper
      *
-     * @param iSWrapper $wrapper
+     * @param ipSWrapper $wrapper
      * @param null      $label   Wrapper Label
      *        - If Not Set Using iSWrapper
      *
      * @throws \Exception If Wrapper Registered Before
      */
-    static function register(iSWrapper $wrapper, $label = null)
+    static function register(ipSWrapper $wrapper, $label = null)
     {
         if ($label == null)
             $label = $wrapper->getLabel();
@@ -42,11 +42,11 @@ class SWrapperManager implements iSWManager
     /**
      * UnRegister Wrapper
      *
-     * @param string|iSWrapper $label
+     * @param string|ipSWrapper $label
      */
     static function unregister($label)
     {
-        if ($label instanceof iSWrapper)
+        if ($label instanceof ipSWrapper)
             $label = $label->getLabel();
 
         stream_wrapper_unregister($label);
@@ -55,13 +55,13 @@ class SWrapperManager implements iSWManager
     /**
      * Has Registered Wrapper With Name?
      *
-     * @param string|iSWrapper $wrapper
+     * @param string|ipSWrapper $wrapper
      *
      * @return boolean
      */
     static function isRegistered($wrapper)
     {
-        if ($wrapper instanceof iSWrapper)
+        if ($wrapper instanceof ipSWrapper)
             $wrapper = $wrapper->getLabel();
 
         return in_array($wrapper, self::listRegWrappers());

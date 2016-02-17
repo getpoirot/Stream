@@ -1,9 +1,9 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Std\AbstractOptions;
-use Poirot\Std\OpenOptions;
-use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
+use Poirot\Std\Struct\AbstractOptions;
+use Poirot\Std\Struct\OpenOptions;
+use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
 
 /*
 // How to inject options into wrapper as default context:
@@ -19,7 +19,7 @@ fopen('label://stream', 'r', null
 
 abstract class AbstractWrapper
     implements
-    iSWrapper
+    ipSWrapper
 {
     /**
      * Context Wrapper Options
@@ -79,11 +79,12 @@ abstract class AbstractWrapper
      *      $class = new Filesystem($opt);
      *   [/php]
      *
+     *  @param null|mixed $builder Builder Options as Constructor
+     *
      * @return AbstractOptions
      */
-    static function newOptions()
+    static function newOptions($builder = null)
     {
-        return new OpenOptions;
+        return new OpenOptions($builder);
     }
 }
- 

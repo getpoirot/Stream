@@ -1,11 +1,11 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-use Poirot\Std\Interfaces\iPoirotOptions;
-use Poirot\Stream\Interfaces\Filter\iSFilter;
+use Poirot\Std\Interfaces\ipOptions;
+use Poirot\Stream\Interfaces\Filter\ipSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
-interface iSRBuilder extends iPoirotOptions
+interface iSRBuilder extends ipOptions
 {
     /**
      * Build Stream Resource Handle With Config Files
@@ -30,11 +30,11 @@ interface iSRBuilder extends iPoirotOptions
      *
      * - append filter to resource
      *
-     * @param iSFilter $filter
+     * @param ipSFilter $filter
      *
      * @return $this
      */
-    function setFilter(iSFilter $filter);
+    function setFilter(ipSFilter $filter);
 
     /**
      * @link http://php.net/manual/en/function.stream-set-blocking.php

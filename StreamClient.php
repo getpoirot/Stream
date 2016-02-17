@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Std\BuilderSetterTrait;
+use Poirot\Std\SetterBuilderTrait;
 use Poirot\Std\ErrorStack;
 use Poirot\Std\OpenCall;
 use Poirot\Stream\Interfaces\Context\iSContext;
@@ -49,7 +49,7 @@ if ($response->plugin()->status()->isSuccess())
 
 class StreamClient implements iStreamClient
 {
-    use BuilderSetterTrait;
+    use SetterBuilderTrait;
     use StreamClientOptionsTrait;
 
     /** @var iSResource */

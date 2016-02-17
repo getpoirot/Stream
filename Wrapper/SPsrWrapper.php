@@ -146,9 +146,10 @@ class SPsrWrapper extends AbstractWrapper
 
     /**
      * @override ide completion
+     * @param null|mixed $builder Builder Options as Constructor
      * @return SPsrOpts
      */
-    static function newOptions()
+    static function newOptions($builder = null)
     {
         return new SPsrOpts;
     }

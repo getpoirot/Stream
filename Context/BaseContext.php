@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Context;
 
-use Poirot\Stream\Interfaces\Wrapper\iSWrapper;
+use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
 
 /*
 fopen($label.'://stream'
@@ -28,12 +28,12 @@ class BaseContext extends AbstractContext
      * new BaseContext(iSWrapper, [..extraOptions])
      * [/code]
      *
-     * @param string|iSWrapper|array $wrapper
+     * @param string|ipSWrapper|array $wrapper
      * @param array                  $options
      */
     function __construct($wrapper = null, $options = [])
     {
-        if ($wrapper instanceof iSWrapper) {
+        if ($wrapper instanceof ipSWrapper) {
             $this->wrapper = $wrapper->getLabel();
             $this->inOptions()->from($wrapper->inOptions());
         } elseif(is_string($wrapper))

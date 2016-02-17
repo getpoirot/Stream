@@ -8,14 +8,14 @@ interface iSFManager
      *
      * - when the filter registered it can't be removed
      *
-     * @param iSFilter  $filter
+     * @param ipSFilter  $filter
      * @param null      $label   Wrapper Label
      *                           - If Not Set Using iSFilter
      *
      * @throws \Exception If Wrapper Registered Before
      *                    Error on Registering Filter
      */
-    static function register(iSFilter $filter, $label = null);
+    static function register(ipSFilter $filter, $label = null);
 
     /**
      * Get Filter By Name
@@ -23,14 +23,14 @@ interface iSFManager
      * @param string $filterName
      *
      * @throws \Exception Filter Not Found
-     * @return iSFilter
+     * @return ipSFilter
      */
     static function get($filterName);
 
     /**
      * Has Filter ?
      *
-     * @param string|iSFilter $filterName
+     * @param string|ipSFilter $filterName
      *
      * @return boolean
      */
