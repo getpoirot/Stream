@@ -2,7 +2,6 @@
 namespace Poirot\Stream\Context;
 
 use Poirot\Std;
-use Poirot\Std\Interfaces\ipOptions;
 use Poirot\Std\Interfaces\ipOptionsProvider;
 use Poirot\Std\Interfaces\Struct\iOptionStruct;
 use Poirot\Std\Struct\OpenOptions;
@@ -39,7 +38,7 @@ abstract class AbstractContext extends OpenOptions
     /**
      * Construct
      *
-     * @param array|ipOptions $options Options
+     * @param array|iOptionStruct $options Options
      */
     function __construct($options = null)
     {
@@ -226,7 +225,7 @@ abstract class AbstractContext extends OpenOptions
      *
      * ! called by __construct
      *
-     * @param array|ipOptions|resource $options
+     * @param array|iOptionStruct|resource $options
      *
      * @return $this
      */
@@ -234,9 +233,9 @@ abstract class AbstractContext extends OpenOptions
     {
         if (is_array($options))
             $this->fromArray($options);
-        elseif (is_resource($options))
+        if (is_resource($options))
             $this->fromResource($options);
-        elseif ($options instanceof ipOptions)
+        elseif ($options instanceof $this)
             $this->fromSimilar($options);
 
         return $this;
