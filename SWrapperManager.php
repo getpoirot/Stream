@@ -33,7 +33,7 @@ class SWrapperManager implements iSWManager
         // file operations (fopen(), file_get_contents(), etc...) are
         // called without a context parameter.
         $options = [
-            $label => $wrapper->inOptions()->toArray()
+            $label => $wrapper->optsData()->toArray()
         ];
 
         stream_context_set_default($options);

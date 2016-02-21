@@ -3,13 +3,13 @@ namespace Poirot\Stream\Context;
 
 use Poirot\Std;
 use Poirot\Std\Interfaces\ipOptionsProvider;
-use Poirot\Std\Interfaces\Struct\iOptionStruct;
-use Poirot\Std\Struct\OpenOptions;
+use Poirot\Std\Interfaces\Struct\iOptionsData;
+use Poirot\Std\Struct\OpenOptionsData;
 use Poirot\Stream\Interfaces\Context\iSContext;
 
 !defined('POIROT_CORE_LOADED') and include_once 'functions.php';
 
-abstract class AbstractContext extends OpenOptions
+abstract class AbstractContext extends OpenOptionsData
     implements
     iSContext,
     ipOptionsProvider
@@ -26,7 +26,7 @@ abstract class AbstractContext extends OpenOptions
     // options
 
     /**
-     * @var iOptionStruct
+     * @var iOptionsData
      */
     protected $options;
 
@@ -38,7 +38,7 @@ abstract class AbstractContext extends OpenOptions
     /**
      * Construct
      *
-     * @param array|iOptionStruct $options Options
+     * @param array|iOptionsData $options Options
      */
     function __construct($options = null)
     {
@@ -165,12 +165,12 @@ abstract class AbstractContext extends OpenOptions
     /**
      * Set/Retrieves specific options
      *
-     * @return OpenOptions
+     * @return OpenOptionsData
      */
-    function inOptions()
+    function optsData()
     {
         if (!$this->options)
-            $this->options = static::newOptions();
+            $this->options = static::newOptsData();
 
         return $this->options;
     }
@@ -189,11 +189,11 @@ abstract class AbstractContext extends OpenOptions
      *
      * @param null|mixed $builder Builder Options as Constructor
      *
-     * @return OpenOptions
+     * @return OpenOptionsData
      */
-    static function newOptions($builder = null)
+    static function newOptsData($builder = null)
     {
-        return new OpenOptions($builder);
+        return new OpenOptionsData($builder);
     }
 
     /**
@@ -225,18 +225,18 @@ abstract class AbstractContext extends OpenOptions
      *
      * ! called by __construct
      *
-     * @param array|iOptionStruct|resource $options
+     * @param array|iOptionsData|resource $data
      *
      * @return $this
      */
-    function from($options)
+    function from($data)
     {
-        if (is_array($options))
-            $this->fromArray($options);
-        if (is_resource($options))
-            $this->fromResource($options);
-        elseif ($options instanceof $this)
-            $this->fromSimilar($options);
+        if (is_array($data))
+            $this->fromArray($data);
+        if (is_resource($data))
+            $this->fromResource($data);
+        elseif ($data instanceof $this)
+            $this->fromSimilar($data);
 
         return $this;
     }
@@ -335,7 +335,7 @@ abstract class AbstractContext extends OpenOptions
         $return = parent::fromSimilar($context);
 
         // assimilate options
-        $this->inOptions()->fromSimilar($context->inOptions());
+        $this->optsData()->fromSimilar($context->inOptions());
 
         // bind contexts
         foreach($context->listBindContexts() as $wrapper)
@@ -383,7 +383,7 @@ abstract class AbstractContext extends OpenOptions
         /** @var AbstractContext $context */
         while ($context = array_shift($bindContexts)) {
             $wrapper = $context->wrapperName();
-            $options['options'][$wrapper] = $context->inOptions()->toArray();
+            $options['options'][$wrapper] = $context->optsData()->toArray();
 
             $ops = &$options['options'][$wrapper];
             foreach ($ops as $key => &$p) {

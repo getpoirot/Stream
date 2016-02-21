@@ -46,7 +46,7 @@ abstract class AbstractFilter implements iSUserFilter
     function __construct($options = null)
     {
         if ($options !== null)
-            $this->inOptions()->from($options);
+            $this->optsData()->from($options);
     }
 
     /**
@@ -68,10 +68,10 @@ abstract class AbstractFilter implements iSUserFilter
     /**
      * @return AbstractOptions
      */
-    function inOptions()
+    function optsData()
     {
         if (!$this->options)
-            $this->options = self::newOptions();
+            $this->options = self::newOptsData();
 
         return $this->options;
     }
@@ -92,7 +92,7 @@ abstract class AbstractFilter implements iSUserFilter
      *
      * @return AbstractOptions
      */
-    static function newOptions($builder = null)
+    static function newOptsData($builder = null)
     {
         return new OpenOptions;
     }
@@ -133,7 +133,7 @@ abstract class AbstractFilter implements iSUserFilter
             $streamResource->getRHandler()
             , $this->getLabel()
             , $rwFlag
-            , $this->inOptions()->toArray()
+            , $this->optsData()->toArray()
         );
 
         return $filterRes;
@@ -157,7 +157,7 @@ abstract class AbstractFilter implements iSUserFilter
             $streamResource->getRHandler()
             , $this->getLabel()
             , $rwFlag
-            , $this->inOptions()->toArray()
+            , $this->optsData()->toArray()
         );
 
         return $filterRes;

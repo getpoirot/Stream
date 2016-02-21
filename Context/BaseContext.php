@@ -35,7 +35,7 @@ class BaseContext extends AbstractContext
     {
         if ($wrapper instanceof ipSWrapper) {
             $this->wrapper = $wrapper->getLabel();
-            $this->inOptions()->from($wrapper->inOptions());
+            $this->optsData()->from($wrapper->optsData());
         } elseif(is_string($wrapper))
             $this->wrapper = $wrapper;
         else

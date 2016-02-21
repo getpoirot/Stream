@@ -1,9 +1,9 @@
 <?php
 namespace Poirot\Stream\Wrapper\AccessControl;
 
-use Poirot\Std\Struct\AbstractOptions;
+use Poirot\Std\Struct\AbstractOptionsData;
 
-class ACWOptions extends AbstractOptions
+class ACWOptionsData extends AbstractOptionsData
 {
     /**
      * @var ACWPermissions

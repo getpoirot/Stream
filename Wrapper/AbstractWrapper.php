@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Std\Struct\AbstractOptions;
-use Poirot\Std\Struct\OpenOptions;
+use Poirot\Std\Struct\AbstractOptionsData;
+use Poirot\Std\Struct\OpenOptionsData;
 use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
 
 /*
@@ -32,7 +32,7 @@ abstract class AbstractWrapper
     public $context;
 
     /**
-     * @var AbstractOptions|OpenOptions
+     * @var AbstractOptionsData|OpenOptionsData
      */
     protected $options;
 
@@ -49,12 +49,12 @@ abstract class AbstractWrapper
     abstract function getLabel();
 
     /**
-     * @return AbstractOptions
+     * @return AbstractOptionsData
      */
-    function inOptions()
+    function optsData()
     {
         if (!$this->options)
-            $this->options = self::newOptions();
+            $this->options = self::newOptsData();
 
         if ($this->context) {
             ## set options from injected context
@@ -81,10 +81,10 @@ abstract class AbstractWrapper
      *
      *  @param null|mixed $builder Builder Options as Constructor
      *
-     * @return AbstractOptions
+     * @return AbstractOptionsData
      */
-    static function newOptions($builder = null)
+    static function newOptsData($builder = null)
     {
-        return new OpenOptions($builder);
+        return new OpenOptionsData($builder);
     }
 }

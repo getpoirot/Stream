@@ -7,7 +7,7 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 trait StreamClientOptionsTrait
 {
     /** @var string */
-    protected $socketUri    = VOID;
+    protected $socketUri    = null;
 
     // default options
 

@@ -1,9 +1,9 @@
 <?php
 namespace Poirot\Stream\Context\Http;
 
-use Poirot\Std\Struct\OpenOptions;
+use Poirot\Std\Struct\OpenOptionsData;
 
-class SCHttpOptions extends OpenOptions
+class SCHttpOptions extends OpenOptionsData
 {
     /**
      * @var string

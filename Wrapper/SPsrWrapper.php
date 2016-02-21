@@ -70,7 +70,7 @@ class SPsrWrapper extends AbstractWrapper
 
     public function stream_open($path, $mode, $options, &$opened_path)
     {
-        $stream = $this->inOptions()->getStream();
+        $stream = $this->optsData()->getStream();
         if (!$stream || !$stream instanceof StreamInterface)
             return false;
 
@@ -139,9 +139,9 @@ class SPsrWrapper extends AbstractWrapper
      * @override ide completion
      * @return SPsrOpts
      */
-    function inOptions()
+    function optsData()
     {
-        return parent::inOptions();
+        return parent::optsData();
     }
 
     /**
@@ -149,7 +149,7 @@ class SPsrWrapper extends AbstractWrapper
      * @param null|mixed $builder Builder Options as Constructor
      * @return SPsrOpts
      */
-    static function newOptions($builder = null)
+    static function newOptsData($builder = null)
     {
         return new SPsrOpts;
     }

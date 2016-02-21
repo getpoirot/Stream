@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Context;
 
-use Poirot\Std\Interfaces\Struct\iOptionStruct;
+use Poirot\Std\Interfaces\Struct\iOptionsData;
 use Poirot\Std\Interfaces\ipOptions;
 
 /**
@@ -10,7 +10,7 @@ use Poirot\Std\Interfaces\ipOptions;
  *       such as: $arr['wrapper']['option'] = $value
  *
  */
-interface iSContext extends iOptionStruct
+interface iSContext extends iOptionsData
 {
     /**
      * Used To Create Context, as php on creating streams

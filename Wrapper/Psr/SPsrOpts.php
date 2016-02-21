@@ -1,10 +1,10 @@
 <?php
 namespace Poirot\Stream\Wrapper\Psr;
 
-use Poirot\Std\Struct\OpenOptions;
+use Poirot\Std\Struct\OpenOptionsData;
 use Poirot\Stream\Psr\StreamInterface;
 
-class SPsrOpts extends OpenOptions
+class SPsrOpts extends OpenOptionsData
 {
     /** @var StreamInterface */
     protected $stream;

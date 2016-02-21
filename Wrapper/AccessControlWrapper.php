@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
+use Poirot\Stream\Wrapper\AccessControl\ACWOptionsData;
 
 /**
  * Note: This is simple class just demonstrate how
@@ -13,7 +13,7 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptions;
 class AccessControlWrapper extends AbstractWrapper
 {
     /**
-     * @var ACWOptions
+     * @var ACWOptionsData
      */
     protected $options;
 
@@ -34,12 +34,12 @@ class AccessControlWrapper extends AbstractWrapper
     /**
      * Construct
      *
-     * @param ACWOptions|array $options
+     * @param ACWOptionsData|array $options
      */
     function __construct($options = null)
     {
        if ($options !== null)
-           $this->inOptions()->from($options);
+           $this->optsData()->from($options);
     }
 
     /**
@@ -55,11 +55,11 @@ class AccessControlWrapper extends AbstractWrapper
     }
 
     /**
-     * @return ACWOptions
+     * @return ACWOptionsData
      */
-    function inOptions()
+    function optsData()
     {
-        return parent::inOptions();
+        return parent::optsData();
     }
 
     /**
@@ -76,24 +76,24 @@ class AccessControlWrapper extends AbstractWrapper
      *
      * @param null|mixed $builder Builder Options as Constructor
      *
-     * @return ACWOptions
+     * @return ACWOptionsData
      */
-    static function newOptions($builder = null)
+    static function newOptsData($builder = null)
     {
-        return new ACWOptions($builder);
+        return new ACWOptionsData($builder);
     }
 
     // Implement Wrapper:
 
     protected function assertReadAccess()
     {
-        if (!$this->inOptions()->getPermissions()->hasReadAccess())
+        if (!$this->optsData()->getPermissions()->hasReadAccess())
             throw new \Exception('Access Was Denied On Reading.');
     }
 
     protected function assertWriteAccess()
     {
-        if (!$this->inOptions()->getPermissions()->hasWriteAccess())
+        if (!$this->optsData()->getPermissions()->hasWriteAccess())
             throw new \Exception('Access Was Denied On Writing.');
     }
 

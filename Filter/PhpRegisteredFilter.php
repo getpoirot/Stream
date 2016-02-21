@@ -1,8 +1,8 @@
 <?php
 namespace Poirot\Stream\Filter;
 
-use Poirot\Std\Struct\AbstractOptions;
-use Poirot\Std\Struct\OpenOptions;
+use Poirot\Std\Struct\AbstractOptionsData;
+use Poirot\Std\Struct\OpenOptionsData;
 use Poirot\Stream\Interfaces\Filter\ipSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
@@ -33,14 +33,14 @@ class PhpRegisteredFilter implements ipSFilter
      * Construct
      *
      * @param string               $filtername zlib.*, ....
-     * @param null|AbstractOptions $options
+     * @param null|AbstractOptionsData $options
      */
     function __construct($filtername, $options = null)
     {
         $this->label = $filtername;
 
         if ($options !== null)
-            $this->inOptions()->from($options);
+            $this->optsData()->from($options);
     }
 
     /**
@@ -82,7 +82,7 @@ class PhpRegisteredFilter implements ipSFilter
     function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag, $this->inOptions()->toArray());
+        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag, $this->optsData()->toArray());
 
         return $resource;
     }
@@ -98,7 +98,7 @@ class PhpRegisteredFilter implements ipSFilter
     function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag, $this->inOptions()->toArray());
+        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag, $this->optsData()->toArray());
 
         return $resource;
     }
@@ -107,12 +107,12 @@ class PhpRegisteredFilter implements ipSFilter
     // ...
 
     /**
-     * @return OpenOptions
+     * @return OpenOptionsData
      */
-    function inOptions()
+    function optsData()
     {
         if (!$this->options)
-            $this->options = self::newOptions();
+            $this->options = self::newOptsData();
 
         return $this->options;
     }
@@ -131,10 +131,10 @@ class PhpRegisteredFilter implements ipSFilter
      *
      * @param null|mixed $builder Builder Options as Constructor
      *
-     * @return OpenOptions
+     * @return OpenOptionsData
      */
-    static function newOptions($builder = null)
+    static function newOptsData($builder = null)
     {
-        return new OpenOptions($builder);
+        return new OpenOptionsData($builder);
     }
 }

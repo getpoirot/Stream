@@ -1,9 +1,9 @@
 <?php
 namespace Poirot\Stream\Context\Socket;
 
-use Poirot\Std\Struct\OpenOptions;
+use Poirot\Std\Struct\OpenOptionsData;
 
-class SCSocketOptions extends OpenOptions
+class SCSocketOptions extends OpenOptionsData
 {
     protected $bindto;
     protected $backlog;
