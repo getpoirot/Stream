@@ -7,9 +7,9 @@ use Poirot\Std\Interfaces\Struct\iOptionsData;
 use Poirot\Std\Struct\OpenOptionsData;
 use Poirot\Stream\Interfaces\Context\iSContext;
 
+// TODO where is functions ?
 !defined('POIROT_CORE_LOADED') and include_once 'functions.php';
 
-// TODO refactor to abstract options
 class AbstractContext extends OpenOptionsData
     implements
     iSContext,
@@ -424,5 +424,18 @@ class AbstractContext extends OpenOptionsData
         unset($params['options']);
 
         return stream_context_create($options, $params);
+    }
+
+    /**
+     * Set/Retrieves specific socket options
+     *
+     * - data params used on $this::toContext
+     *   to set params of context
+     *
+     * @return ipOptions
+     */
+    function inOptions()
+    {
+        // TODO: Implement inOptions() method.
     }
 }

@@ -2,7 +2,6 @@
 namespace Poirot\Stream\Interfaces\Context;
 
 use Poirot\Std\Interfaces\Struct\iOptionsData;
-use Poirot\Std\Interfaces\ipOptions;
 
 /**
  * Note: Don't include wrapper type for toArray
@@ -62,7 +61,7 @@ interface iSContext extends iOptionsData
      * - data params used on $this::toContext
      *   to set params of context
      *
-     * @return ipOptions
+     * @return iOptionsData
      */
     function inOptions();
 

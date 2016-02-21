@@ -1,11 +1,11 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-use Poirot\Std\Interfaces\ipOptions;
+use Poirot\Std\Interfaces\Struct\iOptionsData;
 use Poirot\Stream\Interfaces\Filter\ipSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
-interface iSRBuilder extends ipOptions
+interface iSRBuilder extends iOptionsData
 {
     /**
      * Build Stream Resource Handle With Config Files
