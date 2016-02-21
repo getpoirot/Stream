@@ -33,7 +33,7 @@ class SWrapperManager implements iSWManager
         // file operations (fopen(), file_get_contents(), etc...) are
         // called without a context parameter.
         $options = [
-            $label => $wrapper->optsData()->toArray()
+            $label => \Poirot\Std\iterator_to_array($wrapper->optsData())
         ];
 
         stream_context_set_default($options);
@@ -77,4 +77,3 @@ class SWrapperManager implements iSWManager
         return stream_get_wrappers();
     }
 }
- 

@@ -10,8 +10,6 @@ interface iStreamClient extends iStreamCommon
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * TODO: socketUri Can converted to an pathUri Object
-     *
      * @param string $socketUri
      *
      * @return $this

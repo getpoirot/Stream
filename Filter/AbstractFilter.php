@@ -1,8 +1,9 @@
 <?php
 namespace Poirot\Stream\Filter;
 
-use Poirot\Std\AbstractOptions;
-use Poirot\Std\OpenOptions;
+use Poirot\Std\Interfaces\Struct\iDataStruct;
+use Poirot\Std\Interfaces\Struct\iOptionsData;
+use Poirot\Std\Struct\OpenOptionsData;
 use Poirot\Stream\Interfaces\Filter\iSUserFilter;
 use Poirot\Stream\Interfaces\iSResource;
 use Poirot\Stream\SFilterManager;
@@ -41,7 +42,7 @@ abstract class AbstractFilter implements iSUserFilter
     /**
      * Construct
      *
-     * @param null|AbstractOptions $options
+     * @param null|iDataStruct $options
      */
     function __construct($options = null)
     {
@@ -66,7 +67,7 @@ abstract class AbstractFilter implements iSUserFilter
     }
 
     /**
-     * @return AbstractOptions
+     * @return iOptionsData
      */
     function optsData()
     {
@@ -90,11 +91,11 @@ abstract class AbstractFilter implements iSUserFilter
      *
      * @param null|mixed $builder Builder Options as Constructor
      *
-     * @return AbstractOptions
+     * @return iOptionsData
      */
     static function newOptsData($builder = null)
     {
-        return new OpenOptions;
+        return (new OpenOptionsData)->from($builder);
     }
 
     /**
@@ -133,7 +134,7 @@ abstract class AbstractFilter implements iSUserFilter
             $streamResource->getRHandler()
             , $this->getLabel()
             , $rwFlag
-            , $this->optsData()->toArray()
+            , \Poirot\Std\iterator_to_array($this->optsData())
         );
 
         return $filterRes;
@@ -157,7 +158,7 @@ abstract class AbstractFilter implements iSUserFilter
             $streamResource->getRHandler()
             , $this->getLabel()
             , $rwFlag
-            , $this->optsData()->toArray()
+            , \Poirot\Std\iterator_to_array($this->optsData())
         );
 
         return $filterRes;

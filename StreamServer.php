@@ -42,8 +42,6 @@ class StreamServer implements iStreamServer
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * TODO: socketUri Can converted to an pathUri Object
-     *
      * @param string                         $socketUri Socket Uri
      * @param iSContext|array|resource| null $context   Context Options
      */
@@ -212,23 +210,19 @@ class StreamServer implements iStreamServer
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * TODO: socketUri Can converted to an pathUri Object
-     *
      * @param string $socketUri
      *
      * @return $this
      */
     protected function __setSocketUri($socketUri)
     {
-        $this->socketUri = $socketUri;
+        $this->socketUri = (string) $socketUri;
 
         return $this;
     }
 
     /**
      * Get Current Socket Uri That Stream Built With
-     *
-     * TODO: Socket Uri Can converted to an pathUri Object
      *
      * @return string
      */
@@ -281,7 +275,6 @@ class StreamServer implements iStreamServer
     function setNoneBlocking($flag = true)
     {
         $this->noneBlocking = (boolean) $flag;
-
         return $this;
     }
 
@@ -307,7 +300,6 @@ class StreamServer implements iStreamServer
     function setTimeout($seconds)
     {
         $this->timeout = $seconds;
-
         return $this;
     }
 
@@ -336,4 +328,3 @@ class StreamServer implements iStreamServer
         #stream_socket_shutdown($this->__socket_connected, STREAM_SHUT_WR);
     }
 }
- 

@@ -48,6 +48,6 @@ class HttpContext extends AbstractContext
      */
     static function newOptsData($builder = null)
     {
-        return new SCHttpOptions;
+        return (new SCHttpOptions)->from($builder);
     }
 }

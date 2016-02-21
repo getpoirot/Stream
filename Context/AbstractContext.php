@@ -9,7 +9,8 @@ use Poirot\Stream\Interfaces\Context\iSContext;
 
 !defined('POIROT_CORE_LOADED') and include_once 'functions.php';
 
-abstract class AbstractContext extends OpenOptionsData
+// TODO refactor to abstract options
+class AbstractContext extends OpenOptionsData
     implements
     iSContext,
     ipOptionsProvider

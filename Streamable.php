@@ -48,7 +48,6 @@ class Streamable implements iStreamable
     function setResource(iSResource $resource)
     {
         $this->resource = $resource;
-
         return $this;
     }
 
@@ -72,7 +71,6 @@ class Streamable implements iStreamable
     function setBuffer($buffer)
     {
         $this->_buffer = $buffer;
-
         return $this;
     }
 

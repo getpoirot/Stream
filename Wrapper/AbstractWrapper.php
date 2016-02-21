@@ -85,6 +85,6 @@ abstract class AbstractWrapper
      */
     static function newOptsData($builder = null)
     {
-        return new OpenOptionsData($builder);
+        return (new OpenOptionsData)->from($builder);
     }
 }

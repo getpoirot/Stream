@@ -151,6 +151,6 @@ class SPsrWrapper extends AbstractWrapper
      */
     static function newOptsData($builder = null)
     {
-        return new SPsrOpts;
+        return (new SPsrOpts)->from($builder);
     }
 }

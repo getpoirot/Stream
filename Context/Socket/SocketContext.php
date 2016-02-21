@@ -57,6 +57,6 @@ class SocketContext extends AbstractContext
      */
     static function newOptsData($builder = null)
     {
-        return new SCSocketOptions;
+        return (new SCSocketOptions)->from($builder);
     }
 }

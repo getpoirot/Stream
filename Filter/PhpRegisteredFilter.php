@@ -82,7 +82,7 @@ class PhpRegisteredFilter implements ipSFilter
     function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag, $this->optsData()->toArray());
+        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag, \Poirot\Std\iterator_to_array($this->optsData()));
 
         return $resource;
     }
@@ -98,7 +98,7 @@ class PhpRegisteredFilter implements ipSFilter
     function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag, $this->optsData()->toArray());
+        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag, \Poirot\Std\iterator_to_array($this->optsData()));
 
         return $resource;
     }
@@ -135,6 +135,6 @@ class PhpRegisteredFilter implements ipSFilter
      */
     static function newOptsData($builder = null)
     {
-        return new OpenOptionsData($builder);
+        return (new OpenOptionsData)->from($builder);
     }
 }

@@ -43,8 +43,6 @@ class WrapperClient implements iWrapperClient
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * TODO: socketUri Can converted to an pathUri Object
-     *
      * @param string                        $socketUri Socket Uri
      * @param iSRAccessMode|string          $openMode  iSRAccessMode::MODE_*
      * @param iSContext|array|resource|null $context   Context Options
@@ -77,23 +75,18 @@ class WrapperClient implements iWrapperClient
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * TODO: socketUri Can converted to an pathUri Object
-     *
      * @param string $socketUri
      *
      * @return $this
      */
     function setSocketUri($socketUri)
     {
-        $this->socketUri = $socketUri;
-
+        $this->socketUri = (string) $socketUri;
         return $this;
     }
 
     /**
      * Get Current Socket Uri That Stream Built With
-     *
-     * TODO: Socket Uri Can converted to an pathUri Object
      *
      * @return string
      */
@@ -223,7 +216,6 @@ class WrapperClient implements iWrapperClient
     function setNoneBlocking($flag = true)
     {
         $this->noneBlocking = (boolean) $flag;
-
         return $this;
     }
 
@@ -249,7 +241,6 @@ class WrapperClient implements iWrapperClient
     function setTimeout($seconds)
     {
         $this->timeout = $seconds;
-
         return $this;
     }
 
@@ -276,7 +267,6 @@ class WrapperClient implements iWrapperClient
     function setOpenmode(iSRAccessMode $mode)
     {
         $this->openmode = $mode;
-
         return $this;
     }
 

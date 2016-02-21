@@ -80,7 +80,7 @@ class AccessControlWrapper extends AbstractWrapper
      */
     static function newOptsData($builder = null)
     {
-        return new ACWOptionsData($builder);
+        return (new ACWOptionsData)->from($builder);
     }
 
     // Implement Wrapper:

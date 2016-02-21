@@ -29,7 +29,6 @@ class SPsrOpts extends OpenOptionsData
     function setStream(StreamInterface $stream)
     {
         $this->stream = $stream;
-
         return $this;
     }
 }
