@@ -164,40 +164,6 @@ class AbstractContext extends OpenOptionsData
     // Context:
 
     /**
-     * Set/Retrieves specific options
-     *
-     * @return OpenOptionsData
-     */
-    function optsData()
-    {
-        if (!$this->options)
-            $this->options = static::newOptsData();
-
-        return $this->options;
-    }
-
-    /**
-     * Get An Bare Options Instance
-     *
-     * ! it used on easy access to options instance
-     *   before constructing class
-     *   [php]
-     *      $opt = Filesystem::optionsIns();
-     *      $opt->setSomeOption('value');
-     *
-     *      $class = new Filesystem($opt);
-     *   [/php]
-     *
-     * @param null|mixed $builder Builder Options as Constructor
-     *
-     * @return OpenOptionsData
-     */
-    static function newOptsData($builder = null)
-    {
-        return new OpenOptionsData($builder);
-    }
-
-    /**
      * access context options bind to this context
      *
      * $cntx->socket->setBindTo(..)
@@ -418,24 +384,47 @@ class AbstractContext extends OpenOptionsData
      */
     function toContext()
     {
-        $params  = $this->toArray();
-
+        $params  = \Poirot\Std\iterator_to_array($this);
         $options = $params['options'];
         unset($params['options']);
 
         return stream_context_create($options, $params);
     }
 
+
+    // ...
+
     /**
-     * Set/Retrieves specific socket options
+     * Set/Retrieves specific options
      *
-     * - data params used on $this::toContext
-     *   to set params of context
-     *
-     * @return ipOptions
+     * @return OpenOptionsData
      */
-    function inOptions()
+    function optsData()
     {
-        // TODO: Implement inOptions() method.
+        if (!$this->options)
+            $this->options = static::newOptsData();
+
+        return $this->options;
+    }
+
+    /**
+     * Get An Bare Options Instance
+     *
+     * ! it used on easy access to options instance
+     *   before constructing class
+     *   [php]
+     *      $opt = Filesystem::optionsIns();
+     *      $opt->setSomeOption('value');
+     *
+     *      $class = new Filesystem($opt);
+     *   [/php]
+     *
+     * @param null|mixed $builder Builder Options as Constructor
+     *
+     * @return OpenOptionsData
+     */
+    static function newOptsData($builder = null)
+    {
+        return (new OpenOptionsData)->from($builder);
     }
 }

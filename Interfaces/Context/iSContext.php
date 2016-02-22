@@ -1,6 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Context;
 
+use Poirot\Std\Interfaces\ipOptionsProvider;
 use Poirot\Std\Interfaces\Struct\iOptionsData;
 
 /**
@@ -9,7 +10,7 @@ use Poirot\Std\Interfaces\Struct\iOptionsData;
  *       such as: $arr['wrapper']['option'] = $value
  *
  */
-interface iSContext extends iOptionsData
+interface iSContext extends iOptionsData, ipOptionsProvider
 {
     /**
      * Used To Create Context, as php on creating streams
@@ -26,10 +27,12 @@ interface iSContext extends iOptionsData
      *
      * [
      *   'socket' => [
-     *     'bindto' => '192.168.0.100:7000',
+     *     // socket context options
+     *     ...
      *   ],
      *   'http' => [
-     *      ...
+     *     // http context options
+     *     ...
      *   ]
      * ]
      *
@@ -54,16 +57,6 @@ interface iSContext extends iOptionsData
      * @return array[ (string) wrapperName ]
      */
     function listBindContexts();
-
-    /**
-     * Set/Retrieves specific socket options
-     *
-     * - data params used on $this::toContext
-     *   to set params of context
-     *
-     * @return iOptionsData
-     */
-    function inOptions();
 
     /**
      * Set Options From Context Resource
