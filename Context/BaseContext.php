@@ -1,46 +1,19 @@
 <?php
 namespace Poirot\Stream\Context;
 
-use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
-
-/*
-fopen($label.'://stream'
-    , (string) $mode
-    , null
-    ## set options to wrapper
-    , (new BaseContext($label, ['stream' => $stream]))->toContext()
-);
-
-// instead of:
-    , stream_context_create([
-        $label => ['stream' => $stream]
-    ])
-*/
+use Poirot\Std\Interfaces\Struct\iOptionsData;
 
 class BaseContext extends AbstractContext
 {
     /**
      * Construct
      *
-     * [code]
-     * new BaseContext('label', [..options])
-     * // options inside wrapper will merge with extra options
-     * new BaseContext(iSWrapper, [..extraOptions])
-     * [/code]
-     *
-     * @param string|ipSWrapper|array $wrapper
-     * @param array                  $options
+     * @param string             $wrapperName Context wrapper name
+     * @param array|iOptionsData $options     Options
      */
-    function __construct($wrapper = null, $options = [])
+    function __construct($wrapperName, $options = null)
     {
-        if ($wrapper instanceof ipSWrapper) {
-            $this->wrapper = $wrapper->getLabel();
-            $this->optsData()->from($wrapper->optsData());
-        } elseif(is_string($wrapper))
-            $this->wrapper = $wrapper;
-        else
-            $options = $wrapper;
-
+        $this->wrapper = (string) $wrapperName;
         parent::__construct($options);
     }
 }

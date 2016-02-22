@@ -11,7 +11,7 @@ class HttpContext extends AbstractContext
 {
     protected $wrapper = 'http';
 
-    protected function __before_construct()
+    protected function __init()
     {
         // Bind Socket Context
         $this->bindWith(new SocketContext);

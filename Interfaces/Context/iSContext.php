@@ -1,16 +1,9 @@
 <?php
 namespace Poirot\Stream\Interfaces\Context;
 
-use Poirot\Std\Interfaces\ipOptionsProvider;
 use Poirot\Std\Interfaces\Struct\iOptionsData;
 
-/**
- * Note: Don't include wrapper type for toArray
- *       fromArray result,
- *       such as: $arr['wrapper']['option'] = $value
- *
- */
-interface iSContext extends iOptionsData, ipOptionsProvider
+interface iSContext extends iOptionsData
 {
     /**
      * Used To Create Context, as php on creating streams
@@ -36,11 +29,11 @@ interface iSContext extends iOptionsData, ipOptionsProvider
      *   ]
      * ]
      *
-     * @param iSContext|array|resource $context
+     * @param iSContext $context
      *
      * @return $this
      */
-    function bindWith($context);
+    function bindWith(iSContext $context);
 
     /**
      * Context with specific wrapper has bind?
@@ -57,18 +50,6 @@ interface iSContext extends iOptionsData, ipOptionsProvider
      * @return array[ (string) wrapperName ]
      */
     function listBindContexts();
-
-    /**
-     * Set Options From Context Resource
-     *
-     * - get parameters from context and store on object
-     *   by $this::params
-     * - rewrite wrapper with resource wrapper name
-     *
-     * @param resource $resource Context/Stream
-     * @return $this
-     */
-    function fromResource($resource);
 
     /**
      * Creates and returns a stream context with any
