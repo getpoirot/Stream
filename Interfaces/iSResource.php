@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-use Poirot\Stream\Interfaces\Filter\ipSFilter;
+use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
 
 interface iSResource
@@ -50,31 +50,31 @@ interface iSResource
      *  $filter->appendTo($this)
      * [/code]
      *
-     * @param ipSFilter $filter
+     * @param iSFilter $filter
      * @param int      $rwFlag  @see iSFilter::AppendTo
      *
      * @return $this
      */
-    function appendFilter(ipSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
+    function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
 
     /**
      * Attach a filter to a stream
      *
-     * @param ipSFilter $filter
+     * @param iSFilter $filter
      * @param int      $rwFlag
      *
      * @return $this
      */
-    function prependFilter(ipSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
+    function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
 
     /**
      * Remove Given Filter From Resource
      *
-     * @param ipSFilter $filter
+     * @param iSFilter $filter
      *
      * @return $this
      */
-    function removeFilter(ipSFilter $filter);
+    function removeFilter(iSFilter $filter);
 
     // :
 

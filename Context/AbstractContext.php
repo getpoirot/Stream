@@ -238,7 +238,7 @@ class AbstractContext extends Std\Struct\OpenOptionsData
     function toContext()
     {
         $params  = \Poirot\Std\iterator_to_array($this);
-        $options = $params['options'];
+        $options = (isset($params['options'])) ? $params['options'] : [];
         unset($params['options']);
 
         return stream_context_create($options, $params);

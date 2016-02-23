@@ -14,7 +14,7 @@ use Poirot\Stream\Interfaces\iSResource;
  * Separately on each action
  *
  */
-interface ipSFilter extends ipOptionsProvider
+interface iSFilter extends ipOptionsProvider
 {
     /**
      * Filter processed successfully with data available in the out bucket

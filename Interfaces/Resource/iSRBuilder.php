@@ -2,7 +2,7 @@
 namespace Poirot\Stream\Interfaces\Resource;
 
 use Poirot\Std\Interfaces\Struct\iOptionsData;
-use Poirot\Stream\Interfaces\Filter\ipSFilter;
+use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
 interface iSRBuilder extends iOptionsData
@@ -30,11 +30,11 @@ interface iSRBuilder extends iOptionsData
      *
      * - append filter to resource
      *
-     * @param ipSFilter $filter
+     * @param iSFilter $filter
      *
      * @return $this
      */
-    function setFilter(ipSFilter $filter);
+    function setFilter(iSFilter $filter);
 
     /**
      * @link http://php.net/manual/en/function.stream-set-blocking.php

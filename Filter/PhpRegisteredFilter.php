@@ -3,7 +3,7 @@ namespace Poirot\Stream\Filter;
 
 use Poirot\Std\Struct\AbstractOptionsData;
 use Poirot\Std\Struct\OpenOptionsData;
-use Poirot\Stream\Interfaces\Filter\ipSFilter;
+use Poirot\Stream\Interfaces\Filter\iSFilter;
 use Poirot\Stream\Interfaces\iSResource;
 
 /*
@@ -23,7 +23,7 @@ $stream   = new Streamable($resource);
  * You have to skip the first two bytes before attaching the filter.
  */
 
-class PhpRegisteredFilter implements ipSFilter
+class PhpRegisteredFilter implements iSFilter
 {
     protected $label;
 
