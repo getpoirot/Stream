@@ -66,8 +66,8 @@ class StreamClient implements iStreamClient
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * @param string|array                   $socketUri Socket Uri or Array of Builder Settings
-     * @param iSContext|array|resource|null  $context   Context Options
+     * @param string|array    $socketUri Socket Uri or Array of Builder Settings
+     * @param iSContext|null  $context   Context Options
      */
     function __construct($socketUri = null, $context = null)
     {
@@ -81,12 +81,8 @@ class StreamClient implements iStreamClient
                 , \Poirot\Std\flatten($socketUri)
             ));
 
-        if ($context !== null) {
-            if ($context instanceof iSContext)
-                $this->setContext($context);
-            else
-                $this->getContext()->from($context);
-        }
+        if ($context !== null)
+            $this->setContext($context);
     }
 
 

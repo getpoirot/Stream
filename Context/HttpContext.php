@@ -1,64 +1,45 @@
 <?php
-namespace Poirot\Stream\Context\Http;
+namespace Poirot\Stream\Context;
 
-use Poirot\Std\Struct\OpenOptionsData;
-
-class SCHttpOptions extends OpenOptionsData
+/**
+ * Context options for http:// and https:// transports
+ *
+ */
+class HttpContext extends AbstractContext
 {
-    /**
-     * @var string
-     */
+    protected $wrapper = 'http';
+
+    // Options
+    /** @var string */
     protected $method = 'GET';
-
-    /**
-     * @var string
-     */
+    /** @var array|string */
     protected $header;
-
-    /**
-     * @var string By default the user_agent php.ini setting is used
-     */
+    /** @var string By default the user_agent php.ini setting is used */
     protected $userAgent;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $content;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $proxy;
-
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     protected $requestFulluri = false;
-
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $followLocation = 1;
-
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $maxRedirects = 20;
-
-    /**
-     * @var float
-     */
+    /** @var float */
     protected $protocolVersion = 1.0;
-
-    /**
-     * @var float By default the default_socket_timeout php.ini setting is used
-     */
+    /** @var float By default the default_socket_timeout php.ini setting is used */
     protected $timeout;
-
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     protected $ignoreErrors = false;
+
+
+    protected function __init()
+    {
+        // Bind Socket Context
+        $this->bindWith(new SocketContext);
+    }
+
 
     /**
      * GET, POST, or any other HTTP method supported by the remote server
@@ -70,7 +51,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setMethod($method)
     {
         $this->method = $method;
-
         return $this;
     }
 
@@ -87,14 +67,13 @@ class SCHttpOptions extends OpenOptionsData
      * Values in this option will override other values
      * (such as User-agent:, Host:, and Authentication:)
      *
-     * @param string $header
+     * @param array|string $header
      *
      * @return $this
      */
     public function setHeader($header)
     {
         $this->header = $header;
-
         return $this;
     }
 
@@ -118,7 +97,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setUserAgent($userAgent)
     {
         $this->userAgent = $userAgent;
-
         return $this;
     }
 
@@ -144,7 +122,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setContent($content)
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -167,7 +144,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setProxy($proxy)
     {
         $this->proxy = $proxy;
-
         return $this;
     }
 
@@ -193,7 +169,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setRequestFulluri($requestFulluri)
     {
         $this->requestFulluri = $requestFulluri;
-
         return $this;
     }
 
@@ -215,7 +190,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setFollowLocation($followLocation)
     {
         $this->followLocation = $followLocation;
-
         return $this;
     }
 
@@ -238,7 +212,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setMaxRedirects($maxRedirects)
     {
         $this->maxRedirects = $maxRedirects;
-
         return $this;
     }
 
@@ -264,7 +237,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setProtocolVersion($protocolVersion)
     {
         $this->protocolVersion = $protocolVersion;
-
         return $this;
     }
 
@@ -286,7 +258,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
-
         return $this;
     }
 
@@ -311,7 +282,6 @@ class SCHttpOptions extends OpenOptionsData
     public function setIgnoreErrors($ignoreErrors)
     {
         $this->ignoreErrors = $ignoreErrors;
-
         return $this;
     }
 
@@ -323,4 +293,3 @@ class SCHttpOptions extends OpenOptionsData
         return $this->ignoreErrors;
     }
 }
- 

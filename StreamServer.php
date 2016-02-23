@@ -1,8 +1,7 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Stream\Context\BaseContext;
-use Poirot\Stream\Context\Socket\SocketContext;
+use Poirot\Stream\Context\SocketContext;
 use Poirot\Stream\Exception\TimeoutException;
 use Poirot\Stream\Interfaces\Context\iSContext;
 use Poirot\Stream\Interfaces\iStreamable;
@@ -234,18 +233,14 @@ class StreamServer implements iStreamServer
     /**
      * Context Options
      *
-     * @param iSContext|array|resource $context
+     * @param iSContext $context
      *
      * @throws \InvalidArgumentException
      * @return $this
      */
-    function setContext($context)
+    function setContext(iSContext $context)
     {
-        if ($context instanceof iSContext)
-            $this->context = $context;
-        else
-            $this->context = new BaseContext($context);
-
+        $this->context = $context;
         return $this;
     }
 

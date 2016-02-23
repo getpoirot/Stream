@@ -19,12 +19,12 @@ interface iStreamCommon
     /**
      * Context Options
      *
-     * @param iSContext|array|resource $context
+     * @param iSContext $context
      *
      * @throws \InvalidArgumentException
      * @return $this
      */
-    function setContext($context);
+    function setContext(iSContext $context);
 
     /**
      * Get Context Options
