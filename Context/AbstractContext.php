@@ -9,6 +9,20 @@ use Traversable;
 // TODO where is functions ?
 !defined('POIROT_CORE_LOADED') and include_once 'functions.php';
 
+/*
+$socket = new SocketContext([
+    'notification' => function() {},
+    'options' => [
+        'http' => [ // bind context
+            'method' => 'POST'
+        ],
+        'socket' => [
+            'bindto' => ':7000'
+        ],
+    ],
+]);
+*/
+
 class AbstractContext extends Std\Struct\OpenOptionsData
     implements iSContext
 {
@@ -244,10 +258,16 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      */
     function __call($method, $args)
     {
+        $origMethod = $method;
         ## method setSocket(...)
         if (strpos($method, 'set') === 0) {
             $method = substr($method, -(strlen($method)-strlen('set')));
             $setterCall = true;
+        }
+
+        if (strpos($method, 'get') === 0) {
+            $method = substr($method, -(strlen($method)-strlen('set')));
+            $getterCall = true;
         }
 
         if ($context = $this->hasBind($method)) {
@@ -259,6 +279,11 @@ class AbstractContext extends Std\Struct\OpenOptionsData
 
             // $cntx->socket()->setBindTo(..)
             return $context;
+        }
+
+        if (isset($setterCall) || isset($getterCall)) {
+            // $socket->Http()->setUserAgent('Firefox');
+            return parent::__call($origMethod, $args);
         }
 
 
