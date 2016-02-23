@@ -31,11 +31,7 @@ class AbstractContext extends Std\Struct\OpenOptionsData
     /**
      * Construct
      *
-     * - params can bind in form of get_context_options
-     *   [ http Array …
-     *     socket Array …
-     *
-     * - or params in form of get_context_params
+     * - params in form of get_context_params
      *   [ 'notification' => ...
      *     'options'|'bind_with' => $contextOptions
      *
@@ -190,24 +186,28 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      */
     public function getIterator()
     {
-        yield parent::getIterator();
-
+        foreach(parent::getIterator() as $key => $val) {
+            if ($val === null) continue;
+            yield (string) $key => $val;
+        }
 
         // Bind Contexts:
         $binds = [];
         foreach($this->listBindContexts() as $context)
         {
-            // TODO each bind context may have bind options => []
-            // here we just used context specific params,
+            // TODO each bind context may have options => [] (bind_with) inside
+            // but here we just used context specific params,
             $contextParams = \Poirot\Std\iterator_to_array($this->hasBind($context), function($key, $val) {
                 ### we don`t want null values on context params
-                return ($val !== null);
+                return ($val === null);
             });
+
             if (isset($contextParams['options'])) unset($contextParams['options']);
             $binds[$context] = $contextParams;
         }
 
-        yield 'options'=> $binds;
+        if (!empty($binds))
+            yield 'options' => $binds;
     }
 
     /**
