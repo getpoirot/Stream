@@ -200,10 +200,8 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      */
     public function getIterator()
     {
-        foreach(parent::getIterator() as $key => $val) {
-            if ($val === null) continue;
-            yield (string) $key => $val;
-        }
+        foreach(parent::getIterator() as $key => $val)
+            yield $key => $val;
 
         // Bind Contexts:
         $binds = [];
