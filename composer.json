@@ -17,7 +17,7 @@
             "Poirot\\Stream": "."
         }
     }
-    "repositories": [
+    , "repositories": [
       {
         "type": "git",
         "url": "https://github.com/phPoirot/Std.git"
