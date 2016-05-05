@@ -10,11 +10,17 @@
     ]
     , "target-dir": "Poirot/Stream"
     , "require": {
-        "poirot/std": "dev-master"
+        "poirot/std": "dev-devel"
     }
     , "autoload"  : {
         "psr-0": {
             "Poirot\\Stream": "."
         }
     }
+    "repositories": [
+      {
+        "type": "git",
+        "url": "https://github.com/phPoirot/Std.git"
+      }
+    ]
 }
