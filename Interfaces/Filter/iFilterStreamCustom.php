@@ -5,13 +5,14 @@ namespace Poirot\Stream\Interfaces\Filter;
  * stream_filter_register() must be called first in order
  * to register the desired user filter to filtername.
  *
- * Using iSFManager To Register Filters
+ * Using iRegistryFilterStream To Register Filters
  *
  * Filters Manipulate Every Chunk Of Data That Read/Write
  * Separately on each action
  *
  */
-interface iSUserFilter extends iSFilter
+interface iFilterStreamCustom
+    extends iFilterStream
 {
     /*
     php_user_filter prototype

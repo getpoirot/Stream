@@ -20,7 +20,8 @@ namespace Poirot\Stream\Context;
  *     'bindto' => '0:7000',
  *  ),
  */
-class SocketContext extends AbstractContext
+class ContextStreamSocket 
+    extends aContextStreamStream
 {
     protected $wrapper = 'socket';
 

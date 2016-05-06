@@ -1,9 +1,10 @@
 <?php
 namespace Poirot\Stream\Interfaces\Context;
 
-use Poirot\Std\Interfaces\Struct\iOptionsData;
+use Poirot\Std\Interfaces\Struct\iDataOptions;
 
-interface iSContext extends iOptionsData
+interface iContextStream 
+    extends iDataOptions
 {
     /**
      * Used To Create Context, as php on creating streams
@@ -13,7 +14,7 @@ interface iSContext extends iOptionsData
      * @throws \Exception Wrapper not defined
      * @return string
      */
-    function wrapperName();
+    function getWrapperName();
 
     /**
      * Bind Another Context Along this
@@ -29,18 +30,18 @@ interface iSContext extends iOptionsData
      *   ]
      * ]
      *
-     * @param iSContext $context
+     * @param iContextStream $context
      *
      * @return $this
      */
-    function bindWith(iSContext $context);
+    function bindWith(iContextStream $context);
 
     /**
      * Context with specific wrapper has bind?
      *
      * @param string $wrapperName
      *
-     * @return false|iSContext
+     * @return false|iContextStream
      */
     function hasBind($wrapperName);
 

@@ -1,9 +1,10 @@
 <?php
 namespace Poirot\Stream\Resource;
 
-use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
+use Poirot\Stream\Interfaces\Resource\iAccessModeToResourceStream;
 
-class SROpenMode implements iSRAccessMode
+class AccessMode 
+    implements iAccessModeToResourceStream
 {
     /*++
     Stream File Open, Words Stand For:
@@ -20,7 +21,7 @@ class SROpenMode implements iSRAccessMode
     @see http://php.net/manual/en/function.fopen.php
     ++*/
 
-    protected $mode_available = [
+    protected $mode_available = array(
         'RB'    => self::MODE_RB,
         'RWB'   => self::MODE_RWB,
         'WBCT'  => self::MODE_WBCT,
@@ -31,9 +32,9 @@ class SROpenMode implements iSRAccessMode
         'RWBX'  => self::MODE_RWBX,
         'WBC'   => self::MODE_WBC,
         'RWBC'  => self::MODE_RWBC,
-    ];
+    );
 
-    protected $mode_xxx = [
+    protected $mode_xxx = array(
         'read'    => null, # R | null
         'write'   => null, # W | null
 
@@ -42,13 +43,12 @@ class SROpenMode implements iSRAccessMode
         'create'  => null, # C | X
 
         'bin'     => null, # T | null
-    ];
+    );
 
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     protected $isBinary;
 
+    
     /**
      * Construct
      *
@@ -79,7 +79,7 @@ class SROpenMode implements iSRAccessMode
      */
     function fromString($modStr)
     {
-        $this->__reset();
+        $this->_reset();
 
         if (strpos($modStr, 'b') !== false) {
             $this->asBinary();
@@ -130,11 +130,11 @@ class SROpenMode implements iSRAccessMode
         return $this;
     }
 
-    protected function __reset()
+    protected function _reset()
     {
         $this->isBinary = null;
 
-        $this->mode_xxx = [
+        $this->mode_xxx = array(
             'read'    => null, # R | null
             'write'   => null, # W | null
 
@@ -143,12 +143,11 @@ class SROpenMode implements iSRAccessMode
             'create'  => null, # C | X
 
             'bin'     => null, # T | null
-        ];
+        );
     }
 
     /**
      * Open File For Write
-     *
      * @return $this
      */
     function openForWrite()
@@ -164,19 +163,16 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Open File For Read
-     *
      * @return $this
      */
     function openForRead()
     {
         $this->mode_xxx['read'] = 'R';
-
         return $this;
     }
 
     /**
      * Indicates whether the mode allows to read
-     *
      * @return boolean
      */
     function hasAllowRead()
@@ -186,7 +182,6 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Indicates whether the mode allows to write
-     *
      * @return boolean
      */
     function hasAllowWrite()
@@ -196,13 +191,11 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Open Stream as Binary Mode
-     *
      * @return $this
      */
     function asBinary()
     {
         $this->isBinary = true;
-
         return $this;
     }
 
@@ -217,7 +210,6 @@ class SROpenMode implements iSRAccessMode
     function asText()
     {
         $this->isBinary = false;
-
         return $this;
     }
 
@@ -233,7 +225,6 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Indicates whether the stream is in text mode
-     *
      * @return boolean
      */
     function isText()
@@ -243,25 +234,21 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Place the file pointer at the end of the file
-     *
      * @return $this
      */
     function withPointerAtEnd()
     {
         $this->mode_xxx['pointer'] = 'A';
-
         return $this;
     }
 
     /**
      * Place the file pointer at the beginning of the file
-     *
      * @return $this
      */
     function withPointerAtBeginning()
     {
         $this->mode_xxx['pointer'] = 'B';
-
         return $this;
     }
 
@@ -289,13 +276,11 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Create File If the file does not exist
-     *
      * @return $this
      */
     function createFile()
     {
         $this->mode_xxx['create'] = 'C';
-
         return $this;
     }
 
@@ -311,7 +296,6 @@ class SROpenMode implements iSRAccessMode
     function createXFile()
     {
         $this->mode_xxx['create'] = 'X';
-
         return $this;
     }
 
@@ -337,13 +321,11 @@ class SROpenMode implements iSRAccessMode
 
     /**
      * Truncate file after open
-     *
      * @return $this
      */
     function doTruncate()
     {
         $this->mode_xxx['bin'] = 'T';
-
         return $this;
     }
 

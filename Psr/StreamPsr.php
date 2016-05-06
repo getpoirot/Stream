@@ -2,13 +2,14 @@
 namespace Poirot\Stream\Psr;
 
 use Poirot\Std\ErrorStack;
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
-use Poirot\Stream\SResource;
+use Poirot\Stream\ResourceStream;
 use Poirot\Stream\Streamable;
-use Poirot\Stream\WrapperClient;
+use Poirot\Stream\WrapperStreamClient;
 
-class StreamPsr implements StreamInterface
+class StreamPsr 
+    implements StreamInterface
 {
     /** @var Streamable */
     protected $stream;
@@ -18,7 +19,7 @@ class StreamPsr implements StreamInterface
      *
      * ! it can be used as decorator for Poirot Stream Into Psr
      *
-     * @param string|resource|iSResource|Streamable $stream
+     * @param string|resource|iResourceStream|Streamable $stream
      * @param string                                $mode Mode with which to open stream
      *
      * @throws \InvalidArgumentException
@@ -34,7 +35,7 @@ class StreamPsr implements StreamInterface
 
         $resource = $stream;
         if (is_resource($stream)) {
-            $resource = new SResource($stream);
+            $resource = new ResourceStream($stream);
         } elseif (is_string($stream))
         {
             ErrorStack::handleError(E_WARNING, function ($errno, $errstr) {
@@ -43,12 +44,12 @@ class StreamPsr implements StreamInterface
                 );
             });
 
-            $resource = (new WrapperClient($stream, $mode))->getConnect();
+            $resource = (new WrapperStreamClient($stream, $mode))->getConnect();
 
             ErrorStack::handleDone();
         }
 
-        if (!$resource instanceof iSResource)
+        if (!$resource instanceof iResourceStream)
             throw new \InvalidArgumentException(sprintf(
                 'Invalid stream provided; must be a string stream identifier or resource.'
                 . ' given: "%s"'

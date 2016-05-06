@@ -6,16 +6,16 @@ interface iStreamable
     /**
      * Set Stream Handler Resource
      * 
-     * @param iSResource $handle
+     * @param iResourceStream $handle
      * 
      * @return $this
      */
-    function setResource(iSResource $handle);
+    function setResource(iResourceStream $handle);
 
     /**
      * Get Stream Handler Resource
      * 
-     * @return iSResource
+     * @return iResourceStream
      */
     function getResource();
 

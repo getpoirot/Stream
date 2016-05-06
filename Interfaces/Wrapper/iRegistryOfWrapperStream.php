@@ -1,30 +1,30 @@
 <?php
 namespace Poirot\Stream\Interfaces\Wrapper;
 
-interface iSWManager
+interface iRegistryOfWrapperStream
 {
     /**
      * Register Stream Wrapper
      *
-     * @param ipSWrapper $wrapper
+     * @param iWrapperStream $wrapper
      * @param null      $label   Wrapper Label
      *        - If Not Set Using iSWrapper
      *
      * @throw \Exception If Wrapper Registered Before
      */
-    static function register(ipSWrapper $wrapper, $label = null);
+    static function register(iWrapperStream $wrapper, $label = null);
 
     /**
      * UnRegister Wrapper
      *
-     * @param string|ipSWrapper $label
+     * @param string|iWrapperStream $label
      */
     static function unregister($label);
 
     /**
      * Has Registered Wrapper With Name?
      *
-     * @param string|ipSWrapper $wrapper
+     * @param string|iWrapperStream $wrapper
      *
      * @return boolean
      */
@@ -35,5 +35,5 @@ interface iSWManager
      *
      * @return array[string]
      */
-    static function listRegWrappers();
+    static function listWrappers();
 }

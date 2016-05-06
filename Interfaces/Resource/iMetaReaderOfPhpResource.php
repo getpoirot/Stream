@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-interface iSResMetaReader
+interface iMetaReaderOfPhpResource
 {
     /**
      * Set Original Resource Handler
@@ -75,7 +75,7 @@ interface iSResMetaReader
     /**
      * The Type Mode Of Access Required For This Stream
      *
-     * @return iSRAccessMode
+     * @return iAccessModeToResourceStream
      */
     function getAccessType();
 

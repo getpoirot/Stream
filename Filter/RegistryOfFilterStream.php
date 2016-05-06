@@ -1,26 +1,27 @@
 <?php
-namespace Poirot\Stream;
+namespace Poirot\Stream\Filter;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\Filter\iSFManager;
+use Poirot\Stream\Interfaces\Filter\iFilterStream;
+use Poirot\Stream\Interfaces\Filter\iRegistryOfFilterStream;
 
-class SFilterManager implements iSFManager
+class RegistryOfFilterStream 
+    implements iRegistryOfFilterStream
 {
-    protected static $filters = [];
+    protected static $filters = array();
 
     /**
      * Register a user defined stream filter
      *
      * - when the filter registered it can't be removed
      *
-     * @param iSFilter  $filter
-     * @param null      $label   Wrapper Label
-     *                           - If Not Set Using iSFilter
+     * @param iFilterStream  $filter
+     * @param null           $label   Wrapper Label
+     *                                - If Not Set Using iFilterStream
      *
      * @throws \Exception If Wrapper Registered Before
      *                    Error on Registering Filter
      */
-    static function register(iSFilter $filter, $label = null)
+    static function register(iFilterStream $filter, $label = null)
     {
         $name = $filter->getLabel();
 
@@ -45,7 +46,7 @@ class SFilterManager implements iSFManager
      * @param string $filterName
      *
      * @throws \Exception Filter Not Found
-     * @return iSFilter
+     * @return iFilterStream
      */
     static function get($filterName)
     {
@@ -61,17 +62,16 @@ class SFilterManager implements iSFManager
     /**
      * Has Filter ?
      *
-     * @param string|iSFilter $filterName
+     * @param string|iFilterStream $filterName
      *
      * @return boolean
      */
     static function has($filterName)
     {
-        if ($filterName instanceof iSFilter)
+        if ($filterName instanceof iFilterStream)
             $filterName = $filterName->getLabel();
 
         $result = in_array($filterName, self::listFilters());
-
         return $result;
     }
 
@@ -85,4 +85,3 @@ class SFilterManager implements iSFManager
         return stream_get_filters();
     }
 }
- 

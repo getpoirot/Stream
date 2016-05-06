@@ -1,20 +1,21 @@
 <?php
 namespace Poirot\Stream\Resource;
 
-use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
-use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
+use Poirot\Stream\Interfaces\Resource\iAccessModeToResourceStream;
+use Poirot\Stream\Interfaces\Resource\iMetaReaderOfPhpResource;
 
-class SRInfoMeta implements iSResMetaReader
+class MetaReaderOfPhpResource 
+    implements iMetaReaderOfPhpResource
 {
-    /**
-     * @var resource
-     */
+    /** @var resource */
     protected $rHandler;
 
-    /**
-     * @var array
-     */
-    protected $__metaData;
+    /** @var array */
+    protected $_metaData;
+    
+    /** @var AccessMode */
+    protected $_c__accMode;
+
 
     /**
      * Construct
@@ -42,8 +43,8 @@ class SRInfoMeta implements iSResMetaReader
                 is_object($resOrigin) ? get_class($resOrigin) : gettype($resOrigin)
             ));
 
+        
         $this->rHandler = $resOrigin;
-
         return $this;
     }
 
@@ -57,7 +58,7 @@ class SRInfoMeta implements iSResMetaReader
                 'Resource not still available, it might be closed.'
             );
 
-        $this->__metaData  = stream_get_meta_data($this->rHandler);
+        $this->_metaData  = stream_get_meta_data($this->rHandler);
     }
 
     /**
@@ -72,8 +73,8 @@ class SRInfoMeta implements iSResMetaReader
     {
         $this->assertMetaData();
 
-        if (isset($this->__metaData[$key]))
-            return $this->__metaData[$key];
+        if (isset($this->_metaData[$key]))
+            return $this->_metaData[$key];
 
         return $default;
     }
@@ -86,8 +87,7 @@ class SRInfoMeta implements iSResMetaReader
     function toArray()
     {
         $this->assertMetaData();
-
-        return $this->__metaData;
+        return $this->_metaData;
     }
 
     /**
@@ -98,7 +98,6 @@ class SRInfoMeta implements iSResMetaReader
     function getUri()
     {
         $this->assertMetaData();
-
         return $this->getMetaKey('uri');
     }
 
@@ -111,7 +110,6 @@ class SRInfoMeta implements iSResMetaReader
     function getUnreadBytes()
     {
         $this->assertMetaData();
-
         return $this->getMetaKey('unread_bytes');
     }
 
@@ -124,7 +122,6 @@ class SRInfoMeta implements iSResMetaReader
     function getStreamType()
     {
         $this->assertMetaData();
-
         return $this->getMetaKey('stream_type');
     }
 
@@ -137,7 +134,6 @@ class SRInfoMeta implements iSResMetaReader
     function getWrapperType()
     {
         $this->assertMetaData();
-
         return $this->getMetaKey('wrapper_type');
     }
 
@@ -149,26 +145,25 @@ class SRInfoMeta implements iSResMetaReader
     function getWrapperData()
     {
         $this->assertMetaData();
-
         return $this->getMetaKey('wrapper_data');
     }
 
     /**
      * The Type Mode Of Access Required For This Stream
      *
-     * @return iSRAccessMode
+     * @return iAccessModeToResourceStream
      */
     function getAccessType()
     {
-        static $modeObj;
-
-        if (!$modeObj instanceof SROpenMode)
-            $modeObj = new SROpenMode;
+        if (!$this->_c__accMode instanceof AccessMode)
+            $this->_c__accMode = new AccessMode;
 
         $this->assertMetaData();
-
         $mode = $this->getMetaKey('mode');
-        return $modeObj->fromString($mode);
+        if ($mode !== null)
+            $this->_c__accMode->fromString($mode);
+
+        return $this->_c__accMode;
     }
 
     /**
@@ -180,7 +175,6 @@ class SRInfoMeta implements iSResMetaReader
     function isTimedOut()
     {
         $this->assertMetaData();
-
         return (bool) $this->getMetaKey('timed_out');
     }
 
@@ -192,7 +186,6 @@ class SRInfoMeta implements iSResMetaReader
     function isSeekable()
     {
         $this->assertMetaData();
-
         return (bool) $this->getMetaKey('seekable');
     }
 
@@ -204,7 +197,6 @@ class SRInfoMeta implements iSResMetaReader
     function isNoneBlocking()
     {
         $this->assertMetaData();
-
         return ! ( (bool) $this->getMetaKey('blocked') );
     }
 
@@ -218,7 +210,6 @@ class SRInfoMeta implements iSResMetaReader
     function isReachedEnd()
     {
         $this->assertMetaData();
-
         return (bool) $this->getMetaKey('eof');
     }
 }

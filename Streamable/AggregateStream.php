@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Streamable;
 use Traversable;
@@ -70,12 +70,12 @@ class AggregateStream extends Streamable
     /**
      * Set Stream Handler Resource
      *
-     * @param iSResource $handle
+     * @param iResourceStream $handle
      *
      * @throws \Exception
      * @return $this
      */
-    function setResource(iSResource $handle)
+    function setResource(iResourceStream $handle)
     {
         throw new \Exception('Resource is banned by default.');
     }
@@ -83,7 +83,7 @@ class AggregateStream extends Streamable
     /**
      * Get Stream Handler Resource
      *
-     * @return iSResource
+     * @return iResourceStream
      */
     function getResource()
     {
@@ -142,7 +142,7 @@ class AggregateStream extends Streamable
         }
 
 
-        $this->__resetTransCount($transCount);
+        $this->_resetTransCount($transCount);
         ## move current offset in resource
         $this->currOffset += $this->getTransCount();
 

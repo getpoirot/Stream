@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-interface iSRAccessMode
+interface iAccessModeToResourceStream
 {
     /*++
     Stream File Open, Words Stand For:
@@ -219,4 +219,10 @@ interface iSRAccessMode
      * @return string
      */
     function toString();
+
+    /**
+     * Proxy Call Method
+     * @return string
+     */
+    function __toString();
 }

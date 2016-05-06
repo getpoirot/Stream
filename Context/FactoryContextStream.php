@@ -1,9 +1,11 @@
 <?php
 namespace Poirot\Stream\Context;
 
-use Poirot\Stream\Interfaces\Context\iSContext;
+use Poirot\Std\Interfaces\Pact\ipFactory;
+use Poirot\Stream\Interfaces\Context\iContextStream;
 
-class ContextFactory
+class FactoryContextStream
+    implements ipFactory
 {
     /**
      * Factory ContextOption From context resource
@@ -11,9 +13,10 @@ class ContextFactory
      * - rewrite wrapper with resource wrapper name
      *
      * @param resource $resource Context/Stream
-     * @return iSContext
+     * 
+     * @return iContextStream
      */
-    static function factory($resource)
+    static function of($resource)
     {
         if (!is_resource($resource) && get_resource_type($resource) !== 'stream-context')
             throw new \InvalidArgumentException(sprintf(
@@ -24,7 +27,7 @@ class ContextFactory
 
         // ..
         $options = stream_context_get_params($resource);
-        $context = new SocketContext('', $options); // Socket Context can be used as Base Context
+        $context = new ContextStreamSocket($options); // Socket Context can be used as Base Context
         return $context;
     }
 }

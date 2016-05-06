@@ -1,37 +1,34 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\iSResource;
-use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
+use Poirot\Stream\Interfaces\Filter\iFilterStream;
+use Poirot\Stream\Interfaces\iResourceStream;
+use Poirot\Stream\Interfaces\Resource\iMetaReaderOfPhpResource;
 use Poirot\Stream\Psr\StreamInterface;
-use Poirot\Stream\Resource\SRInfoMeta;
+use Poirot\Stream\Resource\MetaReaderOfPhpResource;
 use Poirot\Stream\Wrapper\SPsrWrapper;
 
-class SResource implements iSResource
+class ResourceStream 
+    implements iResourceStream
 {
-    /**
-     * @var resource
-     */
+    /** @var resource */
     protected $rHandler;
 
-    /**
-     * @var SRInfoMeta
-     */
-    protected $__rMetaInfo;
+    /** @var MetaReaderOfPhpResource */
+    protected $_rMetaInfo;
 
     /**
      * resource of attached filters by stream_app/prepend_filter
-     * @var array[resource]
+     * @var resource[]
      */
-    protected $attachedFilters = [];
+    protected $attachedFilters = array();
 
 
     /**
      * Construct
      *
      * ! the StreamInterface as argument can be used
-     *   it will converted into resource by psr wrapper
+     *   it will converted into resource by PSR wrapper
      *
      * @param resource|StreamInterface $sResource
      */
@@ -93,14 +90,14 @@ class SResource implements iSResource
     /**
      * Meta Data About Handler
      *
-     * @return SRInfoMeta|iSResMetaReader
+     * @return MetaReaderOfPhpResource|iMetaReaderOfPhpResource
      */
     function meta()
     {
-        if (!$this->__rMetaInfo)
-            $this->__rMetaInfo = new SRInfoMeta($this->getRHandler());
+        if (!$this->_rMetaInfo)
+            $this->_rMetaInfo = new MetaReaderOfPhpResource($this->getRHandler());
 
-        return $this->__rMetaInfo;
+        return $this->_rMetaInfo;
     }
 
     /**
@@ -110,12 +107,12 @@ class SResource implements iSResource
      *  $filter->appendTo($this)
      * [/code]
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      * @param int $rwFlag @see iSFilter::AppendTo
      *
      * @return $this
      */
-    function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function appendFilter(iFilterStream $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         $filterRes = $filter->appendTo($this);
 
@@ -127,12 +124,12 @@ class SResource implements iSResource
     /**
      * Attach a filter to a stream
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      * @param int $rwFlag
      *
      * @return $this
      */
-    function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function prependFilter(iFilterStream $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         $filterRes = $filter->prependTo($this);
 
@@ -144,11 +141,11 @@ class SResource implements iSResource
     /**
      * Remove Given Filter From Resource
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      *
      * @return $this
      */
-    function removeFilter(iSFilter $filter)
+    function removeFilter(iFilterStream $filter)
     {
         $filterName = $filter->getLabel();
         if (isset($this->attachedFilters[$filterName])) {
@@ -237,6 +234,7 @@ class SResource implements iSResource
      */
     function __destruct()
     {
+        // TODO if connection is not persist
         $this->close();
     }
 }

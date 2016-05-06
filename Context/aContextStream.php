@@ -1,13 +1,12 @@
 <?php
 namespace Poirot\Stream\Context;
 
-use Poirot\Std;
-use Poirot\Std\Interfaces\Struct\iOptionsData;
-use Poirot\Stream\Interfaces\Context\iSContext;
+use Poirot\Std\Struct\aDataOptions\PropObject;
 use Traversable;
 
-// TODO where is functions ?
-!defined('POIROT_CORE_LOADED') and include_once 'functions.php';
+use Poirot\Std;
+
+use Poirot\Stream\Interfaces\Context\iContextStream;
 
 /*
 $socket = new SocketContext([
@@ -23,44 +22,37 @@ $socket = new SocketContext([
 ]);
 */
 
-class AbstractContext extends Std\Struct\OpenOptionsData
-    implements iSContext
+class aContextStreamStream 
+    extends Std\Struct\DataOptionsOpen
+    implements iContextStream
 {
     protected $wrapper = null;
 
-    // params
-
-    /**
-     * @var callable
-     */
+    /** @var callable */
     protected $notification;
 
-    // options (bind contexts)
-
-    /**
-     * @var array[AbstractContext]
-     */
-    protected $bindContexts = [];
+    /** @var aContextStreamStream[] */
+    protected $bindContexts = array();
 
     /**
      * Construct
      *
      * - params in form of get_context_params
-     *   [ 'notification' => ...
-     *     'options'|'bind_with' => $contextOptions
+     *   [ 'notification' => ...params
+     *     'options'|'bind_with' => [ $contextOptions..
      *
-     * @param array|iOptionsData $contextParams Options
+     * @param null|array|\Traversable $contextParams Options
      */
     function __construct($contextParams = null)
     {
-        $this->__init();
+        $this->_init();
         parent::__construct($contextParams);
     }
 
     /**
      * Called by __construct
      */
-    protected function __init() { }
+    protected function _init() { }
 
     /**
      * Do Set Data From
@@ -68,19 +60,21 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      */
     protected function doSetFrom($data)
     {
-        // TODO get available options from this context for understanding option key for set or binding context
-
         if ($data instanceof \Traversable)
-            $data = \Poirot\Std\iterator_to_array($data);
+            $data = Std\cast($data)->toArray();
 
         if (isset($data['bind_with'])) {
-            $data['options'] = $data['bind_with'];
+            (isset($data['options'])) 
+                ? $data['options'] = array_merge($data['options'], $data['bind_with'])
+                : $data['options'] = $data['bind_with']
+            ;
             unset($data['bind_with']);
         }
 
         if (isset($data['options'])) {
             // get_context_options ['wrapper_name'=>.., ..]
-            foreach ($data['options'] as $b => $v) $this->bindWith(new BaseContext($b, $v));
+            foreach ($data['options'] as $b => $v) 
+                $this->bindWith(new ContextStreamBase($b, $v));
             unset($data['options']);
         }
 
@@ -93,14 +87,13 @@ class AbstractContext extends Std\Struct\OpenOptionsData
     }
 
     /**
-     * Used To Create Context, as php on creating streams
-     * contexts get options as associative array with
-     * $arr['wrapper']['option'] = $value format
-     *
+     * Wrapper name
+     * @ignore
+     * 
      * @throws \Exception
      * @return string
      */
-    function wrapperName()
+    function getWrapperName()
     {
         $wrapper = $this->wrapper;
         if ($wrapper === null)
@@ -126,13 +119,14 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      *   ]
      * ]
      *
-     * @param iSContext $context
+     * @param iContextStream $context
      *
      * @return $this
      */
-    function bindWith(iSContext $context)
+    function bindWith(iContextStream $context)
     {
-        $this->bindContexts[strtolower($context->wrapperName())] = $context;
+        $wrapperName = strtolower($context->getWrapperName());
+        $this->bindContexts[$wrapperName] = $context;
         return $this;
     }
 
@@ -141,7 +135,7 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      *
      * @param string $wrapperName
      *
-     * @return false|iSContext
+     * @return iContextStream|false
      */
     function hasBind($wrapperName)
     {
@@ -161,6 +155,7 @@ class AbstractContext extends Std\Struct\OpenOptionsData
         return array_keys($this->bindContexts);
     }
 
+    
     // Default PHP Context Params:
 
     /**
@@ -188,28 +183,50 @@ class AbstractContext extends Std\Struct\OpenOptionsData
         return $this->notification;
     }
 
+    
     // Context:
-
-    /**
-     * @ignore
-     * Retrieve an external iterator
-     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Traversable An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
-     * @since 5.0.0
-     */
-    public function getIterator()
+    
+    protected function _getIterator()
     {
-        foreach(parent::getIterator() as $key => $val)
-            yield $key => $val;
+        /** @var PropObject $p */
+        foreach($this->_getProperties() as $p) {
+            if (!$p->isReadable()) continue;
 
+            $val = $this->__get($p->getKey());
+            yield (string) $p => $val;
+        }
+
+        if ($binds = $this->_getBindContextOptions())
+            yield 'options' => $binds;
+    }
+
+    // DO_LEAST_PHPVER_SUPPORT v5.5 yeild
+    protected function _fix__getIterator()
+    {
+        $arr = array();
+        foreach($this->_getProperties() as $p) {
+            if (!$p->isReadable()) continue;
+
+            $val = $this->__get($p->getKey());
+            $arr[(string) $p] = $val;
+        }
+
+        if ($binds = $this->_getBindContextOptions())
+            $arr['options'] = $binds;
+        
+        return new \ArrayIterator($arr);
+    }
+    
+    protected function _getBindContextOptions()
+    {
         // Bind Contexts:
-        $binds = [];
+        $binds = array();
         foreach($this->listBindContexts() as $context)
         {
             // TODO each bind context may have options => [] (bind_with) inside
             // but here we just used context specific params,
-            $contextParams = \Poirot\Std\iterator_to_array($this->hasBind($context), function($key, $val) {
+            $contextParams = new Std\Type\StdTravers($this->hasBind($context));
+            $contextParams = $contextParams->toArray(function($key, $val) {
                 ### we don`t want null values on context params
                 return ($val === null);
             });
@@ -218,8 +235,7 @@ class AbstractContext extends Std\Struct\OpenOptionsData
             $binds[$context] = $contextParams;
         }
 
-        if (!empty($binds))
-            yield 'options' => $binds;
+        return $binds;
     }
 
     /**
@@ -235,8 +251,9 @@ class AbstractContext extends Std\Struct\OpenOptionsData
      */
     function toContext()
     {
-        $params  = \Poirot\Std\iterator_to_array($this);
-        $options = (isset($params['options'])) ? $params['options'] : [];
+        $params  = new Std\Type\StdTravers($this);
+        $params  = $params->toArray();
+        $options = (isset($params['options'])) ? $params['options'] : array();
         unset($params['options']);
 
         return stream_context_create($options, $params);
@@ -271,7 +288,7 @@ class AbstractContext extends Std\Struct\OpenOptionsData
         if ($context = $this->hasBind($method)) {
             if (isset($setterCall)) {
                 // $cntx->setSocket(['bindTo' => ..])
-                $context->from($args[0]);
+                $context->import($args[0]);
                 return $this;
             }
 

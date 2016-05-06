@@ -4,7 +4,8 @@ namespace Poirot\Stream\Filter;
 /**
  * An Example To How To Write New Filter
  */
-class BadwordFilter extends AbstractFilter
+class FilterStreamBadword 
+    extends aFilterStreamCustom
 {
     /**
      * Filter Stream Through Buckets
@@ -21,24 +22,24 @@ class BadwordFilter extends AbstractFilter
      */
     function filter($in, $out, &$consumed, $closing)
     {
-        $unfiltered = $this->__getDataFromBucket($in, $consumed);
+        $unfiltered = $this->_getDataFromBucket($in, $consumed);
 
         // Filter Stream Data:
         $filtered = $unfiltered;
         foreach ($this->params['bad_words'] as $badWord) {
             $regex = "[(^|\s)({$badWord})($|\s)]i";
             preg_match_all($regex, $filtered, $matches);
-            $filtered = preg_replace($regex, "$1{$this->getReplacement()}$3", $filtered);
+            $filtered = preg_replace($regex, "$1{$this->_getReplacement()}$3", $filtered);
         }
 
         // Write Down Back Filtered Data To Stream:
-        return $this->__writeBackDataOut($out, $filtered);
+        return $this->_writeBackDataOut($out, $filtered);
     }
 
     /**
      * @return string
      */
-    protected function getReplacement()
+    protected function _getReplacement()
     {
         return '@!#^#!@';
     }

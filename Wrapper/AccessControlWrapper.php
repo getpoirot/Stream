@@ -10,7 +10,7 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptionsData;
  * (!) The Registered Wrappers Constructed On Each fopen
  *     With Contexts
  */
-class AccessControlWrapper extends AbstractWrapper
+class AccessControlWrapper extends AbstractWrapperStream
 {
     /**
      * @var ACWOptionsData

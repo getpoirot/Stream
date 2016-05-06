@@ -1,10 +1,10 @@
 <?php
 namespace Poirot\Stream\Filter;
 
-use Poirot\Std\Struct\AbstractOptionsData;
-use Poirot\Std\Struct\OpenOptionsData;
-use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Std\Interfaces\Struct\iDataOptions;
+use Poirot\Std\Struct\DataOptionsOpen;
+use Poirot\Stream\Interfaces\Filter\iFilterStream;
+use Poirot\Stream\Interfaces\iResourceStream;
 
 /*
 $socket = new StreamClient([
@@ -23,7 +23,8 @@ $stream   = new Streamable($resource);
  * You have to skip the first two bytes before attaching the filter.
  */
 
-class PhpRegisteredFilter implements iSFilter
+class FilterStreamStreamPhpBuiltin 
+    implements iFilterStream
 {
     protected $label;
 
@@ -32,15 +33,15 @@ class PhpRegisteredFilter implements iSFilter
     /**
      * Construct
      *
-     * @param string               $filtername zlib.*, ....
-     * @param null|AbstractOptionsData $options
+     * @param string                  $filtername zlib.*, ....
+     * @param null|array|\Traversable $options
      */
     function __construct($filtername, $options = null)
     {
         $this->label = $filtername;
 
         if ($options !== null)
-            $this->optsData()->from($options);
+            $this->optsData()->import($options);
     }
 
     /**
@@ -74,15 +75,20 @@ class PhpRegisteredFilter implements iSFilter
      *       stream_filter_append() must be called twice with STREAM_FILTER_READ and STREAM_FILTER_WRITE
      *       to get both filter resources.
      *
-     * @param iSResource $streamResource
+     * @param iResourceStream $streamResource
      * @param int $rwFlag
      *
      * @return resource
      */
-    function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
+    function appendTo(iResourceStream $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_append($resource, $this->getLabel(), $rwFlag, \Poirot\Std\iterator_to_array($this->optsData()));
+        $resource = stream_filter_append(
+            $resource
+            , $this->getLabel()
+            , $rwFlag
+            , \Poirot\Std\cast($this->optsData())->toArray()
+        );
 
         return $resource;
     }
@@ -90,24 +96,29 @@ class PhpRegisteredFilter implements iSFilter
     /**
      * Attach a filter to a stream
      *
-     * @param iSResource $streamResource
+     * @param iResourceStream $streamResource
      * @param int $rwFlag
      *
      * @return resource
      */
-    function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL)
+    function prependTo(iResourceStream $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
         $resource = $streamResource->getRHandler();
-        $resource = stream_filter_prepend($resource, $this->getLabel(), $rwFlag, \Poirot\Std\iterator_to_array($this->optsData()));
+        $resource = stream_filter_prepend(
+            $resource
+            , $this->getLabel()
+            , $rwFlag
+            , \Poirot\Std\cast($this->optsData())->toArray()
+        );
 
         return $resource;
     }
 
 
-    // ...
+    // implement options provider:
 
     /**
-     * @return OpenOptionsData
+     * @return DataOptionsOpen|iDataOptions
      */
     function optsData()
     {
@@ -131,10 +142,11 @@ class PhpRegisteredFilter implements iSFilter
      *
      * @param null|mixed $builder Builder Options as Constructor
      *
-     * @return OpenOptionsData
+     * @return iDataOptions
      */
     static function newOptsData($builder = null)
     {
-        return (new OpenOptionsData)->from($builder);
+        $options = new DataOptionsOpen();
+        return $options->import($builder);
     }
 }

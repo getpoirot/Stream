@@ -1,12 +1,12 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\Filter\iFilterStream;
+use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
-use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
+use Poirot\Stream\Interfaces\Resource\iMetaReaderOfPhpResource;
 
-class AggregateResource implements iSResource
+class AggregateResource implements iResourceStream
 {
     /**
      * Construct
@@ -40,12 +40,12 @@ class AggregateResource implements iSResource
      *  $filter->appendTo($this)
      * [/code]
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      * @param int $rwFlag @see iSFilter::AppendTo
      *
      * @return $this
      */
-    function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function appendFilter(iFilterStream $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
@@ -57,12 +57,12 @@ class AggregateResource implements iSResource
     /**
      * Attach a filter to a stream
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      * @param int $rwFlag
      *
      * @return $this
      */
-    function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL)
+    function prependFilter(iFilterStream $filter, $rwFlag = STREAM_FILTER_ALL)
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
@@ -74,11 +74,11 @@ class AggregateResource implements iSResource
     /**
      * Remove Given Filter From Resource
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      *
      * @return $this
      */
-    function removeFilter(iSFilter $filter)
+    function removeFilter(iFilterStream $filter)
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
@@ -199,7 +199,7 @@ class AggregateResource implements iSResource
      * - meta may not available for some streams
      *   so it must return false
      *
-     * @return iSResMetaReader|false
+     * @return iMetaReaderOfPhpResource|false
      */
     function meta()
     {

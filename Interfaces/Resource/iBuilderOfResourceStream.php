@@ -1,20 +1,21 @@
 <?php
 namespace Poirot\Stream\Interfaces\Resource;
 
-use Poirot\Std\Interfaces\Struct\iOptionsData;
-use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Std\Interfaces\Struct\iDataOptions;
+use Poirot\Stream\Interfaces\Filter\iFilterStream;
+use Poirot\Stream\Interfaces\iResourceStream;
 
-interface iSRBuilder extends iOptionsData
+interface iBuilderOfResourceStream 
+    extends iDataOptions
 {
     /**
      * Build Stream Resource Handle With Config Files
      *
-     * @param iSResource $handle
+     * @param iResourceStream $handle
      *
      * @return $handle
      */
-    function build(iSResource $handle);
+    function build(iResourceStream $handle);
 
     /**
      * Set Filters
@@ -30,11 +31,11 @@ interface iSRBuilder extends iOptionsData
      *
      * - append filter to resource
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      *
      * @return $this
      */
-    function setFilter(iSFilter $filter);
+    function setFilter(iFilterStream $filter);
 
     /**
      * @link http://php.net/manual/en/function.stream-set-blocking.php

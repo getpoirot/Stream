@@ -1,21 +1,22 @@
 <?php
-namespace Poirot\Stream;
+namespace Poirot\Stream\Wrapper;
 
-use Poirot\Stream\Interfaces\Wrapper\iSWManager;
-use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
+use Poirot\Stream\Interfaces\Wrapper\iRegistryOfWrapperStream;
+use Poirot\Stream\Interfaces\Wrapper\iWrapperStream;
 
-class SWrapperManager implements iSWManager
+class RegistryOfWrapperStream 
+    implements iRegistryOfWrapperStream
 {
     /**
      * Register Stream Wrapper
      *
-     * @param ipSWrapper $wrapper
-     * @param null      $label   Wrapper Label
-     *        - If Not Set Using iSWrapper
+     * @param iWrapperStream $wrapper
+     * @param null           $label   Wrapper Label
+     *                                - If Not Set Using iSWrapper::getLabel
      *
      * @throws \Exception If Wrapper Registered Before
      */
-    static function register(ipSWrapper $wrapper, $label = null)
+    static function register(iWrapperStream $wrapper, $label = null)
     {
         if ($label == null)
             $label = $wrapper->getLabel();
@@ -32,9 +33,9 @@ class SWrapperManager implements iSWManager
         // Set the default stream context which will be used whenever
         // file operations (fopen(), file_get_contents(), etc...) are
         // called without a context parameter.
-        $options = [
-            $label => \Poirot\Std\iterator_to_array($wrapper->optsData())
-        ];
+        $options = array(
+            $label => \Poirot\Std\cast($wrapper->optsData())->toArray()
+        );
 
         stream_context_set_default($options);
     }
@@ -42,11 +43,11 @@ class SWrapperManager implements iSWManager
     /**
      * UnRegister Wrapper
      *
-     * @param string|ipSWrapper $label
+     * @param string|iWrapperStream $label
      */
     static function unregister($label)
     {
-        if ($label instanceof ipSWrapper)
+        if ($label instanceof iWrapperStream)
             $label = $label->getLabel();
 
         stream_wrapper_unregister($label);
@@ -55,24 +56,24 @@ class SWrapperManager implements iSWManager
     /**
      * Has Registered Wrapper With Name?
      *
-     * @param string|ipSWrapper $wrapper
+     * @param string|iWrapperStream $wrapper
      *
      * @return boolean
      */
     static function isRegistered($wrapper)
     {
-        if ($wrapper instanceof ipSWrapper)
+        if ($wrapper instanceof iWrapperStream)
             $wrapper = $wrapper->getLabel();
 
-        return in_array($wrapper, self::listRegWrappers());
+        return in_array($wrapper, self::listWrappers());
     }
 
     /**
      * Get List Of Registered Wrappers
      *
-     * @return array[string]
+     * @return string[]
      */
-    static function listRegWrappers()
+    static function listWrappers()
     {
         return stream_get_wrappers();
     }

@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 
 /*
@@ -13,26 +13,23 @@ echo $stream->read();
 
 */
 
-class Streamable implements iStreamable
+class Streamable 
+    implements iStreamable
 {
-    /**
-     * @var iSResource
-     */
+    /** @var iResourceStream */
     protected $resource;
 
-    /**
-     * @var int Transaction Count Bytes
-     */
-    protected $__transCount;
+    /** @var int Transaction Count Bytes */
+    protected $_transCount;
 
     protected $_buffer;
 
     /**
      * Construct
      *
-     * @param iSResource $resource
+     * @param iResourceStream $resource
      */
-    function __construct(iSResource $resource = null)
+    function __construct(iResourceStream $resource = null)
     {
         if ($resource !== null)
             $this->setResource($resource);
@@ -41,11 +38,11 @@ class Streamable implements iStreamable
     /**
      * Set Stream Handler Resource
      *
-     * @param iSResource $resource
+     * @param iResourceStream $resource
      *
      * @return $this
      */
-    function setResource(iSResource $resource)
+    function setResource(iResourceStream $resource)
     {
         $this->resource = $resource;
         return $this;
@@ -54,7 +51,7 @@ class Streamable implements iStreamable
     /**
      * Get Stream Handler Resource
      *
-     * @return SResource|iSResource
+     * @return ResourceStream|iResourceStream|null
      */
     function getResource()
     {
@@ -102,7 +99,7 @@ class Streamable implements iStreamable
      */
     function pipeTo(iStreamable $destStream, $maxByte = null, $offset = null)
     {
-        $this->__assertStreamAlive();
+        $this->_assertStreamAlive();
 
         $maxByte = ($maxByte === null)
             ?
@@ -118,7 +115,7 @@ class Streamable implements iStreamable
         ## copy data
         $data  = $this->read($maxByte);
         $destStream->write($data);
-        $this->__resetTransCount($destStream->getTransCount());
+        $this->_resetTransCount($destStream->getTransCount());
 
         return $this;
     }
@@ -135,7 +132,7 @@ class Streamable implements iStreamable
      */
     function read($inByte = null)
     {
-        $this->__assertReadable();
+        $this->_assertReadable();
 
         $inByte = ($inByte === null)
             ?
@@ -155,7 +152,7 @@ class Streamable implements iStreamable
             // TODO implement data length without mb_strlen
             $transCount = strlen($data);
 
-        $this->__resetTransCount($transCount);
+        $this->_resetTransCount($transCount);
 
         return $data;
     }
@@ -177,7 +174,7 @@ class Streamable implements iStreamable
      */
     function readLine($ending = "\n", $inByte = null)
     {
-        $this->__assertReadable();
+        $this->_assertReadable();
 
         $inByte = ($inByte === null)
             ?
@@ -193,7 +190,7 @@ class Streamable implements iStreamable
 //            throw new \RuntimeException('Cannot read stream.');
 
         $transCount = mb_strlen($data, '8bit');
-        $this->__resetTransCount($transCount);
+        $this->_resetTransCount($transCount);
 
         return $data;
     }
@@ -210,7 +207,7 @@ class Streamable implements iStreamable
      */
     function write($content, $inByte = null)
     {
-        $this->__assertWritable();
+        $this->_assertWritable();
 
         $stream = $this->getResource()->getRHandler();
 
@@ -229,7 +226,7 @@ class Streamable implements iStreamable
             throw new \RuntimeException('Cannot write on stream.');
 
         $transCount = ($inByte !== null) ? $inByte : mb_strlen($content, '8bit');
-        $this->__resetTransCount($transCount);
+        $this->_resetTransCount($transCount);
 
         return $this;
     }
@@ -283,7 +280,7 @@ class Streamable implements iStreamable
                 error_get_last()['message']
             ));
 
-        $this->__resetTransCount($ret);
+        $this->_resetTransCount($ret);
 
         return $this;
     }
@@ -310,9 +307,9 @@ class Streamable implements iStreamable
     {
         $size = fstat(
             $this->getResource()->getRHandler()
-        )['size'];
+        );
 
-        return $size;
+        return $size['size'];
     }
 
     /**
@@ -322,13 +319,8 @@ class Streamable implements iStreamable
      */
     function getTransCount()
     {
-        return $this->__transCount;
+        return $this->_transCount;
     }
-
-        protected function __resetTransCount($count = 0)
-        {
-            $this->__transCount = $count;
-        }
 
     /**
      * Move the file pointer to a new position
@@ -353,7 +345,7 @@ class Streamable implements iStreamable
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        $this->__assertSeekable();
+        $this->_assertSeekable();
 
         $stream = $this->getResource()->getRHandler();
 
@@ -391,7 +383,7 @@ class Streamable implements iStreamable
      */
     function rewind()
     {
-        $this->__assertSeekable();
+        $this->_assertSeekable();
 
         $stream = $this->getResource()->getRHandler();
 
@@ -413,7 +405,7 @@ class Streamable implements iStreamable
 
     // ...
 
-    protected function __assertStreamAlive()
+    protected function _assertStreamAlive()
     {
         if (!$this->getResource()->isAlive()
             || (
@@ -425,17 +417,17 @@ class Streamable implements iStreamable
         }
     }
 
-    protected function __assertSeekable()
+    protected function _assertSeekable()
     {
-        $this->__assertStreamAlive();
+        $this->_assertStreamAlive();
 
         if (!$this->getResource()->isSeekable())
             throw new \Exception('Cannot seek on a non-seekable stream');
     }
 
-    protected function __assertReadable()
+    protected function _assertReadable()
     {
-        $this->__assertStreamAlive();
+        $this->_assertStreamAlive();
 
         if (!$this->getResource()->isReadable())
             throw new \Exception(sprintf(
@@ -444,15 +436,20 @@ class Streamable implements iStreamable
             ));
     }
 
-    protected function __assertWritable()
+    protected function _assertWritable()
     {
-        $this->__assertStreamAlive();
+        $this->_assertStreamAlive();
 
         if (!$this->getResource()->isWritable())
             throw new \Exception(sprintf(
                 'Cannot write on a non-writable stream (current mode is %s)'
                 , $this->getResource()->meta()->getAccessType()
             ));
+    }
+
+    protected function _resetTransCount($count = 0)
+    {
+        $this->_transCount = $count;
     }
 }
  

@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 
 trait StreamWrapTrait
@@ -12,11 +12,11 @@ trait StreamWrapTrait
     /**
      * Set Stream Handler Resource
      *
-     * @param iSResource $handle
+     * @param iResourceStream $handle
      *
      * @return $this
      */
-    function setResource(iSResource $handle)
+    function setResource(iResourceStream $handle)
     {
         $this->_t__wrap_stream->setResource($handle);
         return $this;
@@ -25,7 +25,7 @@ trait StreamWrapTrait
     /**
      * Get Stream Handler Resource
      *
-     * @return iSResource
+     * @return iResourceStream
      */
     function getResource()
     {

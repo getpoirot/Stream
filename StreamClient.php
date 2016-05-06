@@ -1,11 +1,13 @@
 <?php
 namespace Poirot\Stream;
 
-use Poirot\Std\SetterBuilderTrait;
 use Poirot\Std\ErrorStack;
-use Poirot\Std\OpenCall;
-use Poirot\Stream\Interfaces\Context\iSContext;
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Std\ConfigurableSetter;
+use Poirot\Std\Mixin;
+
+use Poirot\Stream\Context\ContextStreamSocket;
+use Poirot\Stream\Interfaces\Context\iContextStream;
+use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamClient;
 
 /*
@@ -47,18 +49,34 @@ if ($response->plugin()->status()->isSuccess())
 
 */
 
-class StreamClient implements iStreamClient
+class StreamClient
+    extends ConfigurableSetter
+    implements iStreamClient
 {
-    use SetterBuilderTrait;
-    use StreamClientOptionsTrait;
+    /** @var string */
+    protected $socketUri    = null;
 
-    /** @var iSResource */
-    protected $_c__connectedResource;
+    // default options
 
+    /** @var float */
+    protected $timeout      = 20;
+    /** @var boolean */
+    protected $persist      = false;
+    /** @var boolean */
+    protected $noneBlocking = false;
+    /** @var boolean */
+    protected $async        = false;
+    /** @var iContextStream */
+    protected $context;
+    
     // Events ....
-    /** @var OpenCall */
+    /** @var Mixin */
     protected $_on__resource_connected;
 
+    /** @var iResourceStream */
+    protected $_c__connectedResource;
+    
+    
     /**
      * Construct
      *
@@ -66,87 +84,27 @@ class StreamClient implements iStreamClient
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * @param string|array    $socketUri Socket Uri or Array of Builder Settings
-     * @param iSContext|null  $context   Context Options
+     * @param string|array                       $serverAddressOrSetter Socket Uri
+     * @param iContextStream                     $context   Context Options
      */
-    function __construct($socketUri = null, $context = null)
+    function __construct($serverAddressOrSetter, $context = null)
     {
-        if (is_array($socketUri) && !empty($socketUri))
-            $this->setupFromArray($socketUri);
-        elseif (is_string($socketUri))
-            $this->setSocketUri($socketUri);
-        elseif ($socketUri !== null)
-            throw new \InvalidArgumentException(sprintf(
-                'StreamClient Construct give string or array of settings builder as first argument. given "%s".'
-                , \Poirot\Std\flatten($socketUri)
-            ));
+        $setters = array();
 
-        if ($context !== null)
-            $this->setContext($context);
+        if (\Poirot\Std\isStringify($serverAddressOrSetter)) {
+            ## maybe using some stringify like pathuri as input
+            $setters['server_address'] = (string) $serverAddressOrSetter;
+
+            if ($context !== null)
+                $setters['context'] = $context;
+        }
+
+        parent::__construct($setters);
     }
 
 
     // ...
-
-    /**
-     * Add Closure Callable On Connected Resource
-     *
-     * - the closure functions will bind to this object
-     *
-     * closure:
-     * function($resource) {
-     *   // $this will point to StreamClient(current)
-     * }
-     *
-     *
-     * @return OpenCall
-     */
-    function onResourceAvailable()
-    {
-        if (!$this->_on__resource_connected)
-            $this->_on__resource_connected = new OpenCall($this);
-
-        return $this->_on__resource_connected;
-    }
-
-    /**
-     * Proxy to StreamClient::whenResourceAvailable for setupFromArray
-     *
-     * ['on_resource' =>
-     *   ['method_name' => \Closure],
-     *   ['method_name', \Closure],
-     * ]
-     *
-     * @param $methods
-     */
-    protected function setOnResource(array $methods)
-    {
-        if ( count($methods) <= 2 && array_filter($methods, function($item) { return is_callable($item); }) )
-            ##! 'on_resource' => ['dump_debug' => function($resource) {k($resource);}]
-            $methods = [$methods];
-
-        foreach($methods as $method) {
-            $name = null;
-            if (is_array($method)) {
-                if (count($method) === 2) {
-                    ##! ['method_name', \Closure]
-                    $name = $method[0]; $fn = $method[1];
-                } elseif (array_values($method) !== $method) {
-                    ##! ['method_name' => \Closure]
-                    $name = key($method);
-                    $fn = current($method);
-                }
-            }
-
-            if ($name === null)
-                throw new \InvalidArgumentException('Unknown Method Type Provided For '.\Poirot\Std\flatten($method));
-
-            $this->onResourceAvailable()->addMethod($name, $fn);
-        }
-    }
-
-
-
+    
     /**
      * Open Socket Connection To Socket Uri
      *
@@ -173,11 +131,11 @@ class StreamClient implements iStreamClient
      * link for the socket until it actually needs to send or receive data
      *
      * @throws \Exception On Connection Failed
-     * @return iSResource
+     * @return iResourceStream
      */
     function getConnect()
     {
-        $sockUri = $this->getSocketUri();
+        $sockUri = $this->getServerAddress();
 
         // knowing transport/wrapper:
         $scheme  = parse_url($sockUri, PHP_URL_SCHEME);
@@ -187,8 +145,8 @@ class StreamClient implements iStreamClient
                 , $scheme
             ));
 
-        $resource = $this->__connect_transport($sockUri);
-        $resource = new SResource($resource);
+        $resource = $this->_connect_transport($sockUri);
+        $resource = new ResourceStream($resource);
 
         if (!$this->isPersist())
             ## close opened connections
@@ -198,11 +156,231 @@ class StreamClient implements iStreamClient
     }
 
     /**
+     * Add Closure Callable On Connected Resource
+     *
+     * - the closure functions will bind to this object
+     *
+     * closure:
+     * function($resource, $self) {
+     *   // $this available for php 5.4
+     * }
+     *
+     *
+     * @return Mixin
+     */
+    function onResourceAvailable()
+    {
+        if (!$this->_on__resource_connected)
+            $this->_on__resource_connected = new Mixin($this);
+
+        return $this->_on__resource_connected;
+    }
+    
+    // Options:
+
+    /**
+     * Proxy to StreamClient::whenResourceAvailable for setupFromArray
+     *
+     * ['on_resource' =>
+     *   ['method_name' => to callable with args ($resource, $self) ],
+     *   ['method_name', function($resource, $self) ],
+     * ]
+     * 
+     * @param $methods
+     */
+    protected function setOnResource(array $methods)
+    {
+        if ( count($methods) <= 2
+            && array_filter($methods, function($item) { return is_callable($item); }) 
+        )
+            ##! 'on_resource' => ['dump_debug' => function($resource) {k($resource);}]
+            $methods = [$methods];
+
+        foreach($methods as $method) {
+            $name = null;
+            if (is_array($method)) {
+                if (count($method) === 2) {
+                    ##! ['method_name', \Closure]
+                    $name = $method[0]; $fn = $method[1];
+                } elseif (array_values($method) !== $method) {
+                    ##! ['method_name' => \Closure]
+                    $name = key($method);
+                    $fn = current($method);
+                }
+            }
+
+            if ($name === null)
+                throw new \InvalidArgumentException(
+                    'Unknown Method Type Provided For '.\Poirot\Std\flatten($method)
+                );
+
+            $this->onResourceAvailable()->addMethod($name, $fn);
+        }
+    }
+    
+    /**
+     * Set Socket Uri
+     *
+     * Note: When specifying a numerical IPv6 address (e.g. fe80::1),
+     *       you must enclose the IP in square brackets—for example,
+     *       tcp://[fe80::1]:80
+     *
+     * @param string $socketUri
+     *
+     * @return $this
+     */
+    function setServerAddress($socketUri)
+    {
+        $this->socketUri = $socketUri;
+        return $this;
+    }
+
+    /**
+     * Get Current Socket Uri That Stream Built With
+     *
+     * @return string
+     */
+    function getServerAddress()
+    {
+        return $this->socketUri;
+    }
+
+    /**
+     * Set Default Base Context Options
+     *
+     * @param iContextStream $context
+     *
+     * @throws \InvalidArgumentException
+     * @return $this
+     */
+    function setContext(iContextStream $context)
+    {
+        $this->context = $context;
+        return $this;
+    }
+
+    /**
+     * Get Default Base Context Options
+     *
+     * @return iContextStream
+     */
+    function getContext()
+    {
+        if (!$this->context)
+            $this->setContext(new ContextStreamSocket());
+
+        return $this->context;
+    }
+
+    /**
+     * Set timeout period on a stream
+     *
+     * - must store time in float mode
+     *   @see self::getTimeout
+     *
+     * @param float|array $seconds In Form Of time.utime
+     *
+     * @return $this
+     */
+    function setTimeout($seconds)
+    {
+        if (is_array($seconds))
+            $seconds = implode('.', $seconds);
+
+        $this->timeout = $seconds;
+        return $this;
+    }
+
+    /**
+     * Get Timeout
+     *
+     * @return float
+     */
+    function getTimeout()
+    {
+        if (!$this->timeout)
+            $this->setTimeout(ini_get('default_socket_timeout'));
+
+        return $this->timeout;
+    }
+
+    /**
+     * Set To Persistent Internet or Unix Domain Socket
+     * Connection Built
+     *
+     * @param bool $flag
+     *
+     * @return $this
+     */
+    function setPersist($flag = true)
+    {
+        $this->persist = (boolean) $flag;
+        return $this;
+    }
+
+    /**
+     * Indicate Is Connection Have To Built On Persistent Mode
+     *
+     * @return boolean
+     */
+    function isPersist()
+    {
+        return $this->persist;
+    }
+
+    /**
+     * Set blocking/non-blocking mode on a stream
+     *
+     * ! This function works for any stream that supports
+     *   non-blocking mode (currently, regular files and socket streams)
+     *
+     * @param bool $flag
+     *
+     * @return $this
+     */
+    function setNoneBlocking($flag = true)
+    {
+        $this->noneBlocking = (boolean) $flag;
+        return $this;
+    }
+
+    /**
+     * Indicate Where Stream Is Built With None-Blocking Mode?
+     *
+     * @return boolean
+     */
+    function isNoneBlocking()
+    {
+        return $this->noneBlocking;
+    }
+
+    /**
+     * @param boolean $async
+     * @return $this
+     */
+    function setAsync($async = true)
+    {
+        $this->async = (boolean) $async;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    function isAsync()
+    {
+        return $this->async;
+    }
+
+    
+    // ..
+
+    /**
      * @link http://php.net/manual/en/function.stream-socket-client.php
      * @link http://php.net/manual/en/function.fsockopen.php
      * @link http://php.net/manual/en/function.pfsockopen.php
      */
-    protected function __connect_transport($sockUri)
+    protected function _connect_transport($sockUri)
     {
         // timeout:
         $timeout = $this->getTimeout();
@@ -211,7 +389,7 @@ class StreamClient implements iStreamClient
         $flags = STREAM_CLIENT_CONNECT;
         (!$this->isPersist()) ?: $flags |= STREAM_CLIENT_PERSISTENT;
         // asynchronous
-        (!$this->isAsync()) ?: $flags |= STREAM_CLIENT_ASYNC_CONNECT;
+        (!$this->isAsync())   ?: $flags |= STREAM_CLIENT_ASYNC_CONNECT;
 
 
         // get connect to resource:
@@ -228,22 +406,24 @@ class StreamClient implements iStreamClient
         );
 
         // Fire up registered methods on resource
+        // It may used to add extra options or context that not available inside this class.
         foreach($this->onResourceAvailable()->listMethods() as $method)
-            call_user_func([$this->onResourceAvailable(), $method], $resource);
+            call_user_func(array($this->onResourceAvailable(), $method), $resource, $this);
 
         $error = ErrorStack::handleDone();
         if ($error)
             throw new \Exception(sprintf(
                 'Cannot Connect To Server "%s".'
-                , $this->getSocketUri()
+                , $this->getServerAddress()
             ), $errno, $error);
-        // ----------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------/
 
-        // Set the stream timeout
-        if (!stream_set_timeout($resource, (int) $this->getTimeout()))
-            throw new \RuntimeException('Unable to set the connection timeout');
-
-        // none blocking mode:
+        # Set the stream timeout
+        $timeOut = explode('.', (string) $this->getTimeout());
+        (isset($timeOut[1])) ?: $timeOut[1] = null;
+        @stream_set_timeout($resource, $timeOut[0], $timeOut[1]);
+        
+        # None blocking mode:
         if ($this->isNoneBlocking())
             // it will work after connection has made on resource
             stream_set_blocking($resource, 0); // 0 for none-blocking
@@ -258,6 +438,7 @@ class StreamClient implements iStreamClient
     {
         if ($this->_c__connectedResource)
             foreach($this->_c__connectedResource as $cn) {
+            /** @var ResourceStream $cn */
                 ## close connection if not persist
                 ErrorStack::handleError();
                 $cn->close();

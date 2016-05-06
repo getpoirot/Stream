@@ -1,10 +1,10 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-use Poirot\Stream\Interfaces\Filter\iSFilter;
-use Poirot\Stream\Interfaces\Resource\iSResMetaReader;
+use Poirot\Stream\Interfaces\Filter\iFilterStream;
+use Poirot\Stream\Interfaces\Resource\iMetaReaderOfPhpResource;
 
-interface iSResource
+interface iResourceStream
 {
     /**
      * Get Resource Origin Handler
@@ -39,7 +39,7 @@ interface iSResource
      * - meta may not available for some streams
      *   so it must return false
      *
-     * @return iSResMetaReader|false
+     * @return iMetaReaderOfPhpResource|false
      */
     function meta();
 
@@ -50,31 +50,31 @@ interface iSResource
      *  $filter->appendTo($this)
      * [/code]
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      * @param int      $rwFlag  @see iSFilter::AppendTo
      *
      * @return $this
      */
-    function appendFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
+    function appendFilter(iFilterStream $filter, $rwFlag = STREAM_FILTER_ALL);
 
     /**
      * Attach a filter to a stream
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      * @param int      $rwFlag
      *
      * @return $this
      */
-    function prependFilter(iSFilter $filter, $rwFlag = STREAM_FILTER_ALL);
+    function prependFilter(iFilterStream $filter, $rwFlag = STREAM_FILTER_ALL);
 
     /**
      * Remove Given Filter From Resource
      *
-     * @param iSFilter $filter
+     * @param iFilterStream $filter
      *
      * @return $this
      */
-    function removeFilter(iSFilter $filter);
+    function removeFilter(iFilterStream $filter);
 
     // :
 

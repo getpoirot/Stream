@@ -3,7 +3,7 @@ namespace Poirot\Stream\Wrapper;
 
 use Poirot\Std\Struct\AbstractOptionsData;
 use Poirot\Std\Struct\OpenOptionsData;
-use Poirot\Stream\Interfaces\Wrapper\ipSWrapper;
+use Poirot\Stream\Interfaces\Wrapper\iWrapperStream;
 
 /*
 // How to inject options into wrapper as default context:
@@ -17,9 +17,9 @@ fopen('label://stream', 'r', null
 );
 */
 
-abstract class AbstractWrapper
+abstract class AbstractWrapperStream
     implements
-    ipSWrapper
+    iWrapperStream
 {
     /**
      * Context Wrapper Options

@@ -1,7 +1,8 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-interface iStreamClient extends iStreamCommon
+interface iStreamClient 
+    extends iStreamCommon
 {
     /**
      * Set Socket Uri
@@ -14,7 +15,7 @@ interface iStreamClient extends iStreamCommon
      *
      * @return $this
      */
-    function setSocketUri($socketUri);
+    function setServerAddress($socketUri);
 
     /**
      * Open Socket Connection To Socket Uri
@@ -42,7 +43,7 @@ interface iStreamClient extends iStreamCommon
      * link for the socket until it actually needs to send or receive data
      *
      * @throws \Exception On Connection Failed
-     * @return iSResource
+     * @return iResourceStream
      */
     function getConnect();
 

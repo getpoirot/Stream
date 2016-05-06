@@ -1,21 +1,21 @@
 <?php
 namespace Poirot\Stream\Interfaces\Filter;
 
-interface iSFManager 
+interface iRegistryOfFilterStream 
 {
     /**
      * Register a user defined stream filter
      *
      * - when the filter registered it can't be removed
      *
-     * @param iSFilter  $filter
-     * @param null      $label   Wrapper Label
-     *                           - If Not Set Using iSFilter
+     * @param iFilterStream  $filter
+     * @param null           $label   Wrapper Label
+     *                                - If Not Set Using iFilterStream
      *
      * @throws \Exception If Wrapper Registered Before
      *                    Error on Registering Filter
      */
-    static function register(iSFilter $filter, $label = null);
+    static function register(iFilterStream $filter, $label = null);
 
     /**
      * Get Filter By Name
@@ -23,14 +23,14 @@ interface iSFManager
      * @param string $filterName
      *
      * @throws \Exception Filter Not Found
-     * @return iSFilter
+     * @return iFilterStream
      */
     static function get($filterName);
 
     /**
      * Has Filter ?
      *
-     * @param string|iSFilter $filterName
+     * @param string|iFilterStream $filterName
      *
      * @return boolean
      */

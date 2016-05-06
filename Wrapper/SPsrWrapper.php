@@ -1,9 +1,9 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Stream\Context\BaseContext;
+use Poirot\Stream\Context\ContextStreamBase;
 use Poirot\Stream\Psr\StreamInterface;
-use Poirot\Stream\Resource\SROpenMode;
+use Poirot\Stream\Resource\AccessMode;
 use Poirot\Stream\SWrapperManager;
 use Poirot\Stream\Wrapper\Psr\SPsrOpts;
 
@@ -14,7 +14,7 @@ use Poirot\Stream\Wrapper\Psr\SPsrOpts;
  * if ($rHandler instanceof StreamInterface)
  *    $rHandler = SPsrWrapper::convertToResource($rHandler);
  */
-class SPsrWrapper extends AbstractWrapper
+class SPsrWrapper extends AbstractWrapperStream
 {
     /** @var string Open Mode */
     protected $_w__mode;
@@ -52,7 +52,7 @@ class SPsrWrapper extends AbstractWrapper
 
 
         # make resource
-        $mode = new SROpenMode;
+        $mode = new AccessMode;
         (!$stream->isWritable()) ?: $mode->openForWrite();
         (!$stream->isReadable()) ?: $mode->openForRead();
 
@@ -61,7 +61,7 @@ class SPsrWrapper extends AbstractWrapper
             , (string) $mode
             , null
             ## set options to wrapper
-            , (new BaseContext($label, ['stream' => $stream]))->toContext()
+            , (new ContextStreamBase($label, ['stream' => $stream]))->toContext()
         );
     }
 

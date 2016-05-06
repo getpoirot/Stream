@@ -1,20 +1,22 @@
 <?php
 namespace Poirot\Stream\Interfaces\Filter;
 
-use Poirot\Std\Interfaces\ipOptionsProvider;
-use Poirot\Stream\Interfaces\iSResource;
+use Poirot\Stream\Interfaces\iResourceStream;
+
+use Poirot\Std\Interfaces\Pact\ipOptionsProvider;
 
 /**
  * stream_filter_register() must be called first in order
  * to register the desired user filter to filtername.
  *
- * Using iSFManager To Register Filters
+ * Using iRegistryFilterStream To Register Filters
  *
  * Filters Manipulate Every Chunk Of Data That Read/Write
  * Separately on each action
  *
  */
-interface iSFilter extends ipOptionsProvider
+interface iFilterStream 
+    extends ipOptionsProvider
 {
     /**
      * Filter processed successfully with data available in the out bucket
@@ -95,20 +97,20 @@ interface iSFilter extends ipOptionsProvider
      *       stream_filter_append() must be called twice with STREAM_FILTER_READ and STREAM_FILTER_WRITE
      *       to get both filter resources.
      *
-     * @param iSResource $streamResource
+     * @param iResourceStream $streamResource
      * @param int        $rwFlag
      *
      * @return $this
      */
-    function appendTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL);
+    function appendTo(iResourceStream $streamResource, $rwFlag = STREAM_FILTER_ALL);
 
     /**
      * Attach a filter to a stream
      *
-     * @param iSResource $streamResource
+     * @param iResourceStream $streamResource
      * @param int        $rwFlag
      *
      * @return $this
      */
-    function prependTo(iSResource $streamResource, $rwFlag = STREAM_FILTER_ALL);
+    function prependTo(iResourceStream $streamResource, $rwFlag = STREAM_FILTER_ALL);
 }

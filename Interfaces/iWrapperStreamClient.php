@@ -1,10 +1,11 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-use Poirot\Stream\Interfaces\Resource\iSRAccessMode;
-use Poirot\Stream\Resource\SROpenMode;
+use Poirot\Stream\Interfaces\Resource\iAccessModeToResourceStream;
+use Poirot\Stream\Resource\AccessMode;
 
-interface iWrapperClient extends iStreamCommon
+interface iWrapperStreamClient 
+    extends iStreamCommon
 {
     /**
      * Set Socket Uri
@@ -13,13 +14,11 @@ interface iWrapperClient extends iStreamCommon
      *       you must enclose the IP in square brackets—for example,
      *       tcp://[fe80::1]:80
      *
-     * TODO: socketUri Can converted to an pathUri Object
-     *
      * @param string $socketUri
      *
      * @return $this
      */
-    function setSocketUri($socketUri);
+    function setServerAddress($socketUri);
 
     /**
      * Open Socket Connection To Socket Uri
@@ -47,23 +46,23 @@ interface iWrapperClient extends iStreamCommon
      * link for the socket until it actually needs to send or receive data
      *
      * @throws \Exception On Connection Failed
-     * @return iSResource
+     * @return iResourceStream
      */
     function getConnect();
 
     /**
      * Open Wrapper R/W Mode
      *
-     * @param iSRAccessMode $mode
+     * @param iAccessModeToResourceStream|string $mode
      *
-     * @return SROpenMode
+     * @return $this
      */
-    function setOpenmode(iSRAccessMode $mode);
+    function setAccessMode($mode);
 
     /**
      * Get Open Access Mode
      *
-     * @return SROpenMode
+     * @return AccessMode
      */
-    function getOpenmode();
+    function getAccessMode();
 }

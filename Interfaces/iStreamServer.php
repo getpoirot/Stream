@@ -6,7 +6,8 @@ namespace Poirot\Stream\Interfaces;
  * Local Socket
  *
  */
-interface iStreamServer extends iStreamCommon
+interface iStreamServer 
+    extends iStreamCommon
 {
     /**
      * Open Socket Connection To Socket Uri and Bind Server

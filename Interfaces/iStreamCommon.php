@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Interfaces;
 
-use Poirot\Stream\Interfaces\Context\iSContext;
+use Poirot\Stream\Interfaces\Context\iContextStream;
 
 interface iStreamCommon
 {
@@ -14,22 +14,22 @@ interface iStreamCommon
      *
      * @return string
      */
-    function getSocketUri();
+    function getServerAddress();
 
     /**
      * Context Options
      *
-     * @param iSContext $context
+     * @param iContextStream $context
      *
      * @throws \InvalidArgumentException
      * @return $this
      */
-    function setContext(iSContext $context);
+    function setContext(iContextStream $context);
 
     /**
      * Get Context Options
      *
-     * @return iSContext
+     * @return iContextStream
      */
     function getContext();
 
@@ -54,10 +54,11 @@ interface iStreamCommon
 
     /**
      * Set timeout period on a stream
+     * 
+     * - must store time in float mode
+     *   @see self::getTimeout
      *
-     * @see iSResource::setTimeout
-     *
-     * @param float $seconds In Form Of 5.3
+     * @param float|array $seconds In Form Of time.utime
      *
      * @return $this
      */
@@ -66,7 +67,7 @@ interface iStreamCommon
     /**
      * Get Timeout
      *
-     * @return array[$second, $microsecond]
+     * @return float
      */
     function getTimeout();
 }

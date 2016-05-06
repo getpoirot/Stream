@@ -5,7 +5,8 @@ namespace Poirot\Stream\Context;
  * Context options for http:// and https:// transports
  *
  */
-class HttpContext extends AbstractContext
+class ContextStreamHttp 
+    extends aContextStreamStream
 {
     protected $wrapper = 'http';
 
@@ -34,10 +35,10 @@ class HttpContext extends AbstractContext
     protected $ignoreErrors = false;
 
 
-    protected function __init()
+    protected function _init()
     {
         // Bind Socket Context
-        $this->bindWith(new SocketContext);
+        $this->bindWith(new ContextStreamSocket);
     }
 
 
