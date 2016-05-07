@@ -1,10 +1,12 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
+use Traversable;
+
 use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Streamable;
-use Traversable;
+use Poirot\Stream\Streamable\AggregateStreams\ResourceAggregate;
 
 /*
 $aggrStream = new AggregateStream([
@@ -14,14 +16,15 @@ $aggrStream = new AggregateStream([
 echo $aggrStream->read(); // Hello ... Stream Worlds
 */
 
-class AggregateStream extends Streamable
+class SAggregateStreams 
+    extends Streamable
     implements iStreamable
     , \IteratorAggregate
 {
     /** @var Streamable[] */
-    protected $streams = [];
+    protected $streams = array();
 
-    /** @var AggregateResource */
+    /** @var ResourceAggregate */
     protected $resource;
 
     /** @var int Current Offset */
@@ -88,7 +91,7 @@ class AggregateStream extends Streamable
     function getResource()
     {
         if (!$this->resource)
-            $this->resource = new AggregateResource($this);
+            $this->resource = new ResourceAggregate($this);
 
         return $this->resource;
     }

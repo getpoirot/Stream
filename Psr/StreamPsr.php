@@ -20,7 +20,7 @@ class StreamPsr
      * ! it can be used as decorator for Poirot Stream Into Psr
      *
      * @param string|resource|iResourceStream|Streamable $stream
-     * @param string                                $mode Mode with which to open stream
+     * @param string                                     $mode   Mode with which to open stream
      *
      * @throws \InvalidArgumentException
      */
@@ -44,7 +44,8 @@ class StreamPsr
                 );
             });
 
-            $resource = (new WrapperStreamClient($stream, $mode))->getConnect();
+            $resource = new WrapperStreamClient($stream, $mode);
+            $resource = $resource->getConnect();
 
             ErrorStack::handleDone();
         }
@@ -106,16 +107,7 @@ class StreamPsr
 
         return $this->stream = null;
     }
-
-    protected function __assertUsable()
-    {
-        $return = true;
-        if (null === $this->stream || !$this->stream->getResource()->isAlive())
-            $return = false;
-
-        return $return;
-    }
-
+    
     /**
      * Get the size of the stream if known.
      *
@@ -123,7 +115,7 @@ class StreamPsr
      */
     function getSize()
     {
-        if ($this->__assertUsable() === false)
+        if ($this->_assertUsable() === false)
             return null;
 
         $size = fstat(
@@ -141,7 +133,7 @@ class StreamPsr
      */
     function tell()
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot tell position');
 
         return $this->stream->getCurrOffset();
@@ -154,7 +146,7 @@ class StreamPsr
      */
     function eof()
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             return true;
 
         return $this->stream->isEOF();
@@ -167,7 +159,7 @@ class StreamPsr
      */
     function isSeekable()
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             return false;
 
         return $this->stream->getResource()->isSeekable();
@@ -187,7 +179,7 @@ class StreamPsr
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot seek position');
 
         $this->stream->seek($offset, $whence);
@@ -215,7 +207,7 @@ class StreamPsr
      */
     function isWritable()
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             return false;
 
         return $this->stream->getResource()->isWritable();
@@ -230,7 +222,7 @@ class StreamPsr
      */
     function write($string)
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot write');
 
         $this->stream->write($string);
@@ -245,7 +237,7 @@ class StreamPsr
      */
     function isReadable()
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             return false;
 
         return $this->stream->getResource()->isReadable();
@@ -263,7 +255,7 @@ class StreamPsr
      */
     function read($length)
     {
-        if (!$this->__assertUsable())
+        if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot read');
 
         return $this->stream->read($length);
@@ -308,17 +300,30 @@ class StreamPsr
      */
     function getMetadata($key = null)
     {
-        if (!$this->__assertUsable())
-            return ($key === null) ? [] : null;
+        if (!$this->_assertUsable())
+            return ($key === null) ? array() : null;
 
         $meta = $this->stream->getResource()->meta();
         $meta = $meta->toArray();
 
         ## ! compatible for Poirot Messages access to body stream
+        #- Instead can be used WrapperPsrToPhpResource
         $meta['resource'] = $this->stream->getResource()->getRHandler();
         if ($key === null)
             return $meta;
 
         return (array_key_exists($key, $meta)) ? $meta[$key] : null;
+    }
+    
+    
+    // ..
+
+    protected function _assertUsable()
+    {
+        $return = true;
+        if (null === $this->stream || !$this->stream->getResource()->isAlive())
+            $return = false;
+
+        return $return;
     }
 }

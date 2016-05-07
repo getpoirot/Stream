@@ -1,8 +1,9 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Std\Struct\AbstractOptionsData;
-use Poirot\Std\Struct\OpenOptionsData;
+use Poirot\Std\Struct\aDataOptions;
+use Poirot\Std\Struct\DataOptionsOpen;
+
 use Poirot\Stream\Interfaces\Wrapper\iWrapperStream;
 
 /*
@@ -17,7 +18,7 @@ fopen('label://stream', 'r', null
 );
 */
 
-abstract class AbstractWrapperStream
+abstract class aWrapperStream
     implements
     iWrapperStream
 {
@@ -32,7 +33,7 @@ abstract class AbstractWrapperStream
     public $context;
 
     /**
-     * @var AbstractOptionsData|OpenOptionsData
+     * @var aDataOptions|DataOptionsOpen
      */
     protected $options;
 
@@ -49,7 +50,7 @@ abstract class AbstractWrapperStream
     abstract function getLabel();
 
     /**
-     * @return AbstractOptionsData
+     * @return DataOptionsOpen
      */
     function optsData()
     {
@@ -61,7 +62,7 @@ abstract class AbstractWrapperStream
             $contextOpt = stream_context_get_options($this->context);
             $contextOpt = $contextOpt[$this->getLabel()];
 
-            $this->options->from($contextOpt);
+            $this->options->import($contextOpt);
         }
 
         return $this->options;
@@ -81,10 +82,10 @@ abstract class AbstractWrapperStream
      *
      *  @param null|mixed $builder Builder Options as Constructor
      *
-     * @return AbstractOptionsData
+     * @return DataOptionsOpen
      */
     static function newOptsData($builder = null)
     {
-        return (new OpenOptionsData)->from($builder);
+        return new DataOptionsOpen($builder);
     }
 }

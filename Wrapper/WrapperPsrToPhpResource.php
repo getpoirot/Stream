@@ -4,8 +4,7 @@ namespace Poirot\Stream\Wrapper;
 use Poirot\Stream\Context\ContextStreamBase;
 use Poirot\Stream\Psr\StreamInterface;
 use Poirot\Stream\Resource\AccessMode;
-use Poirot\Stream\SWrapperManager;
-use Poirot\Stream\Wrapper\Psr\SPsrOpts;
+use Poirot\Stream\Wrapper\PsrToPhpResource\OptsPsrToPhpResource;
 
 /**
  * Wrapper to Convert StreamInterface into
@@ -14,7 +13,8 @@ use Poirot\Stream\Wrapper\Psr\SPsrOpts;
  * if ($rHandler instanceof StreamInterface)
  *    $rHandler = SPsrWrapper::convertToResource($rHandler);
  */
-class SPsrWrapper extends AbstractWrapperStream
+class WrapperPsrToPhpResource 
+    extends aWrapperStream
 {
     /** @var string Open Mode */
     protected $_w__mode;
@@ -47,12 +47,12 @@ class SPsrWrapper extends AbstractWrapperStream
     {
         # register wrapper if not
         $self = new self;
-        if(!SWrapperManager::isRegistered($self->getLabel()))
-            SWrapperManager::register($self);
+        if(!RegistryOfWrapperStream::isRegistered($self->getLabel()))
+            RegistryOfWrapperStream::register($self);
 
 
         # make resource
-        $mode = new AccessMode;
+        $mode = new AccessMode();
         (!$stream->isWritable()) ?: $mode->openForWrite();
         (!$stream->isReadable()) ?: $mode->openForRead();
 
@@ -61,7 +61,7 @@ class SPsrWrapper extends AbstractWrapperStream
             , (string) $mode
             , null
             ## set options to wrapper
-            , (new ContextStreamBase($label, ['stream' => $stream]))->toContext()
+            , (new ContextStreamBase($label, array('stream' => $stream)))->toContext()
         );
     }
 
@@ -109,13 +109,13 @@ class SPsrWrapper extends AbstractWrapperStream
 
     public function stream_stat()
     {
-        static $modeMap = [
+        static $modeMap = array(
             'r'  => 33060,
             'r+' => 33206,
             'w'  => 33188
-        ];
+        );
 
-        return [
+        return array(
             'dev'     => 0,
             'ino'     => 0,
             'mode'    => $modeMap[$this->_w__mode],
@@ -129,7 +129,7 @@ class SPsrWrapper extends AbstractWrapperStream
             'ctime'   => 0,
             'blksize' => 0,
             'blocks'  => 0
-        ];
+        );
     }
 
 
@@ -137,7 +137,7 @@ class SPsrWrapper extends AbstractWrapperStream
 
     /**
      * @override ide completion
-     * @return SPsrOpts
+     * @return OptsPsrToPhpResource
      */
     function optsData()
     {
@@ -147,10 +147,10 @@ class SPsrWrapper extends AbstractWrapperStream
     /**
      * @override ide completion
      * @param null|mixed $builder Builder Options as Constructor
-     * @return SPsrOpts
+     * @return OptsPsrToPhpResource
      */
     static function newOptsData($builder = null)
     {
-        return (new SPsrOpts)->from($builder);
+        return new OptsPsrToPhpResource($builder);
     }
 }

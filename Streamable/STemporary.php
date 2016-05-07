@@ -6,7 +6,8 @@ use Poirot\Stream\Resource\AccessMode;
 use Poirot\Stream\Streamable;
 use Poirot\Stream\WrapperStreamClient;
 
-class TemporaryStream extends Streamable
+class STemporary 
+    extends Streamable
 {
     /** @see http://php.net/manual/en/wrappers.php.php */
     const PHP_MEMORY = 'php://memory';

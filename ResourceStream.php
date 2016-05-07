@@ -6,7 +6,7 @@ use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\Resource\iMetaReaderOfPhpResource;
 use Poirot\Stream\Psr\StreamInterface;
 use Poirot\Stream\Resource\MetaReaderOfPhpResource;
-use Poirot\Stream\Wrapper\SPsrWrapper;
+use Poirot\Stream\Wrapper\WrapperPsrToPhpResource;
 
 class ResourceStream 
     implements iResourceStream
@@ -35,7 +35,7 @@ class ResourceStream
     function __construct($sResource)
     {
         if ($sResource instanceof StreamInterface)
-            $sResource = SPsrWrapper::convertToResource($sResource);
+            $sResource = WrapperPsrToPhpResource::convertToResource($sResource);
 
         if (!is_resource($sResource))
             throw new \InvalidArgumentException(sprintf(

@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
-use Poirot\Stream\Wrapper\AccessControl\ACWOptionsData;
+use Poirot\Stream\Wrapper\FileAccessControl\ACWOptionsData;
 
 /**
  * Note: This is simple class just demonstrate how
@@ -10,27 +10,21 @@ use Poirot\Stream\Wrapper\AccessControl\ACWOptionsData;
  * (!) The Registered Wrappers Constructed On Each fopen
  *     With Contexts
  */
-class AccessControlWrapper extends AbstractWrapperStream
+class WrapperFileAccessControl 
+    extends aWrapperStream
 {
-    /**
-     * @var ACWOptionsData
-     */
+    /** @var ACWOptionsData */
     protected $options;
 
-    /**
-     * File Handler Resource
-     *
-     * @var resource
-     */
+    /** @var resource File Handler Resource */
     protected $fp;
 
     /**
-     * Directory Handler Resource
-     *
-     * @var resource
+     * @var resource Directory Handler Resource 
      */
     protected $dh;
 
+    
     /**
      * Construct
      *
@@ -39,7 +33,7 @@ class AccessControlWrapper extends AbstractWrapperStream
     function __construct($options = null)
     {
        if ($options !== null)
-           $this->optsData()->from($options);
+           $this->optsData()->import($options);
     }
 
     /**
@@ -54,6 +48,9 @@ class AccessControlWrapper extends AbstractWrapperStream
         return 'iacc';
     }
 
+    
+    // Implement Options Provider:
+    
     /**
      * @return ACWOptionsData
      */
@@ -80,9 +77,10 @@ class AccessControlWrapper extends AbstractWrapperStream
      */
     static function newOptsData($builder = null)
     {
-        return (new ACWOptionsData)->from($builder);
+        return new ACWOptionsData($builder);
     }
 
+    
     // Implement Wrapper:
 
     protected function assertReadAccess()

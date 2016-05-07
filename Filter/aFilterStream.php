@@ -5,7 +5,6 @@ use Poirot\Std\Interfaces\Struct\iDataOptions;
 use Poirot\Std\Struct\DataOptionsOpen;
 use Poirot\Stream\Interfaces\Filter\iFilterStreamCustom;
 use Poirot\Stream\Interfaces\iResourceStream;
-use Poirot\Stream\SRegistryFilter;
 
 abstract class aFilterStreamCustom
     implements iFilterStreamCustom
@@ -109,9 +108,9 @@ abstract class aFilterStreamCustom
      */
     function appendTo(iResourceStream $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
-        if (!SRegistryFilter::has($this))
+        if (!RegistryOfFilterStream::has($this))
             // register filter if not exists in registry
-            SRegistryFilter::register($this);
+            RegistryOfFilterStream::register($this);
 
         $filterRes = stream_filter_append(
             $streamResource->getRHandler()
@@ -133,9 +132,9 @@ abstract class aFilterStreamCustom
      */
     function prependTo(iResourceStream $streamResource, $rwFlag = STREAM_FILTER_ALL)
     {
-        if (!SRegistryFilter::has($this))
+        if (!RegistryOfFilterStream::has($this))
             // register filter if not exists in registry
-            SRegistryFilter::register($this);
+            RegistryOfFilterStream::register($this);
 
         $filterRes = stream_filter_prepend(
             $streamResource->getRHandler()

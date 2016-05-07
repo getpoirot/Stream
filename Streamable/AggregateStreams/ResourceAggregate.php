@@ -1,19 +1,24 @@
 <?php
-namespace Poirot\Stream\Streamable;
+namespace Poirot\Stream\Streamable\AggregateStreams;
 
 use Poirot\Stream\Interfaces\Filter\iFilterStream;
 use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Interfaces\Resource\iMetaReaderOfPhpResource;
+use Poirot\Stream\Streamable\SAggregateStreams;
 
-class AggregateResource implements iResourceStream
+class ResourceAggregate 
+    implements iResourceStream
 {
+    /** @var SAggregateStreams */
+    protected $_aggrStream;
+
     /**
      * Construct
      *
-     * @param AggregateStream $aggrStream
+     * @param SAggregateStreams $aggrStream
      */
-    function __construct(AggregateStream $aggrStream)
+    function __construct(SAggregateStreams $aggrStream)
     {
         $this->_aggrStream = $aggrStream;
     }

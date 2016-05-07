@@ -4,7 +4,7 @@ namespace Poirot\Stream\Streamable;
 use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 
-trait StreamWrapTrait
+trait tDecorateStreamable
 {
     /** @var iStreamable Wrapped Stream */
     protected $_t__wrap_stream;

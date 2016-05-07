@@ -1,5 +1,5 @@
 <?php
-namespace Poirot\Stream\Wrapper\AccessControl;
+namespace Poirot\Stream\Wrapper\FileAccessControl;
 
 class ACWPermissions 
 {

@@ -1,9 +1,10 @@
 <?php
-namespace Poirot\Stream\Wrapper\AccessControl;
+namespace Poirot\Stream\Wrapper\FileAccessControl;
 
-use Poirot\Std\Struct\AbstractOptionsData;
+use Poirot\Std\Struct\aDataOptions;
 
-class ACWOptionsData extends AbstractOptionsData
+class ACWOptionsData 
+    extends aDataOptions
 {
     /**
      * @var ACWPermissions
@@ -26,4 +27,3 @@ class ACWOptionsData extends AbstractOptionsData
         $this->permissions = $permissions;
     }
 }
- 

@@ -408,6 +408,9 @@ class StreamClient
         // Fire up registered methods on resource
         // It may used to add extra options or context that not available inside this class.
         foreach($this->onResourceAvailable()->listMethods() as $method)
+            #! Mixin in php 5.4 and above are support bind to otherwise it will
+            #- pass the bindto as object on last arguments of methods
+            #- So, we pass the object $this as last argument to support both scenarion
             call_user_func(array($this->onResourceAvailable(), $method), $resource, $this);
 
         $error = ErrorStack::handleDone();
