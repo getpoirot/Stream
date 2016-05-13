@@ -11,6 +11,25 @@ class StreamPsr
     /** @var resource */
     protected $rHandler;
 
+    /** @var array Hash of readable and writable stream types */
+    private static $readWriteHash = array(
+        'read' => array(
+            'r',   'w+',  'r+',  'x+', 'c+',
+            'rb',  'w+b', 'r+b', 'x+b',
+            'c+b', 'rt',  'w+t', 'r+t',
+            'x+t', 'c+t', 'a+',
+        ),
+        'write' => array(
+            'w',   'w+',  'rw',  'r+', 'x+',
+            'c+',  'wb',  'w+b', 'r+b',
+            'x+b', 'c+b', 'w+t', 'r+t',
+            'x+t', 'c+t', 'a',   'a+',
+        )
+    );
+
+    /** @var Streamable */
+    protected $stream;
+
     /**
      * Construct
      *
@@ -58,11 +77,12 @@ class StreamPsr
      */
     function __toString()
     {
-        $content = '';
-        while ($r = $this->stream->read())
-            $content .= $r;
-
-        return $r;
+        try {
+            $this->seek(0);
+            return (string) stream_get_contents($this->rHandler);
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 
     /**
@@ -72,8 +92,10 @@ class StreamPsr
      */
     function close()
     {
-        if ($this->stream)
-            $this->detach();
+        if (is_resource($this->rHandler))
+            fclose($this->rHandler);
+
+        $this->detach();
     }
 
     /**
@@ -85,9 +107,11 @@ class StreamPsr
      */
     function detach()
     {
-        $this->stream->getResource()->close();
+        $resource = $this->rHandler;
 
-        return $this->stream = null;
+        $this->rHandler = null;
+
+        return $resource;
     }
     
     /**
@@ -97,14 +121,19 @@ class StreamPsr
      */
     function getSize()
     {
-        if ($this->_assertUsable() === false)
+        if (!$this->_assertUsable())
             return null;
 
-        $size = fstat(
-            $this->stream->getResource()->getRHandler()
-        )['size'];
 
-        return $size;
+        if ($uri = $this->getMetadata('uri'))
+            ## clear the stat cache of stream URI
+            clearstatcache(true, $uri);
+
+        $stats = fstat($this->rHandler);
+        if (isset($stats['size']))
+            return $stats['size'];
+
+        return null;
     }
 
     /**
@@ -118,7 +147,10 @@ class StreamPsr
         if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot tell position');
 
-        return $this->stream->getCurrOffset();
+        if (false === $r = ftell($this->rHandler))
+            throw new \RuntimeException('Unable to determine stream position');
+
+        return $r;
     }
 
     /**
@@ -128,10 +160,7 @@ class StreamPsr
      */
     function eof()
     {
-        if (!$this->_assertUsable())
-            return true;
-
-        return $this->stream->isEOF();
+        return ( !$this->_assertUsable() || feof($this->rHandler) );
     }
 
     /**
@@ -144,7 +173,7 @@ class StreamPsr
         if (!$this->_assertUsable())
             return false;
 
-        return $this->stream->getResource()->isSeekable();
+        return $this->getMetadata('seekable');
     }
 
     /**
@@ -164,7 +193,8 @@ class StreamPsr
         if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot seek position');
 
-        $this->stream->seek($offset, $whence);
+        if (-1 === fseek($this->rHandler, $offset, $whence))
+            throw new \RuntimeException('Cannot seek on stream');
     }
 
     /**
@@ -192,7 +222,8 @@ class StreamPsr
         if (!$this->_assertUsable())
             return false;
 
-        return $this->stream->getResource()->isWritable();
+        $mode = $this->getMetadata('mode');
+        return in_array($mode, self::$readWriteHash['write']);
     }
 
     /**
@@ -207,9 +238,17 @@ class StreamPsr
         if (!$this->_assertUsable())
             throw new \RuntimeException('No resource available; cannot write');
 
-        $this->stream->write($string);
+        if (!$this->isWritable())
+            throw new \RuntimeException('resource is not writable.');
 
-        return $this->stream->getTransCount();
+        $content = (string) $string;
+        $result  = fwrite($this->rHandler, $content);
+
+        if (false === $result)
+            throw new \RuntimeException('Cannot write on stream.');
+
+        $transCount = mb_strlen($content, '8bit');
+        return $transCount;
     }
 
     /**
@@ -222,25 +261,34 @@ class StreamPsr
         if (!$this->_assertUsable())
             return false;
 
-        return $this->stream->getResource()->isReadable();
+        $mode = $this->getMetadata('mode');
+        return in_array($mode, self::$readWriteHash['read']);
     }
 
     /**
      * Read data from the stream.
      *
      * @param int $length Read up to $length bytes from the object and return
-     *     them. Fewer than $length bytes may be returned if underlying stream
-     *     call returns fewer bytes.
+     *                    them. Fewer than $length bytes may be returned if
+     *                    underlying stream call returns fewer bytes.
+     *
      * @return string Returns the data read from the stream, or an empty string
-     *     if no bytes are available.
+     *                if no bytes are available.
      * @throws \RuntimeException if an error occurs.
      */
     function read($length)
     {
         if (!$this->_assertUsable())
-            throw new \RuntimeException('No resource available; cannot read');
+            throw new \RuntimeException('No resource alive; cannot read.');
 
-        return $this->stream->read($length);
+        if (!$this->isReadable())
+            throw new \RuntimeException('resource is not readable.');
+
+        $data   = stream_get_contents($this->rHandler, $length);
+        if (false === $data)
+            throw new \RuntimeException('Cannot read stream.');
+
+        return $data;
     }
 
     /**
@@ -248,24 +296,18 @@ class StreamPsr
      *
      * @return string
      * @throws \RuntimeException if unable to read or an error occurs while
-     *     reading.
+     *                           reading.
      */
     function getContents()
     {
         if (!$this->isReadable())
-            return '';
+            throw new \RuntimeException('Stream is not readable.');
 
-        $content = '';
-        while (!$this->eof()) {
-            $buf = $this->read(1048576);
-            // Using a loose equality here to match on '' and false.
-            if ($buf == null)
-                break;
+        $contents = stream_get_contents($this->rHandler);
+        if ($contents === false)
+            throw new \RuntimeException('Unable to read stream contents');
 
-            $content .= $buf;
-        }
-
-        return $content;
+        return $contents;
     }
 
     /**
@@ -285,12 +327,9 @@ class StreamPsr
         if (!$this->_assertUsable())
             return ($key === null) ? array() : null;
 
-        $meta = $this->stream->getResource()->meta();
-        $meta = $meta->toArray();
 
-        ## ! compatible for Poirot Messages access to body stream
-        #- Instead can be used WrapperPsrToPhpResource
-        $meta['resource'] = $this->stream->getResource()->getRHandler();
+        $meta = stream_get_meta_data($this->rHandler);
+
         if ($key === null)
             return $meta;
 
@@ -302,10 +341,17 @@ class StreamPsr
 
     protected function _assertUsable()
     {
-        $return = true;
-        if (null === $this->stream || !$this->stream->getResource()->isAlive())
-            $return = false;
+        if (null === $this->rHandler || !is_resource($this->rHandler))
+            return false;
 
-        return $return;
+        return true;
+    }
+
+    /**
+     * Closes the stream when the destructed
+     */
+    function __destruct()
+    {
+        $this->close();
     }
 }
