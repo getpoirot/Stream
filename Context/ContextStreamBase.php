@@ -2,7 +2,7 @@
 namespace Poirot\Stream\Context;
 
 class ContextStreamBase 
-    extends aContextStreamStream
+    extends aContextStream
 {
     /**
      * Construct

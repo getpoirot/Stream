@@ -21,7 +21,7 @@ namespace Poirot\Stream\Context;
  *  ),
  */
 class ContextStreamSocket 
-    extends aContextStreamStream
+    extends aContextStream
 {
     protected $wrapper = 'socket';
 

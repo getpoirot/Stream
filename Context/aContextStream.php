@@ -22,7 +22,7 @@ $socket = new SocketContext([
 ]);
 */
 
-class aContextStreamStream 
+class aContextStream
     extends Std\Struct\DataOptionsOpen
     implements iContextStream
 {
@@ -31,7 +31,7 @@ class aContextStreamStream
     /** @var callable */
     protected $notification;
 
-    /** @var aContextStreamStream[] */
+    /** @var aContextStream[] */
     protected $bindContexts = array();
 
     /**

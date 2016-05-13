@@ -6,7 +6,7 @@ namespace Poirot\Stream\Context;
  *
  */
 class ContextStreamHttp 
-    extends aContextStreamStream
+    extends aContextStream
 {
     protected $wrapper = 'http';
 
