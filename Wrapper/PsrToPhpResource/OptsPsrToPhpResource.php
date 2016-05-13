@@ -1,8 +1,9 @@
 <?php
 namespace Poirot\Stream\Wrapper\PsrToPhpResource;
 
+use Psr\Http\Message\StreamInterface;
+
 use Poirot\Std\Struct\DataOptionsOpen;
-use Poirot\Stream\Psr\StreamInterface;
 
 class OptsPsrToPhpResource 
     extends DataOptionsOpen

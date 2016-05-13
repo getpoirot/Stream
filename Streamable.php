@@ -349,7 +349,7 @@ class Streamable
 
         $stream = $this->getResource()->getRHandler();
 
-        if (false === fseek($stream, $offset, $whence))
+        if (-1 === fseek($stream, $offset, $whence))
             throw new \RuntimeException('Cannot seek on stream');
 
         return $this;
