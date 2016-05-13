@@ -1,8 +1,9 @@
 <?php
 namespace Poirot\Stream\Wrapper;
 
+use Psr\Http\Message\StreamInterface;
+
 use Poirot\Stream\Context\ContextStreamBase;
-use Poirot\Stream\Psr\StreamInterface;
 use Poirot\Stream\Resource\AccessMode;
 use Poirot\Stream\Wrapper\PsrToPhpResource\OptsPsrToPhpResource;
 

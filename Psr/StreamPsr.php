@@ -3,63 +3,43 @@ namespace Poirot\Stream\Psr;
 
 use Psr\Http\Message\StreamInterface;
 
-use Poirot\Std\ErrorStack;
-use Poirot\Stream\Interfaces\iResourceStream;
-use Poirot\Stream\Interfaces\iStreamable;
-use Poirot\Stream\ResourceStream;
 use Poirot\Stream\Streamable;
-use Poirot\Stream\WrapperStreamClient;
 
 class StreamPsr 
     implements StreamInterface
 {
-    /** @var Streamable */
-    protected $stream;
+    /** @var resource */
+    protected $rHandler;
 
     /**
      * Construct
      *
-     * ! it can be used as decorator for Poirot Stream Into Psr
-     *
-     * @param string|resource|iResourceStream|Streamable $stream
-     * @param string                                     $mode   Mode with which to open stream
+     * @param string|resource $stream
+     * @param string          $mode   Mode with which to open stream
      *
      * @throws \InvalidArgumentException
      */
-    function __construct($stream, $mode = 'r')
+    function __construct($stream, $mode = 'br')
     {
-        if ($stream instanceof iStreamable) {
-            $this->stream = $stream;
-            return;
-        }
-
-        // ...
-
         $resource = $stream;
-        if (is_resource($stream)) {
-            $resource = new ResourceStream($stream);
-        } elseif (is_string($stream))
-        {
-            ErrorStack::handleError(E_WARNING, function ($errno, $errstr) {
-                throw new \InvalidArgumentException(
-                    'Invalid file provided for stream; must be a valid path with valid permissions'
-                );
-            });
 
-            $resource = new WrapperStreamClient($stream, $mode);
-            $resource = $resource->getConnect();
-
-            ErrorStack::handleDone();
+        if (is_string($stream)) {
+            if( false === ($resource = fopen($stream, $mode)) )
+                throw new \RuntimeException(sprintf(
+                    'Error while trying to connect to (%s).'
+                    , $resource
+                ));
         }
 
-        if (!$resource instanceof iResourceStream)
+        if ( !is_resource($resource) )
             throw new \InvalidArgumentException(sprintf(
                 'Invalid stream provided; must be a string stream identifier or resource.'
                 . ' given: "%s"'
                 , \Poirot\Std\flatten($resource)
             ));
 
-        $this->stream = new Streamable($resource);
+
+        $this->rHandler = $resource;
     }
 
     /**
