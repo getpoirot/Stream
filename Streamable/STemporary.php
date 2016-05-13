@@ -4,7 +4,7 @@ namespace Poirot\Stream\Streamable;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Resource\AccessMode;
 use Poirot\Stream\Streamable;
-use Poirot\Stream\WrapperStreamClient;
+use Poirot\Stream\StreamWrapperClient;
 
 class STemporary 
     extends Streamable
@@ -29,7 +29,7 @@ class STemporary
                 , \Poirot\Std\flatten($resource)
             ));
 
-        $phpTmp  = new WrapperStreamClient('php://temp', new AccessMode('bRWB'));
+        $phpTmp  = new StreamWrapperClient('php://temp', new AccessMode('bRWB'));
         ## set resource for this streamable
         parent::__construct($phpTmp->getConnect());
 

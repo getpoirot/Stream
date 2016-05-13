@@ -1,4 +1,6 @@
 <?php
+// DO_LEAST_PHPVER_SUPPORT 5.4 trait
+
 namespace Poirot\Stream\Streamable;
 
 use Poirot\Stream\Interfaces\iStreamable;

@@ -11,7 +11,7 @@ use Poirot\Stream\Context\ContextStreamSocket;
 use Poirot\Stream\Resource\AccessMode;
 use Poirot\Stream\Wrapper\RegistryOfWrapperStream;
 
-class WrapperStreamClient
+class StreamWrapperClient
     extends ConfigurableSetter
     implements iWrapperStreamClient
 {

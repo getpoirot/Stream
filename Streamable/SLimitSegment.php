@@ -1,7 +1,7 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-// DO_LEAST_PHPVER_SUPPORT 5.3 trait
+// DO_LEAST_PHPVER_SUPPORT 5.4 trait
 if (version_compare(phpversion(), '5.4.0') < 0) {
     require_once __DIR__.'/../fixes/SLimitSegment.php';
     return;
