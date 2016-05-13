@@ -1,6 +1,8 @@
 <?php
 namespace Poirot\Stream\Psr;
 
+use Psr\Http\Message\StreamInterface;
+
 use Poirot\Std\ErrorStack;
 use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
