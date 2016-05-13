@@ -3,8 +3,6 @@ namespace Poirot\Stream\Psr;
 
 use Psr\Http\Message\StreamInterface;
 
-use Poirot\Stream\Streamable;
-
 class StreamPsr 
     implements StreamInterface
 {
@@ -27,9 +25,7 @@ class StreamPsr
         )
     );
 
-    /** @var Streamable */
-    protected $stream;
-
+    
     /**
      * Construct
      *
