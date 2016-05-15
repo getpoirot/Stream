@@ -53,7 +53,7 @@ class Streamable
      *
      * @return ResourceStream|iResourceStream|null
      */
-    function getResource()
+    function resource()
     {
         return $this->resource;
     }
@@ -141,7 +141,7 @@ class Streamable
             )
             : $inByte;
 
-        $stream = $this->getResource()->getRHandler();
+        $stream = $this->resource()->getRHandler();
         $data   = stream_get_contents($stream, $inByte);
         if (false === $data)
             throw new \RuntimeException('Cannot read stream.');
@@ -149,7 +149,6 @@ class Streamable
         if (function_exists('mb_strlen'))
             $transCount = mb_strlen($data, '8bit');
         else
-            // TODO implement data length without mb_strlen
             $transCount = strlen($data);
 
         $this->_resetTransCount($transCount);
@@ -183,11 +182,10 @@ class Streamable
             )
             : $inByte;
 
-        $stream = $this->getResource()->getRHandler();
+        $stream = $this->resource()->getRHandler();
         $data   = stream_get_line($stream, $inByte, $ending);
         if (false === $data)
             return null;
-//            throw new \RuntimeException('Cannot read stream.');
 
         $transCount = mb_strlen($data, '8bit');
         $this->_resetTransCount($transCount);
@@ -209,7 +207,7 @@ class Streamable
     {
         $this->_assertWritable();
 
-        $stream = $this->getResource()->getRHandler();
+        $stream = $this->resource()->getRHandler();
 
         $inByte = ($inByte === null)
             ? $this->getBuffer()
@@ -262,10 +260,10 @@ class Streamable
      */
     function sendData($data, $flags = null)
     {
-        $rHandler = $this->getResource()->getRHandler();
+        $rHandler = $this->resource()->getRHandler();
 
         if ($flags === null) {
-            if ($this->getResource()->meta()->getStreamType() == 'udp_socket')
+            if ($this->resource()->meta()->getStreamType() == 'udp_socket')
                 // STREAM_OOB data not provided on udp sockets
                 $flags = STREAM_PEEK;
             else
@@ -295,7 +293,7 @@ class Streamable
      */
     function receiveFrom($maxByte, $flags = STREAM_OOB)
     {
-        return stream_socket_recvfrom($this->getResource()->getRHandler(), 1024);
+        return stream_socket_recvfrom($this->resource()->getRHandler(), 1024);
     }
 
     /**
@@ -306,7 +304,7 @@ class Streamable
     function getSize()
     {
         $size = fstat(
-            $this->getResource()->getRHandler()
+            $this->resource()->getRHandler()
         );
 
         return $size['size'];
@@ -347,7 +345,7 @@ class Streamable
     {
         $this->_assertSeekable();
 
-        $stream = $this->getResource()->getRHandler();
+        $stream = $this->resource()->getRHandler();
 
         if (-1 === fseek($stream, $offset, $whence))
             throw new \RuntimeException('Cannot seek on stream');
@@ -366,7 +364,7 @@ class Streamable
      */
     function getCurrOffset()
     {
-        return ftell($this->getResource()->getRHandler());
+        return ftell($this->resource()->getRHandler());
     }
 
     /**
@@ -385,7 +383,7 @@ class Streamable
     {
         $this->_assertSeekable();
 
-        $stream = $this->getResource()->getRHandler();
+        $stream = $this->resource()->getRHandler();
 
         if (false === rewind($stream))
             throw new \RuntimeException('Cannot rewind stream');
@@ -400,17 +398,17 @@ class Streamable
      */
     function isEOF()
     {
-        return feof($this->getResource()->getRHandler());
+        return feof($this->resource()->getRHandler());
     }
 
     // ...
 
     protected function _assertStreamAlive()
     {
-        if (!$this->getResource()->isAlive()
+        if (!$this->resource()->isAlive()
             || (
-                $this->getResource()->meta()
-                && $this->getResource()->meta()->isTimedOut()
+                $this->resource()->meta()
+                && $this->resource()->meta()->isTimedOut()
             )
         ) {
             throw new \Exception('Stream is not alive it can be closed or timeout.');
@@ -421,7 +419,7 @@ class Streamable
     {
         $this->_assertStreamAlive();
 
-        if (!$this->getResource()->isSeekable())
+        if (!$this->resource()->isSeekable())
             throw new \Exception('Cannot seek on a non-seekable stream');
     }
 
@@ -429,10 +427,10 @@ class Streamable
     {
         $this->_assertStreamAlive();
 
-        if (!$this->getResource()->isReadable())
+        if (!$this->resource()->isReadable())
             throw new \Exception(sprintf(
                 'Cannot read on a non readable stream (current mode is %s)'
-                , $this->getResource()->meta()->getAccessType()
+                , $this->resource()->meta()->getAccessType()
             ));
     }
 
@@ -440,10 +438,10 @@ class Streamable
     {
         $this->_assertStreamAlive();
 
-        if (!$this->getResource()->isWritable())
+        if (!$this->resource()->isWritable())
             throw new \Exception(sprintf(
                 'Cannot write on a non-writable stream (current mode is %s)'
-                , $this->getResource()->meta()->getAccessType()
+                , $this->resource()->meta()->getAccessType()
             ));
     }
 

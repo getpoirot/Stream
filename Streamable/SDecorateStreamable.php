@@ -20,7 +20,7 @@ class SDecorateStreamable
     function __construct(iStreamable $streamable)
     {
         $this->_t__wrap_stream = $streamable;
-        parent::__construct($streamable->getResource());
+        parent::__construct($streamable->resource());
     }
     
     /**
@@ -41,9 +41,9 @@ class SDecorateStreamable
      *
      * @return iResourceStream
      */
-    function getResource()
+    function resource()
     {
-        return $this->_t__wrap_stream->getResource();
+        return $this->_t__wrap_stream->resource();
     }
 
     /**

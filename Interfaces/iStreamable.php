@@ -17,7 +17,7 @@ interface iStreamable
      * 
      * @return iResourceStream
      */
-    function getResource();
+    function resource();
 
     /**
      * Set R/W Buffer Size
@@ -188,4 +188,13 @@ interface iStreamable
      * @return boolean
      */
     function isEOF();
+    
+    // TODO implement detach
+    
+    /**
+     * Separates any underlying resources from the stream.
+     * After the stream has been detached, the stream is in an unusable state.
+     *
+     */ 
+    // function detach();
 }

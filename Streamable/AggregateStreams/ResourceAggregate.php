@@ -54,7 +54,7 @@ class ResourceAggregate
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
-            $strm->getResource()->appendFilter($filter, $rwFlag);
+            $strm->resource()->appendFilter($filter, $rwFlag);
 
         return $this;
     }
@@ -71,7 +71,7 @@ class ResourceAggregate
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
-            $strm->getResource()->prependFilter($filter, $rwFlag);
+            $strm->resource()->prependFilter($filter, $rwFlag);
 
         return $this;
     }
@@ -87,7 +87,7 @@ class ResourceAggregate
     {
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
-            $strm->getResource()->removeFilter($filter);
+            $strm->resource()->removeFilter($filter);
 
         return $this;
     }
@@ -102,7 +102,7 @@ class ResourceAggregate
         $isLocal = true;
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
-            if (!$isLocal &= $strm->getResource()->isLocal())
+            if (!$isLocal &= $strm->resource()->isLocal())
                 break;
 
         return $isLocal;
@@ -120,7 +120,7 @@ class ResourceAggregate
         $isAlive = true;
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
-            if (!$isAlive &= $strm->getResource()->isAlive())
+            if (!$isAlive &= $strm->resource()->isAlive())
                 break;
 
         return $isAlive;
@@ -156,7 +156,7 @@ class ResourceAggregate
         $isSeekable = true;
         /** @var iStreamable $strm */
         foreach($this->_aggrStream as $strm)
-            if (!$isSeekable &= $strm->getResource()->isSeekable())
+            if (!$isSeekable &= $strm->resource()->isSeekable())
                 break;
 
         return $isSeekable;
@@ -172,7 +172,7 @@ class ResourceAggregate
         if ($this->isAlive())
             foreach($this->_aggrStream as $strm)
                 /** @var iStreamable $strm */
-                $strm->getResource()->close();
+                $strm->resource()->close();
     }
 
     /**

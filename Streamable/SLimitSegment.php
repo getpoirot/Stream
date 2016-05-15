@@ -36,7 +36,7 @@ class SLimitSegment
         $this->setSegmentLimit($limit);
         $this->setSegmentOffset($offset);
 
-        parent::__construct($streamable->getResource());
+        parent::__construct($streamable->resource());
 
         ## ensure wrapped stream is on correct offset
         $this->seek(0);
@@ -151,7 +151,7 @@ class SLimitSegment
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->_t__wrap_stream->getResource()->isSeekable()) {
+        if (!$this->_t__wrap_stream->resource()->isSeekable()) {
             $cur = $this->_t__wrap_stream->getCurrOffset();
             if ($cur > $this->getSegmentOffset())
                 throw new \RuntimeException('Could not seek to stream offset.');

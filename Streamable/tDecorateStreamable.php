@@ -29,7 +29,7 @@ trait tDecorateStreamable
      */
     function getResource()
     {
-        return $this->_t__wrap_stream->getResource();
+        return $this->_t__wrap_stream->resource();
     }
 
     /**

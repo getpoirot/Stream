@@ -143,7 +143,7 @@ class SLimitSegment
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->_t__wrap_stream->getResource()->isSeekable()) {
+        if (!$this->_t__wrap_stream->resource()->isSeekable()) {
             $cur = $this->_t__wrap_stream->getCurrOffset();
             if ($cur > $this->getSegmentOffset())
                 throw new \RuntimeException('Could not seek to stream offset.');

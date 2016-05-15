@@ -59,7 +59,7 @@ class SAggregateStreams
      */
     function addStream(iStreamable $stream)
     {
-        if (!$stream->getResource()->isReadable())
+        if (!$stream->resource()->isReadable())
             throw new \InvalidArgumentException(sprintf(
                 'Stream "%s" is not readable.'
                 , \Poirot\Std\flatten($stream)
@@ -88,7 +88,7 @@ class SAggregateStreams
      *
      * @return iResourceStream
      */
-    function getResource()
+    function resource()
     {
         if (!$this->resource)
             $this->resource = new ResourceAggregate($this);
@@ -271,7 +271,7 @@ class SAggregateStreams
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->getResource()->isSeekable())
+        if (!$this->resource()->isSeekable())
             throw new \RuntimeException('This AggregateStream is not seekable.');
         elseif ($whence !== SEEK_SET)
             throw new \RuntimeException('The AggregateStream can only seek with SEEK_SET.');
