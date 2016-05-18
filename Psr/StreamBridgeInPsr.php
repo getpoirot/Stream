@@ -4,7 +4,7 @@ namespace Poirot\vendor\poirot\stream\Poirot\Stream\Psr;
 use Poirot\Stream\Interfaces\iStreamable;
 use Psr\Http\Message\StreamInterface;
 
-class StreamPsrBridge 
+class StreamBridgeInPsr 
     implements StreamInterface
 {
     /** @var iStreamable */
