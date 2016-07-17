@@ -187,7 +187,11 @@ class Streamable
         if (false === $data)
             return null;
 
-        $transCount = mb_strlen($data, '8bit');
+        if (function_exists('mb_strlen'))
+            $transCount = mb_strlen($data, '8bit');
+        else
+            $transCount = strlen($data);
+
         $this->_resetTransCount($transCount);
 
         return $data;
@@ -223,9 +227,15 @@ class Streamable
         if (false === $ret)
             throw new \RuntimeException('Cannot write on stream.');
 
-        $transCount = ($inByte !== null) ? $inByte : mb_strlen($content, '8bit');
-        $this->_resetTransCount($transCount);
+        $transCount = $inByte;
+        if ($transCount === null) {
+            if (function_exists('mb_strlen'))
+                $transCount = mb_strlen($content, '8bit');
+            else
+                $transCount = strlen($content);
+        }
 
+        $this->_resetTransCount($transCount);
         return $this;
     }
 
