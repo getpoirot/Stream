@@ -23,7 +23,7 @@ $stream   = new Streamable($resource);
  * You have to skip the first two bytes before attaching the filter.
  */
 
-class FilterStreamStreamPhpBuiltin 
+class FilterStreamPhpBuiltin
     implements iFilterStream
 {
     protected $label;
