@@ -178,12 +178,23 @@ class Streamable
         $inByte = ($inByte === null)
             ?
             (
-                ($this->getBuffer() === null) ? 0 : $this->getBuffer()
+                // buffer must be greater than zero
+                (!$this->getBuffer()) ? 1024 : $this->getBuffer()
             )
             : $inByte;
 
         $stream = $this->resource()->getRHandler();
-        $data   = stream_get_line($stream, $inByte, $ending);
+        if ($ending == "\r" || $ending == "\n" || $ending == "\r\n") {
+            // php7 stream_get_line is too slow!!!! so i use default fgets instead in this case
+            $data   = fgets($stream, $inByte);
+            if (false !== $i = strpos($data, $ending))
+                ## found ending in string
+                $data = substr($data, 0, $i);
+        }
+        else 
+            // does not return the delimiter itself
+            $data   = stream_get_line($stream, $inByte, $ending);
+
         if (false === $data)
             return null;
 
@@ -282,11 +293,14 @@ class Streamable
 
         $ret = @stream_socket_sendto($rHandler, $data, $flags);
 
-        if ($ret == -1)
+        if ($ret == -1) {
+            $lerror = error_get_last();
             throw new \RuntimeException(sprintf(
                 'Cannot send data on stream, %s.',
-                error_get_last()['message']
+                $lerror['message']
             ));
+        }
+
 
         $this->_resetTransCount($ret);
 
