@@ -194,7 +194,7 @@ class StreamClient
             && array_filter($methods, function($item) { return is_callable($item); }) 
         )
             ##! 'on_resource' => ['dump_debug' => function($resource) {k($resource);}]
-            $methods = [$methods];
+            $methods = array($methods);
 
         foreach($methods as $method) {
             $name = null;
