@@ -37,6 +37,7 @@ abstract class aWrapperStream
      */
     protected $options;
 
+
     /**
      * Get Wrapper Protocol Label
      *
@@ -60,9 +61,11 @@ abstract class aWrapperStream
         if ($this->context) {
             ## set options from injected context
             $contextOpt = stream_context_get_options($this->context);
-            $contextOpt = $contextOpt[$this->getLabel()];
 
-            $this->options->import($contextOpt);
+            if (isset($contextOpt[$this->getLabel()])) {
+                $contextOpt = $contextOpt[$this->getLabel()];
+                $this->options->import($contextOpt);
+            }
         }
 
         return $this->options;

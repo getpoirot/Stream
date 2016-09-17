@@ -1,7 +1,6 @@
 <?php
 namespace Poirot\Stream\Context;
 
-use Poirot\Std\Struct\aDataOptions\PropObject;
 use Traversable;
 
 use Poirot\Std;
@@ -33,6 +32,11 @@ class aContextStream
 
     /** @var aContextStream[] */
     protected $bindContexts = array();
+
+
+    ## just determine that fixed class loaded in debugs
+    protected $IS_FIX = true;
+
 
     /**
      * Construct
@@ -166,22 +170,22 @@ class aContextStream
      *
      * @return $this
      */
-    public function setNotification($notification)
-    {
-        if ($notification !== null && !is_callable($notification))
-            throw new \InvalidArgumentException('Notification handler must be a callable.');
-
-        $this->notification = $notification;
-        return $this;
-    }
+//    public function setNotification($notification)
+//    {
+//        if ($notification !== null && !is_callable($notification))
+//            throw new \InvalidArgumentException('Notification handler must be a callable.');
+//
+//        $this->notification = $notification;
+//        return $this;
+//    }
 
     /**
      * @return callable
      */
-    public function getNotification()
-    {
-        return $this->notification;
-    }
+//    public function getNotification()
+//    {
+//        return $this->notification;
+//    }
 
     
     // Context:
@@ -226,7 +230,7 @@ class aContextStream
             // TODO each bind context may have options => [] (bind_with) inside
             // but here we just used context specific params,
             $contextParams = new Std\Type\StdTravers($this->hasBind($context));
-            $contextParams = $contextParams->toArray(function($key, $val) {
+            $contextParams = $contextParams->toArray(function($val) {
                 ### we don`t want null values on context params
                 return ($val === null);
             });
@@ -251,12 +255,30 @@ class aContextStream
      */
     function toContext()
     {
-        $params  = new Std\Type\StdTravers($this);
-        $params  = $params->toArray();
-        $options = (isset($params['options'])) ? $params['options'] : array();
-        unset($params['options']);
+        $options  = new Std\Type\StdTravers($this);
+        $options  = $options->toArray(function($val) {
+            ### we don`t want null values on context params
+            return ($val === null);
+        });
 
-        return stream_context_create($options, $params);
+        $params = (isset($options['params'])) ? $options['params'] : array();
+        unset($options['params']);
+
+
+        if (isset($options['options']))
+            // We get bind context below; so unset here
+            /** @see self::getItterator() */
+            unset($options['options']);
+
+        $options = array(
+            $this->getWrapperName() => $options,
+        );
+
+        $bindOptions = $this->_getBindContextOptions();
+        $options     = array_merge($bindOptions, $options);
+
+        $context = stream_context_create($options, $params);
+        return $context;
     }
 
 

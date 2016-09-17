@@ -25,7 +25,7 @@ class STemporary
     {
         if ($resource !== null && !(is_string($resource) || $resource instanceof iStreamable))
             throw new \InvalidArgumentException(sprintf(
-                'Temporary Stream Can Get Only The String as default prepared data. given: "%s".'
+                'Temporary Stream Can Get Only The String Or iStreamable as default prepared data. given: "%s".'
                 , \Poirot\Std\flatten($resource)
             ));
 

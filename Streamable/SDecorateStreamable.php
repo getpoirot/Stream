@@ -5,6 +5,7 @@ use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Streamable;
 
+
 class SDecorateStreamable
     extends Streamable
     implements iStreamable

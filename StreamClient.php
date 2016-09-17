@@ -395,6 +395,8 @@ class StreamClient
         // get connect to resource:
         $errstr = $errno = null;
 
+        $context = $this->getContext();
+
         ErrorStack::handleError(E_ALL); // -------------------------------------------\
         $resource = stream_socket_client(
             $sockUri
@@ -402,7 +404,7 @@ class StreamClient
             , $errstr
             , $timeout
             , $flags
-            , $this->getContext()->toContext()
+            , $context->toContext()
         );
 
         // Fire up registered methods on resource

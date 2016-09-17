@@ -34,6 +34,7 @@ class aContextStream
     /** @var aContextStream[] */
     protected $bindContexts = array();
 
+    
     /**
      * Construct
      *
@@ -251,12 +252,30 @@ class aContextStream
      */
     function toContext()
     {
-        $params  = new Std\Type\StdTravers($this);
-        $params  = $params->toArray();
-        $options = (isset($params['options'])) ? $params['options'] : array();
-        unset($params['options']);
+        $options  = new Std\Type\StdTravers($this);
+        $options  = $options->toArray(function($val) {
+            ### we don`t want null values on context params
+            return ($val === null);
+        });
 
-        return stream_context_create($options, $params);
+        $params = (isset($options['params'])) ? $options['params'] : array();
+        unset($options['params']);
+
+
+        if (isset($options['options']))
+            // We get bind context below; so unset here
+            /** @see self::getItterator() */
+            unset($options['options']);
+
+        $options = array(
+            $this->getWrapperName() => $options,
+        );
+
+        $bindOptions = $this->_getBindContextOptions();
+        $options     = array_merge($bindOptions, $options);
+
+        $context = stream_context_create($options, $params);
+        return $context;
     }
 
 

@@ -132,7 +132,7 @@ class SAggregateStreams
                 $this->_curr_stream__index++; ## next stream
                 continue;
             }
-
+            
             if (function_exists('mb_strlen'))
                 $transCount += mb_strlen($result, '8bit');
             else
@@ -360,4 +360,3 @@ class SAggregateStreams
         return new \ArrayObject($this->streams);
     }
 }
- 

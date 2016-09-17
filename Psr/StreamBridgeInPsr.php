@@ -1,5 +1,5 @@
 <?php
-namespace Poirot\vendor\poirot\stream\Poirot\Stream\Psr;
+namespace Poirot\Stream\Psr;
 
 use Poirot\Stream\Interfaces\iStreamable;
 use Psr\Http\Message\StreamInterface;

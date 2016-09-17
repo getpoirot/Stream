@@ -51,19 +51,23 @@ class WrapperPsrToPhpResource
         if(!RegistryOfWrapperStream::isRegistered($self->getLabel()))
             RegistryOfWrapperStream::register($self);
 
-
         # make resource
         $mode = new AccessMode();
         (!$stream->isWritable()) ?: $mode->openForWrite();
         (!$stream->isReadable()) ?: $mode->openForRead();
 
         $label = $self->getLabel();
-        return fopen($label.'://stream'
+
+        $context  = new ContextStreamBase( $label, array('stream' => $stream) );
+        $context  = $context->toContext();
+        $resource = fopen($label.'://stream'
             , (string) $mode
             , null
             ## set options to wrapper
-            , (new ContextStreamBase($label, array('stream' => $stream)))->toContext()
+            , $context
         );
+
+        return $resource;
     }
 
 
@@ -113,13 +117,14 @@ class WrapperPsrToPhpResource
         static $modeMap = array(
             'r'  => 33060,
             'r+' => 33206,
-            'w'  => 33188
+            'w'  => 33188,
+            // TODO more maps
         );
 
         return array(
             'dev'     => 0,
             'ino'     => 0,
-            'mode'    => $modeMap[$this->_w__mode],
+            'mode'    => (isset($modeMap[$this->_w__mode])) ? $modeMap[$this->_w__mode] : 0,
             'nlink'   => 0,
             'uid'     => 0,
             'gid'     => 0,
