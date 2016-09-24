@@ -40,10 +40,13 @@ class StreamBridgeInPsr
         
         try 
         {
-            (!$streamable->resource()->isSeekable()) ?: $streamable->seek(0);
+            if ($streamable->resource()->isSeekable())
+                $streamable->seek(0);
+
             return $this->getContents();
+
         } catch (\Exception $e) {
-            trigger_error($e->getMessage(), E_USER_ERROR);
+            trigger_error($e->getMessage(), E_USER_WARNING);
             return '';
         }
     }

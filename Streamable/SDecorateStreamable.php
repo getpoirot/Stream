@@ -13,6 +13,7 @@ class SDecorateStreamable
     /** @var iStreamable Wrapped Stream */
     protected $_t__wrap_stream;
 
+    
     /**
      * Construct
      *
@@ -21,7 +22,7 @@ class SDecorateStreamable
     function __construct(iStreamable $streamable)
     {
         $this->_t__wrap_stream = $streamable;
-        parent::__construct($streamable->resource());
+        parent::__construct();
     }
     
     /**

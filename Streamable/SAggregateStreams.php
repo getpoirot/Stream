@@ -80,7 +80,7 @@ class SAggregateStreams
      */
     function setResource(iResourceStream $handle)
     {
-        throw new \Exception('Resource is banned by default.');
+        throw new \Exception('Aggregate Stream setResource not implemented.');
     }
 
     /**
@@ -167,18 +167,30 @@ class SAggregateStreams
      *
      * @return string
      */
-    function readLine($ending = "\n", $inByte = null)
+    function readLine($ending = "\n", $inByte = null, $debug = false)
     {
-        $currOffset = $this->getCurrOffset();
+        // TODO trailing ending remain on lines; does not return the ending delimiter itself.
 
-        $rData = $this->read($inByte);
-        if (($i = strpos($rData, $ending)) !== false) {
-            ## found ending in string
-            $rData = substr($rData, 0, $i);
-            $this->seek($currOffset+$i/*length of data*/+strlen($ending)/* skip ending */);
+        $line = null; $i = 1;
+        while ( '' !== $rData = $this->read(1) )
+        {
+            if ($rData === $ending[$i-1]) {
+                if ($i == strlen($ending))
+                    break;
+                $i++;
+            } else {
+                $i = 1;
+            }
+
+            $line .= $rData;
+
+            if ($inByte !== null) {
+                if (strlen($line) >= $inByte)
+                    break;
+            }
         }
 
-        return $rData;
+        return $line;
     }
 
     /**

@@ -1,23 +1,15 @@
 <?php
 namespace Poirot\Stream\Streamable;
 
-// DO_LEAST_PHPVER_SUPPORT 5.4 trait
-if (version_compare(phpversion(), '5.4.0') < 0) {
-    require_once __DIR__.'/../fixes/SLimitSegment.php';
-    return;
-}
-
 use Poirot\Stream\Interfaces\iStreamable;
 use Poirot\Stream\Streamable;
 
 /**
  * Wrapper Around Stream To Use Subset Of Stream
  */
-class SLimitSegment 
-    extends Streamable
+class SLimitSegment
+    extends SDecorateStreamable
 {
-    use tDecorateStreamable;
-
     protected $segmentOffset = 0;
     protected $segmentLimit  = -1;
 
@@ -27,17 +19,18 @@ class SLimitSegment
      *
      * @param iStreamable $streamable
      * @param int         $limit      Bytes limit can be read from stream
-     * @param int         $offset     Start offset of stream that consumed as zero seek
+     * @param int|null    $offset     Start offset of stream that consumed as zero seek; null mean current offset
      */
-    function __construct(iStreamable $streamable, $limit = -1, $offset = 0)
+    function __construct(iStreamable $streamable, $limit = -1, $offset = null)
     {
-        $this->_t__wrap_stream = $streamable;
-
         $this->setSegmentLimit($limit);
+
+        if ($offset === null)
+            $offset = $streamable->getCurrOffset();
+
         $this->setSegmentOffset($offset);
 
-        parent::__construct($streamable->resource());
-
+        parent::__construct($streamable);
         ## ensure wrapped stream is on correct offset
         $this->seek(0);
     }
@@ -83,7 +76,7 @@ class SLimitSegment
         $inByte = ($inByte === null)
             ?
             (
-                ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
+            ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
             )
             : $inByte;
 
