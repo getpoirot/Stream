@@ -106,12 +106,12 @@ class SAggregateStreams
      * @throws \Exception Error On Read Data
      * @return string
      */
-    function read($inByte = null)
+    function read($inByte = null, $debug = false)
     {
         $inByte = ($inByte === null)
             ?
             (
-                ($this->getBuffer() === null) ? -1 : $this->getBuffer()
+                ( $this->getBuffer() === null ) ? -1 : $this->getBuffer()
             )
             : $inByte;
 
@@ -127,6 +127,12 @@ class SAggregateStreams
 
             $currStream = $this->streams[$this->_curr_stream__index];
             $result     = $currStream->read($inByte);
+
+            if ($debug) {
+                k($this->streams[1]->read());
+                kd($this->streams[1]->seek(0, SEEK_SET, true)->read());
+            }
+
             if ($result == null && $currStream->isEOF()) {
                 ## loose comparison to match on '', false, and null
                 $this->_curr_stream__index++; ## next stream
@@ -136,7 +142,6 @@ class SAggregateStreams
             if (function_exists('mb_strlen'))
                 $transCount += mb_strlen($result, '8bit');
             else
-                // TODO implement data length without mb_strlen
                 $transCount += strlen($result);
 
 
@@ -167,22 +172,22 @@ class SAggregateStreams
      *
      * @return string
      */
-    function readLine($ending = "\n", $inByte = null, $debug = false)
+    function readLine($ending = "\n", $inByte = null)
     {
-        // TODO trailing ending remain on lines; does not return the ending delimiter itself.
-
         $line = null; $i = 1;
         while ( '' !== $rData = $this->read(1) )
         {
+            $line .= $rData;
+            
             if ($rData === $ending[$i-1]) {
-                if ($i == strlen($ending))
+                if ($i == strlen($ending)) {
+                    $line = trim($line, $ending);
                     break;
+                }
                 $i++;
             } else {
                 $i = 1;
             }
-
-            $line .= $rData;
 
             if ($inByte !== null) {
                 if (strlen($line) >= $inByte)
