@@ -106,7 +106,7 @@ class SAggregateStreams
      * @throws \Exception Error On Read Data
      * @return string
      */
-    function read($inByte = null, $debug = false)
+    function read($inByte = null)
     {
         $inByte = ($inByte === null)
             ?
@@ -127,14 +127,13 @@ class SAggregateStreams
 
             $currStream = $this->streams[$this->_curr_stream__index];
             $result     = $currStream->read($inByte);
-
-            if ($debug) {
-                k($this->streams[1]->read());
-                kd($this->streams[1]->seek(0, SEEK_SET, true)->read());
-            }
-
+            
             if ($result == null && $currStream->isEOF()) {
                 ## loose comparison to match on '', false, and null
+                if ($this->_curr_stream__index +1 >= $total)
+                    // Don`t increment current stream index
+                    break;
+
                 $this->_curr_stream__index++; ## next stream
                 continue;
             }

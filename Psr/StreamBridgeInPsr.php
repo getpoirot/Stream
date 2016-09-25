@@ -4,6 +4,7 @@ namespace Poirot\Stream\Psr;
 use Poirot\Stream\Interfaces\iStreamable;
 use Psr\Http\Message\StreamInterface;
 
+
 class StreamBridgeInPsr 
     implements StreamInterface
 {
@@ -206,9 +207,10 @@ class StreamBridgeInPsr
     {
         $content = '';
         while(!$this->streamable->isEOF()) {
-            $r = $this->streamable->read(1048576);
+            $r = $this->streamable->read(1024);
             if ($r == null)
                 break;
+
             $content .= $r;
         }
         
