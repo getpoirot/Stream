@@ -29,7 +29,7 @@ class STemporary
                 , \Poirot\Std\flatten($resource)
             ));
 
-        $phpTmp  = new StreamWrapperClient('php://temp', new AccessMode('bRWB'));
+        $phpTmp  = new StreamWrapperClient($io, new AccessMode('bRWB'));
         ## set resource for this streamable
         parent::__construct($phpTmp->getConnect());
 
