@@ -181,11 +181,30 @@ class MetaReaderOfPhpResource
     /**
      * Whether The Current Stream Can Be seeked?
      *
-     * @return boolean
+     * note: StreamWrapper implementations have no control over
+     *       the "seekable" property of stream_get_meta_data()
+     *       and always advertise themselves as seekable.
+     *
+     * @return bool
      */
     function isSeekable()
     {
         $this->assertMetaData();
+        
+        if ($this->getMetaKey('wrapper_type')) {
+            // This is a wrapper resource; challenge seekable ...
+            if (false === $pos = ftell($this->rHandler))
+                throw new \RuntimeException('Unable to determine stream position');
+
+            try {
+                if (-1 === @fseek($this->rHandler, $pos, SEEK_SET))
+                    return false;
+            } catch (\Exception $e) {
+                // Maybe Fallback into wrapper handler for seek
+                return false;
+            }
+        }
+        
         return (bool) $this->getMetaKey('seekable');
     }
 
