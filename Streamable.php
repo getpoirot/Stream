@@ -422,6 +422,10 @@ class Streamable
      */
     function isEOF()
     {
+        if ($this->resource()->meta()->getWrapperType())
+            // Wrapper Stream ...
+            return $this->resource()->meta()->isReachedEnd();
+
         return feof($this->resource()->getRHandler());
     }
 

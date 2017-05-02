@@ -2,7 +2,7 @@
 namespace Poirot\Stream\Streamable;
 
 use Poirot\Stream\Interfaces\iStreamable;
-use Poirot\Stream\Streamable;
+
 
 /**
  * Wrapper Around Stream To Use Subset Of Stream
@@ -73,12 +73,12 @@ class SLimitSegment
         if ($this->getSegmentLimit() == -1)
             return $this->_t__wrap_stream->read($inByte);
 
+
         $inByte = ($inByte === null)
-            ?
-            (
-            ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
-            )
-            : $inByte;
+            ? (
+                ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
+
+            ) : $inByte;
 
         $remain = $this->getSegmentLimit() - $this->getCurrOffset();
         if ($remain > 0)
@@ -107,12 +107,12 @@ class SLimitSegment
         if ($this->getSegmentLimit() == -1)
             return $this->_t__wrap_stream->readLine($ending, $inByte);
 
+
         $inByte = ($inByte === null)
-            ?
-            (
-            ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
-            )
-            : $inByte;
+            ? (
+                ($this->getBuffer() === null) ? $this->getSize() : $this->getBuffer()
+
+            ) : $inByte;
 
         $remain = $this->getSegmentLimit() - $this->getCurrOffset();
         if ($remain > 0)
@@ -144,21 +144,28 @@ class SLimitSegment
      */
     function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->_t__wrap_stream->resource()->isSeekable()) {
-            $cur = $this->_t__wrap_stream->getCurrOffset();
-            if ($cur > $this->getSegmentOffset())
-                throw new \RuntimeException('Could not seek to stream offset.');
-
-            // when stream is not seekable read til offset
-            $this->_t__wrap_stream->read($offset - $cur);
-            return $this;
-        }
-
+        // offset at 0 has equal to segment when given
         $offset += $this->getSegmentOffset();
 
         $endOffset = $this->getSegmentOffset() + $this->getSegmentLimit();
         if ($this->getSegmentLimit() !== -1 && $offset > $endOffset)
+            // offset not exceed the limit when given ....
             $offset = $endOffset;
+
+
+        if (! $this->_t__wrap_stream->resource()->isSeekable() )
+        {
+            // when stream is not seekable read til offset
+
+            $cur = $this->_t__wrap_stream->getCurrOffset();
+            if ($cur > $this->getSegmentOffset())
+                throw new \RuntimeException('Could not seek to stream offset.');
+
+            if ( 0 < $byte = $offset - $cur )
+                $this->_t__wrap_stream->read($byte);
+
+            return $this;
+        }
 
         return $this->_t__wrap_stream->seek($offset, $whence);
     }
@@ -221,13 +228,17 @@ class SLimitSegment
         $size = $this->_t__wrap_stream->getSize();
         if ($size !== null) {
             $segmentSize = $size - $this->getSegmentOffset();
-            $size = ($this->getSegmentLimit() == -1)
-                ? $segmentSize
-                : min($segmentSize - $this->getSegmentLimit(), $this->getSegmentLimit());
+            if ($this->getSegmentLimit() == -1)
+                $size = $segmentSize;
+            elseif ($this->getSegmentLimit() >= $segmentSize)
+                $size = $segmentSize;
+            else
+                $size = min( $segmentSize - $this->getSegmentLimit(), $this->getSegmentLimit() );
         }
 
         return $size;
     }
+
 
     // options:
 
@@ -236,7 +247,7 @@ class SLimitSegment
      * @param int $limit
      * @return $this
      */
-    public function setSegmentLimit($limit)
+    function setSegmentLimit($limit)
     {
         $this->segmentLimit = $limit;
         return $this;
@@ -245,7 +256,7 @@ class SLimitSegment
     /**
      * @return int
      */
-    public function getSegmentLimit()
+    function getSegmentLimit()
     {
         return $this->segmentLimit;
     }
@@ -255,7 +266,7 @@ class SLimitSegment
      * @param int $offset
      * @return $this
      */
-    public function setSegmentOffset($offset)
+    function setSegmentOffset($offset)
     {
         $this->segmentOffset = $offset;
         return $this;
@@ -264,7 +275,7 @@ class SLimitSegment
     /**
      * @return int
      */
-    public function getSegmentOffset()
+    function getSegmentOffset()
     {
         return $this->segmentOffset;
     }

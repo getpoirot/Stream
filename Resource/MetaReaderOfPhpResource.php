@@ -197,6 +197,7 @@ class MetaReaderOfPhpResource
                 throw new \RuntimeException('Unable to determine stream position');
 
             try {
+                // TODO Stream Reach EOF When Seek On it Sometimes!!
                 if (-1 === @fseek($this->rHandler, $pos, SEEK_SET))
                     return false;
             } catch (\Exception $e) {
