@@ -10,7 +10,7 @@
     ]
     , "target-dir": "Poirot/Stream"
     , "require": {
-        "poirot/std": "dev-devel"
+        "poirot/std": "dev-master"
         , "psr/http-message": "1.0"
     }
     , "autoload"  : {
