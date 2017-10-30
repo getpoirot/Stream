@@ -89,7 +89,7 @@ class SDecorateStreamable
      *
      * @return $this
      */
-    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0)
+    function pipeTo(iStreamable $destStream, $maxByte = null, $offset = null)
     {
         $this->_t__wrap_stream->pipeTo($destStream, $maxByte, $offset);
         return $this;

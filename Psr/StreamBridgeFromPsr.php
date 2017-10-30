@@ -25,8 +25,7 @@ class StreamBridgeFromPsr
         $this->streamInterface = $streamInterface;
 
         $resource   = WrapperPsrToPhpResource::convertToResource($streamInterface);
-        $resource   = new ResourceStream($resource);
-        $streamable = new Streamable($resource);
+        $streamable = new Streamable( new ResourceStream($resource) );
 
         parent::__construct($streamable);
     }

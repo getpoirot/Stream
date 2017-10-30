@@ -51,8 +51,10 @@ class SLimitSegment
     function pipeTo(iStreamable $destStream, $maxByte = null, $offset = 0)
     {
         ## get real offset of wrapped stream
-        $this->seek($offset);
-        $offset = $this->_t__wrap_stream->getCurrOffset();
+        if ( $this->resource()->isSeekable() ) {
+            $this->seek($offset);
+            $offset = $this->_t__wrap_stream->getCurrOffset();
+        }
 
         return $this->_t__wrap_stream->pipeTo($destStream, $maxByte, $offset);
     }
