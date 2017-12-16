@@ -416,11 +416,13 @@ class StreamClient
             call_user_func(array($this->onResourceAvailable(), $method), $resource, $this);
 
         $error = ErrorStack::handleDone();
-        if ($error)
+        if ($error) {
             throw new \Exception(sprintf(
                 'Cannot Connect To Server "%s".'
                 , $this->getServerAddress()
             ), $errno, $error);
+        }
+
         // ---------------------------------------------------------------------------/
 
         # Set the stream timeout
