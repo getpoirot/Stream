@@ -298,7 +298,10 @@ class SAggregateStreams
         // Rewind each stream
         foreach ($this->streams as $i => $stream)
             try {
-                $stream->rewind();
+                if ( $stream->resource()->isSeekable() )
+                    // rewind just seekable resources!
+                    $stream->rewind();
+
             } catch (\Exception $e) {
                 throw new \RuntimeException(
                     'Unable to seek stream '.$i.' of the AggregateStream'

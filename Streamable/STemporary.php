@@ -38,5 +38,7 @@ class STemporary
             $this->write($resource);
         elseif ($resource !== null)
             $resource->pipeTo($this);
+
+        $this->rewind();
     }
 }
