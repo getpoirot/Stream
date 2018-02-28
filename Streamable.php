@@ -113,10 +113,30 @@ class Streamable
             $this->seek($offset);
 
         ## copy data
+        #
+        /*
+         * Old
         $data  = $this->read($maxByte);
         $destStream->write($data);
         $this->_resetTransCount($destStream->getTransCount());
+        */
 
+        $buffBytes = 8192; $totalBytes = 0;
+        while ('' !== $data = $this->read($buffBytes))
+        {
+            $destStream->write($data);
+
+            $readBytes = $this->getTransCount();
+            $totalBytes+=$readBytes;
+
+            if ($maxByte > 0)
+                $buffBytes = ($maxByte - $readBytes < 1024)
+                    ? $maxByte - $readBytes
+                    : 1024;
+        }
+
+
+        $this->_resetTransCount($totalBytes);
         return $this;
     }
 

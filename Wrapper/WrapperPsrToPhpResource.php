@@ -121,6 +121,14 @@ class WrapperPsrToPhpResource
             // TODO more maps
         );
 
+        try {
+            $size = $this->_w__stream->getSize();
+        } catch (\Exception $_)
+        {
+            $size = null;
+        }
+
+
         return array(
             'dev'     => 0,
             'ino'     => 0,
@@ -129,7 +137,7 @@ class WrapperPsrToPhpResource
             'uid'     => 0,
             'gid'     => 0,
             'rdev'    => 0,
-            'size'    => $this->_w__stream->getSize() ?: 0,
+            'size'    => $size,
             'atime'   => 0,
             'mtime'   => 0,
             'ctime'   => 0,

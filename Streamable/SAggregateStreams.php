@@ -248,13 +248,14 @@ class SAggregateStreams
      * Get the size of the stream if known.
      *
      * @return int|null Returns the size in bytes if known, or null if unknown.
+     * @throws \Exception
      */
     function getSize()
     {
         $size = 0;
         foreach ($this->streams as $stream) {
             if (($s = $stream->getSize()) === null)
-                return null;
+                throw new \Exception('Can`t determine size from stream.');
 
             $size += $s;
         }
