@@ -114,13 +114,14 @@ class Streamable
 
         ## copy data
         #
-        /*
-         * Old
         $data  = $this->read($maxByte);
         $destStream->write($data);
         $this->_resetTransCount($destStream->getTransCount());
-        */
 
+        return $this;
+
+
+        /*
         $buffBytes = 8192; $totalBytes = 0;
         while ('' !== $data = $this->read($buffBytes))
         {
@@ -137,7 +138,9 @@ class Streamable
 
 
         $this->_resetTransCount($totalBytes);
+
         return $this;
+        */
     }
 
     /**
