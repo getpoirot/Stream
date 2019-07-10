@@ -3,6 +3,7 @@ namespace Poirot\Stream;
 
 use Poirot\Std\ConfigurableSetter;
 
+use Poirot\Stream\Exception\ConnectionError;
 use Poirot\Stream\Interfaces\Context\iContextStream;
 use Poirot\Stream\Interfaces\iResourceStream;
 use Poirot\Stream\Interfaces\iWrapperStreamClient;
@@ -271,8 +272,8 @@ class StreamWrapperClient
             , $this->getContext()->toContext()
         );
 
-        if (!$resource)
-            throw new \Exception('Error Connecting to '.$sockUri);
+        if (false === $resource)
+            throw new ConnectionError('Error Connecting to ' . $sockUri);
 
         // set timeout:
         $timeOut = explode('.', (string) $this->getTimeout());

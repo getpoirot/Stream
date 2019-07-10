@@ -6,11 +6,17 @@ use Poirot\Stream\Interfaces\iStreamable;
 
 /*
 // Covert Psr StreamInterface into Streamable:
-// ++
+//
 $psr    = new StreamPsr('http://google.com/');
 $stream = new Streamable(new SResource($psr));
 echo $stream->read();
+*/
 
+/*
+// Using Stream Wrapper Client To Create Resource
+//
+$streamClient = new StreamWrapperClient($this->assetUri, new AccessMode('bRB'));
+$stream = new Streamable($streamClient->getConnect());
 */
 
 class Streamable 
