@@ -10,12 +10,12 @@
     ]
     , "target-dir": "Poirot/Stream"
     , "require": {
-        "poirot/std": "dev-devel"
-        , "psr/http-message": "1.0"
+        "../../../std": "dev-devel"
+        , "../../../../psr/http-message": "1.0"
     }
     , "autoload"  : {
         "psr-0": {
-            "Poirot\\Stream": "."
+            "Poirot\\Stream": ""
         }
     }
     , "repositories": [
